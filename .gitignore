@@ -1,0 +1,15 @@
+# KataGo engine and weights
+katago/
+KataGoData/
+
+# Generated images and analysis data
+output_images/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS files
+.DS_Store
+Thumbs.db
