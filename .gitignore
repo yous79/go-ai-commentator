@@ -13,3 +13,6 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+
+# API Key
+api_key.txt
