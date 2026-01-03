@@ -16,13 +16,13 @@ MODEL = os.path.join(BASE_DIR, "weights", "kata20bs530.bin.gz")
 BASE_OUTPUT_DIR = os.path.join(SCRIPT_DIR, "output_images")
 
 class BoardRenderer:
-    def __init__(self, board_size=19, image_size=800):
+    def __init__(self, board_size=19, image_size=850):
         self.board_size = board_size
         self.image_size = image_size
-        self.margin = 50
+        self.margin = 70 # Sufficient space for coordinates
         self.grid_size = (self.image_size - 2 * self.margin) // (self.board_size - 1)
         
-        self.color_bg = (220, 179, 92)
+        self.color_bg = (220, 179, 92) # Wood color
         self.color_line = (0, 0, 0)
         self.color_black = (0, 0, 0)
         self.color_white = (255, 255, 255)
@@ -30,28 +30,56 @@ class BoardRenderer:
 
     def _get_star_points(self):
         if self.board_size == 19:
-            points = [3, 9, 15]
-            return [(r, c) for r in points for c in points]
+            p = [3, 9, 15]
+            return [(r, c) for r in p for c in p]
         elif self.board_size == 13:
-            points = [3, 9]
-            return [(r, c) for r in points for c in points] + [(6,6)]
+            p = [3, 9]
+            return [(r, c) for r in p for c in p] + [(6, 6)]
         elif self.board_size == 9:
-            points = [2, 6]
-            return [(r, c) for r in points for c in points] + [(4,4)]
+            p = [2, 6]
+            return [(r, c) for r in p for c in p] + [(4, 4)]
         return []
 
     def _coord_to_pixel(self, row, col):
+        # row 0 is bottom
         visual_row = self.board_size - 1 - row
         x = self.margin + col * self.grid_size
         y = self.margin + visual_row * self.grid_size
         return x, y
 
+    def _draw_centered_text(self, draw, x, y, text, font, fill):
+        try:
+            left, top, right, bottom = draw.textbbox((0, 0), text, font=font)
+            w, h = right - left, bottom - top
+            draw.text((x - w / 2, y - h / 2 - top), text, font=font, fill=fill)
+        except AttributeError:
+            w, h = draw.textsize(text, font=font)
+            draw.text((x - w / 2, y - h / 2), text, font=font, fill=fill)
+
     def render(self, board, last_move=None, analysis_text=""):
         img = Image.new("RGB", (self.image_size, self.image_size + 100), self.color_bg)
         draw = ImageDraw.Draw(img)
+        
+        try: font = ImageFont.truetype("arial.ttf", 22)
+        except: font = ImageFont.load_default()
 
-        # Draw Grid
+        # Grid and Coordinates
+        cols = "ABCDEFGHJKLMNOPQRST"
         for i in range(self.board_size):
+            # Coordinates
+            x_pos = self.margin + i * self.grid_size
+            y_pos = self.margin + i * self.grid_size
+            
+            # Letters (Top/Bottom)
+            self._draw_centered_text(draw, x_pos, self.margin - 35, cols[i], font, "black")
+            self._draw_centered_text(draw, x_pos, self.margin + (self.board_size-1)*self.grid_size + 35, cols[i], font, "black")
+            
+            # Numbers (Left/Right)
+            num_label = str(self.board_size - i)
+            self._draw_centered_text(draw, self.margin - 35, y_pos, num_label, font, "black")
+            self._draw_centered_text(draw, self.margin + (self.board_size-1)*self.grid_size + 35, y_pos, num_label, font, "black")
+
+            # Lines
             sx, sy = self.margin + i * self.grid_size, self.margin
             ex, ey = sx, self.margin + (self.board_size - 1) * self.grid_size
             draw.line([(sx, sy), (ex, ey)], fill=self.color_line, width=2)
@@ -59,176 +87,117 @@ class BoardRenderer:
             ex, ey = self.margin + (self.board_size - 1) * self.grid_size, sy
             draw.line([(sx, sy), (ex, ey)], fill=self.color_line, width=2)
 
-        for row, col in self._get_star_points():
-             x, y = self._coord_to_pixel(row, col)
-             draw.ellipse([(x-4, y-4), (x+4, y+4)], fill=self.color_line)
+        # Stars
+        for r, c in self._get_star_points():
+            px, py = self._coord_to_pixel(r, c)
+            draw.ellipse([px-4, py-4, px+4, py+4], fill=self.color_line)
 
-        stone_radius = self.grid_size // 2 - 2
-        for row in range(self.board_size):
-            for col in range(self.board_size):
-                color = board.get(row, col)
+        # Stones
+        rad = self.grid_size // 2 - 2
+        for r in range(self.board_size):
+            for c in range(self.board_size):
+                color = board.get(r, c)
                 if color:
-                    x, y = self._coord_to_pixel(row, col)
-                    fill_color = self.color_black if color == 'b' else self.color_white
-                    draw.ellipse([(x-stone_radius, y-stone_radius), (x+stone_radius, y+stone_radius)], fill=fill_color, outline=(0,0,0))
+                    px, py = self._coord_to_pixel(r, c)
+                    fill_c = self.color_black if color == 'b' else self.color_white
+                    draw.ellipse([px-rad, py-rad, px+rad, py+rad], fill=fill_c, outline="black")
 
+        # Last Move
         if last_move:
-            color, (row, col) = last_move
-            x, y = self._coord_to_pixel(row, col)
-            m = stone_radius // 2
-            draw.rectangle([(x-m, y-m), (x+m, y+m)], fill=self.color_last_move)
+            c, (r, col) = last_move
+            px, py = self._coord_to_pixel(r, col)
+            m = rad // 2
+            draw.rectangle([px-m, py-m, px+m, py+m], fill=self.color_last_move)
 
+        # Text Area
         draw.rectangle([(0, self.image_size), (self.image_size, self.image_size + 100)], fill=(30, 30, 30))
-        draw.text((20, self.image_size + 30), analysis_text, fill=(255, 255, 255))
+        self._draw_centered_text(draw, self.image_size // 2, self.image_size + 50, analysis_text, font, "white")
         return img
 
 class KataGoEngine:
     def __init__(self, board_size=19):
         self.board_size = board_size
         cmd = [KATAGO_EXE, "analysis", "-config", CONFIG, "-model", MODEL]
-        self.process = subprocess.Popen(
-            cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1
-        )
-        
-        # Wait for "Started" message in stderr
-        print("Initializing KataGo engine...", flush=True)
+        self.process = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
+        print("Initializing KataGo...", flush=True)
         while True:
             line = self.process.stderr.readline()
             if "Started, ready to begin handling requests" in line:
                 print("KataGo is ready.", flush=True)
                 break
             if not line and self.process.poll() is not None:
-                print("KataGo failed to start.", flush=True)
                 sys.exit(1)
 
-    def analyze(self, move_history, komi=6.5):
-        query = {
-            "id": "analysis",
-            "moves": move_history,
-            "rules": "japanese",
-            "komi": komi,
-            "boardXSize": self.board_size,
-            "boardYSize": self.board_size,
-            "maxVisits": 500
-        }
-
+    def analyze(self, moves, komi=6.5):
+        query = {"id": "analysis", "moves": moves, "rules": "japanese", "komi": komi, "boardXSize": self.board_size, "boardYSize": self.board_size, "maxVisits": 500}
         try:
             self.process.stdin.write(json.dumps(query) + "\n")
             self.process.stdin.flush()
-
             while True:
                 line = self.process.stdout.readline()
                 if not line: break
-                response = json.loads(line)
-                if response.get("id") == "analysis":
-                    return response
-        except Exception as e:
-            print(f"Error: {e}", flush=True)
-            return None
+                resp = json.loads(line)
+                if resp.get("id") == "analysis": return resp
+        except: return None
 
     def close(self):
         self.process.terminate()
 
 def main():
-    sgf_path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(SCRIPT_DIR, "sample.sgf")
-    
-    sgf_name = os.path.splitext(os.path.basename(sgf_path))[0]
-    output_dir = os.path.join(BASE_OUTPUT_DIR, sgf_name)
-    os.makedirs(output_dir, exist_ok=True)
-    
-    print(f"Loading SGF: {sgf_path}", flush=True)
-    print(f"Output Images to: {output_dir}", flush=True)
-
-    try:
-        with open(sgf_path, "rb") as f:
-            game = sgf.Sgf_game.from_bytes(f.read())
-    except Exception as e:
-        print(f"SGF Load Error: {e}", flush=True)
-        return
-
+    path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(SCRIPT_DIR, "sample.sgf")
+    name = os.path.splitext(os.path.basename(path))[0]
+    out = os.path.join(BASE_OUTPUT_DIR, name)
+    os.makedirs(out, exist_ok=True)
+    print(f"Loading SGF: {path}", flush=True)
+    with open(path, "rb") as f: game = sgf.Sgf_game.from_bytes(f.read())
     board_size = game.get_size()
-    katago = KataGoEngine(board_size=board_size)
-    renderer = BoardRenderer(board_size=board_size)
+    engine = KataGoEngine(board_size)
+    renderer = BoardRenderer(board_size)
     
-    total_moves = 0
-    temp_node = game.get_root()
+    total = 0; temp = game.get_root()
     while True:
-        try:
-            temp_node = temp_node[0]
-            if temp_node.get_move()[0] is not None:
-                total_moves += 1
-        except IndexError:
-            break
-    print(f"Total Moves: {total_moves}", flush=True)
+        try: temp = temp[0]; total += 1
+        except: break
+    print(f"Total Moves: {total}", flush=True)
 
-    node = game.get_root()
-    board = boards.Board(board_size)
-    komi = game.get_komi()
-    move_history = [] 
-    move_num = 0
-    
-    analysis_log = {
-        "board_size": board_size,
-        "moves": []
-    }
+    node = game.get_root(); board = boards.Board(board_size); history = []; m_num = 0
+    log = {"board_size": board_size, "moves": []}
 
     while True:
-        print(f"Analyzing Move {move_num}", flush=True)
-        analysis = katago.analyze(move_history, komi)
-        
+        print(f"Analyzing Move {m_num}", flush=True)
+        ans = engine.analyze(history)
         info = "No Data"
-        current_data = {
-            "move_number": move_num,
-            "winrate": 0.0,
-            "score": 0.0,
-            "candidates": []
-        }
-
-        if analysis and 'rootInfo' in analysis:
-            wr, sc = analysis['rootInfo'].get('winrate', 0), analysis['rootInfo'].get('scoreLead', 0)
+        data = {"move_number": m_num, "winrate": 0.5, "score": 0.0, "candidates": []}
+        if ans and 'rootInfo' in ans:
+            wr, sc = ans['rootInfo'].get('winrate', 0.5), ans['rootInfo'].get('scoreLead', 0.0)
             info = f"Winrate: {wr:.1%} | Score: {sc:.1f}"
-            current_data["winrate"] = wr
-            current_data["score"] = sc
-            if 'moveInfos' in analysis:
-                for cand in analysis['moveInfos'][:10]:
-                    current_data["candidates"].append({
-                        "move": cand['move'],
-                        "winrate": cand.get('winrate', 0),
-                        "scoreLead": cand.get('scoreLead', 0),
-                        "visits": cand.get('visits', 0)
-                    })
+            data.update({"winrate": wr, "score": sc})
+            if 'moveInfos' in ans:
+                for c in ans['moveInfos'][:10]:
+                    data["candidates"].append({"move": c['move'], "winrate": c.get('winrate', 0), "scoreLead": c.get('scoreLead', 0), "pv": c.get('pv', [])})
         
-        analysis_log["moves"].append(current_data)
-        json_path = os.path.join(output_dir, "analysis.json")
-        try:
-            with open(json_path, "w") as f:
-                json.dump(analysis_log, f, indent=2)
-        except: pass
+        log["moves"].append(data)
+        with open(os.path.join(out, "analysis.json"), "w") as f: json.dump(log, f, indent=2)
 
-        last_move = None
-        if move_num > 0:
+        last = None
+        if m_num > 0:
             c, m = node.get_move()
-            if m: last_move = (c, m)
+            if m: last = (c, m)
 
-        img = renderer.render(board, last_move=last_move, analysis_text=f"Move {move_num} | {info}")
-        img.save(os.path.join(output_dir, f"move_{move_num:03d}.png"))
+        img = renderer.render(board, last_move=last, analysis_text=f"Move {m_num} | {info}")
+        img.save(os.path.join(out, f"move_{m_num:03d}.png"))
 
         try:
-            node = node[0]
-            move_num += 1
-            color, move = node.get_move()
+            node = node[0]; m_num += 1; color, m = node.get_move()
             if color:
-                if move:
-                    board.play(move[0], move[1], color)
-                    coord = "ABCDEFGHJKLMNOPQRST"[move[1]] + str(move[0] + 1)
-                    move_history.append(["B" if color == "b" else "W", coord])
-                else:
-                    move_history.append(["B" if color == "b" else "W", "pass"])
-        except IndexError:
-            break
-
-    katago.close()
-    print(f"\nDone. {move_num+1} images and analysis.json saved to {output_dir}", flush=True)
+                if m:
+                    board.play(m[0], m[1], color)
+                    history.append(["B" if color == 'b' else "W", cols[m[1]] + str(m[0]+1)])
+                else: history.append(["B" if color == 'b' else "W", "pass"])
+        except: break
+    engine.close()
+    print(f"Done. Images in {out}", flush=True)
 
 if __name__ == "__main__":
+    cols = "ABCDEFGHJKLMNOPQRST"
     main()
