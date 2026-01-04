@@ -149,6 +149,9 @@ class GoReplayApp:
         self.btn_comment = tk.Button(self.info_frame, text="Ask KataGo Agent", command=self.generate_commentary, bg="#4CAF50", fg="white", font=("Arial", 10, "bold"))
         self.btn_comment.pack(pady=5, fill=tk.X, padx=10)
         
+        self.btn_full_report = tk.Button(self.info_frame, text="対局レポートを生成 (Markdown)", command=self.generate_full_report, bg="#9C27B0", fg="white", font=("Arial", 10, "bold"))
+        self.btn_full_report.pack(pady=5, fill=tk.X, padx=10)
+        
         comm_container = tk.Frame(self.info_frame, bg="#f0f0f0")
         comm_container.pack(fill=tk.BOTH, expand=True, padx=10, pady=2)
         comm_scroll = tk.Scrollbar(comm_container)
@@ -524,6 +527,162 @@ class GoReplayApp:
             err = str(e)
             print(f"Agent Loop Error: {err}")
             self.root.after(0, lambda: self.update_commentary_ui(f"Agent Error: {err}"))
+
+    def generate_full_report(self):
+        if not self.gemini_client or not self.current_sgf_path:
+            messagebox.showwarning("Error", "SGFをロードし、Geminiを設定してください。")
+            return
+
+        self.btn_full_report.config(state="disabled", text="Generating Report...")
+        threading.Thread(target=self._run_report_task, daemon=True).start()
+
+    def _run_report_task(self):
+        try:
+            # 1. Gather mistakes
+            self.load_analysis_data()
+            moves = self.analysis_data.get("moves", [])
+            if not moves: return
+
+            drops = []
+            for i in range(1, len(moves)):
+                drop = moves[i-1].get('winrate', 0.5) - (1.0 - moves[i].get('winrate', 0.5))
+                if drop > 0.05: drops.append((drop, i))
+            
+            # Top 3 for each color
+            drops_b = sorted([d for d in drops if d[1] % 2 != 0], key=lambda x: x[0], reverse=True)[:3]
+            drops_w = sorted([d for d in drops if d[1] % 2 == 0], key=lambda x: x[0], reverse=True)[:3]
+            all_mistakes = sorted(drops_b + drops_w, key=lambda x: x[1])
+
+            report_md = f"# 対局レポート: {self.current_sgf_name}\n\n"
+            report_md += f"生成日時: {time.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+            report_md += "## 悪手分析 (Top Mistakes)\n\n"
+
+            # Create report directory
+            report_dir = os.path.join(self.image_dir, "report")
+            os.makedirs(report_dir, exist_ok=True)
+
+            # Reconstruct board state for each mistake
+            with open(self.current_sgf_path, "rb") as f: game = sgf.Sgf_game.from_bytes(f.read())
+            board_size = game.get_size()
+            from analyze_sgf import BoardRenderer, boards # Import from analyze_sgf
+            renderer = BoardRenderer(board_size)
+
+            for drop, m_idx in all_mistakes:
+                # Get moves up to m_idx
+                history = []; node = game.get_root(); temp_board = boards.Board(board_size)
+                for _ in range(m_idx - 1):
+                    node = node[0]; c, m = node.get_move()
+                    if c:
+                        if m: temp_board.play(m[0], m[1], c); history.append(["B" if c == 'b' else "W", "ABCDEFGHJKLMNOPQRST"[m[1]] + str(m[0] + 1)])
+                        else: history.append(["B" if c == 'b' else "W", "pass"])
+                
+                # Get PV for this state
+                print(f"DEBUG: Analyzing mistake at move {m_idx}...")
+                result = self.katago_agent.analyze_situation(history, board_size=board_size)
+                
+                if 'top_candidates' in result and result['top_candidates']:
+                    best = result['top_candidates'][0]
+                    pv_str = best.get('future_sequence', "")
+                    pv_list = [m.strip() for m in pv_str.split("->")] if pv_str else []
+                    
+                    # Save reference diagram
+                    color = "W" if (m_idx % 2 == 0) else "B"
+                    pv_img = renderer.render_pv(temp_board, pv_list, color, title=f"Move {m_idx} Ref (Winrate Drop: {drop:.1%})")
+                    img_filename = f"mistake_{m_idx:03d}_pv.png"
+                    pv_img.save(os.path.join(report_dir, img_filename))
+
+                    # Ask Gemini for commentary (Individual Mistake)
+                    print(f"DEBUG: Requesting individual commentary for move {m_idx}...")
+                    m_player = "黒" if m_idx % 2 != 0 else "白"
+                    prompt = f"""
+囲碁インストラクターとして、以下の局面の悪手分析を論理的に解説してください。
+対象：強くなりたい大人の級位者
+
+【データ】
+- 手数: {m_idx}手目 ({m_player}番)
+- 勝率下落: -{drop:.1%}
+- AI推奨手: {best['move']}
+- AIの読み筋: {pv_str}
+
+【指示】
+1. なぜ実戦の手が「疑問手」とされたのか、石の強弱や地の効率の観点から説明してください。
+2. AIの推奨手「{best['move']}」にはどのような狙い（攻め、守り、根拠の確保など）がありますか？
+3. 簡潔に150文字〜200文字程度で、丁寧かつ論理的な口調でお願いします。
+"""
+                    resp = self.gemini_client.models.generate_content(
+                        model='gemini-3-flash-preview', 
+                        contents=prompt
+                    )
+                    
+                    report_md += f"### 手数 {m_idx} ({m_player}番)\n"
+                    report_md += f"- **勝率下落**: -{drop:.1%}\n"
+                    report_md += f"- **AI推奨**: {best['move']}\n\n"
+                    report_md += f"![参考図]({img_filename})\n\n"
+                    report_md += f"**解説**: {resp.text}\n\n"
+                    report_md += "---\n\n"
+
+            # --- Generate Overall Summary ---
+            print("DEBUG: Generating Game Summary...")
+            
+            # Create a summary prompt with winrate flow
+            # Sample critical points
+            flow_data = []
+            step = max(1, len(moves) // 10)
+            for i in range(0, len(moves), step):
+                m = moves[i]
+                flow_data.append(f"手数{i}: 黒勝率 {m.get('winrate', 0.5):.1%}")
+            
+            summary_prompt = f"""
+あなたは経験豊富な囲碁インストラクターです。この対局の「黒番（プレイヤー）」に向けた、上達のための詳細な総評を作成してください。
+対象は、論理的な解説を好む大人の級位者です。子供向けの表現は避け、専門的かつ教育的な視点から記述してください。
+
+【対局データ】
+- 総手数: {len(moves)}手
+- 碁盤サイズ: {self.analysis_data.get('board_size', 19)}路盤
+- 黒番の勝率推移:
+{chr(10).join(flow_data)}
+
+【黒番の主な失着（勝負所）】
+{chr(10).join([f"手数{m}: -{d:.1%}" for d, m in all_mistakes if m % 2 != 0][:5])}
+
+【記述に関する厳格なルール】
+1. **前置きは不要**: 「お疲れ様でした」「対局を振り返ります」などの挨拶や導入は一切省き、いきなりポイントの解説から始めてください。
+2. **黒番目線**: 常に黒番の立場に立ち、黒の構想や判断の是非について論じてください。
+3. **3つのポイント**: 解説を以下の3項目に整理し、見出し（###）を立てて記述してください。
+    - **ポイント1：布石・序盤の構想と大局観**
+      （序盤の石の方向性や勢力の築き方がどうだったか、大局的な視点から評価してください）
+    - **ポイント2：中盤の攻防と勝負の分かれ目**
+      （リストにある具体的な失着を取り上げ、その時どのような理屈で悪手となったのか、理詰めで解説してください）
+    - **ポイント3：実力向上のための具体的な課題**
+      （今回の対局から見える改善点について、次の一局から直ちに意識すべき技術的課題を提示してください）
+4. **文字数**: 600文字〜1000文字。
+5. **トーン**: 抽象的な表現を避け、「厚みが働いていない」「根拠を奪うべきだった」など、囲碁の理論に基づいた論理的なトーンで統一してください。
+"""
+            
+            try:
+                summary_resp = self.gemini_client.models.generate_content(
+                    model='gemini-3-flash-preview',
+                    contents=summary_prompt
+                )
+                report_md += "## 総評 (Game Summary)\n\n"
+                report_md += f"{summary_resp.text}\n\n"
+            except Exception as e:
+                print(f"Summary Error: {e}")
+                report_md += "\n(総評の生成に失敗しました)\n"
+
+            # Save Markdown
+            with open(os.path.join(report_dir, "report.md"), "w", encoding="utf-8") as f:
+                report_md = report_md.replace("\n", "\n") # Normalize
+                f.write(report_md)
+
+            print(f"Report generated in {report_dir}")
+            self.root.after(0, lambda: messagebox.showinfo("Done", f"レポートを生成しました:\n{report_dir}"))
+            
+        except Exception as e:
+            print(f"Report Error: {e}")
+            self.root.after(0, lambda: messagebox.showerror("Error", f"レポート生成に失敗しました: {e}"))
+        finally:
+            self.root.after(0, lambda: self.btn_full_report.config(state="normal", text="対局レポートを生成 (Markdown)"))
 
     def update_commentary_ui(self, text):
         if text is None: text = ""

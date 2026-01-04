@@ -19,10 +19,10 @@ class BoardRenderer:
     def __init__(self, board_size=19, image_size=850):
         self.board_size = board_size
         self.image_size = image_size
-        self.margin = 70 # Sufficient space for coordinates
+        self.margin = 70 
         self.grid_size = (self.image_size - 2 * self.margin) // (self.board_size - 1)
         
-        self.color_bg = (220, 179, 92) # Wood color
+        self.color_bg = (220, 179, 92) 
         self.color_line = (0, 0, 0)
         self.color_black = (0, 0, 0)
         self.color_white = (255, 255, 255)
@@ -41,7 +41,6 @@ class BoardRenderer:
         return []
 
     def _coord_to_pixel(self, row, col):
-        # row 0 is bottom
         visual_row = self.board_size - 1 - row
         x = self.margin + col * self.grid_size
         y = self.margin + visual_row * self.grid_size
@@ -63,23 +62,16 @@ class BoardRenderer:
         try: font = ImageFont.truetype("arial.ttf", 22)
         except: font = ImageFont.load_default()
 
-        # Grid and Coordinates
         cols = "ABCDEFGHJKLMNOPQRST"
         for i in range(self.board_size):
-            # Coordinates
             x_pos = self.margin + i * self.grid_size
             y_pos = self.margin + i * self.grid_size
-            
-            # Letters (Top/Bottom)
             self._draw_centered_text(draw, x_pos, self.margin - 35, cols[i], font, "black")
             self._draw_centered_text(draw, x_pos, self.margin + (self.board_size-1)*self.grid_size + 35, cols[i], font, "black")
-            
-            # Numbers (Left/Right)
             num_label = str(self.board_size - i)
             self._draw_centered_text(draw, self.margin - 35, y_pos, num_label, font, "black")
             self._draw_centered_text(draw, self.margin + (self.board_size-1)*self.grid_size + 35, y_pos, num_label, font, "black")
 
-            # Lines
             sx, sy = self.margin + i * self.grid_size, self.margin
             ex, ey = sx, self.margin + (self.board_size - 1) * self.grid_size
             draw.line([(sx, sy), (ex, ey)], fill=self.color_line, width=2)
@@ -87,12 +79,10 @@ class BoardRenderer:
             ex, ey = self.margin + (self.board_size - 1) * self.grid_size, sy
             draw.line([(sx, sy), (ex, ey)], fill=self.color_line, width=2)
 
-        # Stars
         for r, c in self._get_star_points():
             px, py = self._coord_to_pixel(r, c)
             draw.ellipse([px-4, py-4, px+4, py+4], fill=self.color_line)
 
-        # Stones
         rad = self.grid_size // 2 - 2
         for r in range(self.board_size):
             for c in range(self.board_size):
@@ -102,16 +92,33 @@ class BoardRenderer:
                     fill_c = self.color_black if color == 'b' else self.color_white
                     draw.ellipse([px-rad, py-rad, px+rad, py+rad], fill=fill_c, outline="black")
 
-        # Last Move
         if last_move:
             c, (r, col) = last_move
             px, py = self._coord_to_pixel(r, col)
             m = rad // 2
             draw.rectangle([px-m, py-m, px+m, py+m], fill=self.color_last_move)
 
-        # Text Area
         draw.rectangle([(0, self.image_size), (self.image_size, self.image_size + 100)], fill=(30, 30, 30))
         self._draw_centered_text(draw, self.image_size // 2, self.image_size + 50, analysis_text, font, "white")
+        return img
+
+    def render_pv(self, board, pv_list, starting_color, title=""):
+        img = self.render(board, last_move=None, analysis_text=title)
+        draw = ImageDraw.Draw(img)
+        try: font = ImageFont.truetype("arial.ttf", 20)
+        except: font = ImageFont.load_default()
+        curr_color = starting_color
+        for i, m_str in enumerate(pv_list[:10]):
+            if not m_str or m_str.lower() == "pass": continue
+            col_idx = "ABCDEFGHJKLMNOPQRST".find(m_str[0].upper())
+            row_val = int(m_str[1:])
+            px, py = self._coord_to_pixel(row_val - 1, col_idx)
+            fill = self.color_black if curr_color == "B" else self.color_white
+            txt_c = "white" if curr_color == "B" else "black"
+            rad = self.grid_size // 2 - 2
+            draw.ellipse([px-rad, py-rad, px+rad, py+rad], fill=fill, outline="black")
+            self._draw_centered_text(draw, px, py, str(i+1), font, txt_c)
+            curr_color = "W" if curr_color == "B" else "B"
         return img
 
 class KataGoEngine:
@@ -153,40 +160,32 @@ def main():
     board_size = game.get_size()
     engine = KataGoEngine(board_size)
     renderer = BoardRenderer(board_size)
-    
     total = 0; temp = game.get_root()
     while True:
         try: temp = temp[0]; total += 1
         except: break
     print(f"Total Moves: {total}", flush=True)
-
     node = game.get_root(); board = boards.Board(board_size); history = []; m_num = 0
     log = {"board_size": board_size, "moves": []}
-
+    cols = "ABCDEFGHJKLMNOPQRST"
     while True:
         print(f"Analyzing Move {m_num}", flush=True)
         ans = engine.analyze(history)
-        info = "No Data"
-        data = {"move_number": m_num, "winrate": 0.5, "score": 0.0, "candidates": []}
+        info = "No Data"; data = {"move_number": m_num, "winrate": 0.5, "score": 0.0, "candidates": []}
         if ans and 'rootInfo' in ans:
             wr, sc = ans['rootInfo'].get('winrate', 0.5), ans['rootInfo'].get('scoreLead', 0.0)
-            info = f"Winrate: {wr:.1%} | Score: {sc:.1f}"
-            data.update({"winrate": wr, "score": sc})
+            info = f"Winrate: {wr:.1%} | Score: {sc:.1f}"; data.update({"winrate": wr, "score": sc})
             if 'moveInfos' in ans:
                 for c in ans['moveInfos'][:10]:
                     data["candidates"].append({"move": c['move'], "winrate": c.get('winrate', 0), "scoreLead": c.get('scoreLead', 0), "pv": c.get('pv', [])})
-        
         log["moves"].append(data)
         with open(os.path.join(out, "analysis.json"), "w") as f: json.dump(log, f, indent=2)
-
         last = None
         if m_num > 0:
             c, m = node.get_move()
             if m: last = (c, m)
-
         img = renderer.render(board, last_move=last, analysis_text=f"Move {m_num} | {info}")
         img.save(os.path.join(out, f"move_{m_num:03d}.png"))
-
         try:
             node = node[0]; m_num += 1; color, m = node.get_move()
             if color:
@@ -199,5 +198,4 @@ def main():
     print(f"Done. Images in {out}", flush=True)
 
 if __name__ == "__main__":
-    cols = "ABCDEFGHJKLMNOPQRST"
     main()
