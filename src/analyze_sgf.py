@@ -8,12 +8,13 @@ from sgfmill import sgf, boards, common
 from PIL import Image, ImageDraw, ImageFont
 
 # --- Configuration ---
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-BASE_DIR = os.path.join(SCRIPT_DIR, "katago", "2023-06-15-windows64+katago")
-KATAGO_EXE = os.path.join(BASE_DIR, "katago_opencl", "katago.exe")
-CONFIG = os.path.join(BASE_DIR, "katago_configs", "analysis.cfg")
-MODEL = os.path.join(BASE_DIR, "weights", "kata20bs530.bin.gz")
-BASE_OUTPUT_DIR = os.path.join(SCRIPT_DIR, "output_images")
+from config import KATAGO_EXE, KATAGO_CONFIG, KATAGO_MODEL, OUTPUT_BASE_DIR, SRC_DIR
+
+SCRIPT_DIR = SRC_DIR
+BASE_OUTPUT_DIR = OUTPUT_BASE_DIR
+KATAGO_EXE = KATAGO_EXE
+CONFIG = KATAGO_CONFIG
+MODEL = KATAGO_MODEL
 
 class BoardRenderer:
     def __init__(self, board_size=19, image_size=850):

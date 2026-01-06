@@ -75,7 +75,9 @@ class KataGoDriver:
                         resp = json.loads(line)
                         if resp.get("id") == query["id"]:
                             return resp
-                    except: continue
+                    except Exception as e:
+                        print(f"KataGo JSON Decode Error: {e}, Line: {line}")
+                        continue
             except Exception as e:
                 print(f"KataGo communication error: {e}")
                 return None
@@ -85,6 +87,7 @@ class KataGoDriver:
         """
         Gemini用の「解説に必要な情報」だけを抽出して返す関数。
         現在の局面と、そこからの「最善手」および「読み筋（PV）」を取得する。
+        常に黒番視点の勝率・目数差に変換して返す。
         """
         data = self.query(moves, board_size=board_size)
         if not data or 'moveInfos' not in data:
@@ -93,25 +96,48 @@ class KataGoDriver:
         root_info = data.get('rootInfo', {})
         candidates = data['moveInfos']
         
-        # Current situation
+        # KataGo returns stats for the "current player"
+        raw_winrate = root_info.get('winrate', 0.5)
+        raw_score = root_info.get('scoreLead', 0.0)
+        
+        # Determine current player: Even moves -> Black to play, Odd moves -> White to play
+        is_white_turn = (len(moves) % 2 != 0)
+        
+        if is_white_turn:
+            current_winrate_black = 1.0 - raw_winrate
+            current_score_lead_black = -raw_score
+        else:
+            current_winrate_black = raw_winrate
+            current_score_lead_black = raw_score
+
+        # Current situation (Black perspective)
         result = {
-            "current_winrate_black": root_info.get('winrate', 0.5),
-            "current_score_lead_black": root_info.get('scoreLead', 0.0),
+            "current_winrate_black": current_winrate_black,
+            "current_score_lead_black": current_score_lead_black,
             "top_candidates": []
         }
 
-        # Extract top 3 candidates with their "Principal Variation" (PV)
-        # PV is the sequence of moves KataGo thinks will happen next.
+        # Extract top 3 candidates
         for cand in candidates[:3]:
-            # Convert GTP moves in PV to a readable string
+            # Candidate stats are also from current player's perspective
+            c_wr = cand.get('winrate', 0.0)
+            c_score = cand.get('scoreLead', 0.0)
+            
+            if is_white_turn:
+                cand_wr_black = 1.0 - c_wr
+                cand_score_black = -c_score
+            else:
+                cand_wr_black = c_wr
+                cand_score_black = c_score
+
             pv_moves = cand.get('pv', [])
-            pv_str = " -> ".join(pv_moves[:6]) # First 6 moves of the sequence
+            pv_str = " -> ".join(pv_moves[:6])
             
             result["top_candidates"].append({
                 "move": cand['move'],
-                "winrate": cand.get('winrate', 0.0),
-                "score_lead": cand.get('scoreLead', 0.0),
-                "future_sequence": pv_str, # 重要：この先の変化図
+                "winrate_black": cand_wr_black, # Explicitly named for Black
+                "score_lead_black": cand_score_black,
+                "future_sequence": pv_str,
                 "visits": cand.get('visits', 0)
             })
             
