@@ -118,24 +118,29 @@ class GoReplayApp:
         self.btn_comment.pack(pady=5, fill=tk.X, padx=20)
         
         comm_f = tk.Frame(self.info_frame, bg="#f0f0f0")
-        comm_f.pack(fill=tk.BOTH, expand=True, padx=10)
+        comm_f.pack(fill=tk.BOTH, expand=False, padx=10) # Changed expand=True to False
         scr = tk.Scrollbar(comm_f)
         scr.pack(side=tk.RIGHT, fill=tk.Y)
-        self.txt_commentary = tk.Text(comm_f, height=10, wrap=tk.WORD, yscrollcommand=scr.set)
+        self.txt_commentary = tk.Text(comm_f, height=8, wrap=tk.WORD, yscrollcommand=scr.set) # Slightly reduced height
         self.txt_commentary.pack(fill=tk.BOTH, expand=True)
         scr.config(command=self.txt_commentary.yview)
         
         self.btn_agent_pv = tk.Button(self.info_frame, text="エージェントの想定図を表示", command=self.show_agent_pv, state="disabled", bg="#FF9800", fg="white")
         self.btn_agent_pv.pack(pady=5, fill=tk.X, padx=20)
+        self.btn_report = tk.Button(self.info_frame, text="対局レポートを生成", command=self.generate_full_report, bg="#9C27B0", fg="white")
+        self.btn_report.pack(pady=5, fill=tk.X, padx=20)
         
-        # Mistakes
-        tk.Frame(self.info_frame, height=2, bg="#ccc").pack(fill=tk.X, pady=5)
-        m_frame = tk.Frame(self.info_frame, bg="#f0f0f0")
-        m_frame.pack(fill=tk.X, padx=5)
+        # Mistakes Section
+        tk.Frame(self.info_frame, height=2, bg="#ccc").pack(fill=tk.X, pady=10)
+        tk.Label(self.info_frame, text="Mistakes (Winrate Drop > 5%)", font=("Arial", 10, "bold"), bg="#f0f0f0").pack()
+        
+        m_frame = tk.Frame(self.info_frame, bg="#eee", bd=1, relief=tk.RIDGE)
+        m_frame.pack(fill=tk.X, padx=10, pady=5)
         m_frame.columnconfigure(0, weight=1)
         m_frame.columnconfigure(1, weight=1)
-        tk.Label(m_frame, text="Black", font=("Arial", 9, "bold"), bg="#f0f0f0").grid(row=0, column=0)
-        tk.Label(m_frame, text="White", font=("Arial", 9, "bold"), bg="#f0f0f0").grid(row=0, column=1)
+        
+        tk.Label(m_frame, text="Black", font=("Arial", 9, "bold"), bg="#333", fg="white").grid(row=0, column=0, sticky="ew")
+        tk.Label(m_frame, text="White", font=("Arial", 9, "bold"), bg="#eee", fg="#333").grid(row=0, column=1, sticky="ew")
         
         self.btn_m_b = []
         self.btn_m_w = []
@@ -146,6 +151,10 @@ class GoReplayApp:
             w = tk.Button(m_frame, text="-", command=lambda x=i: self.goto_mistake("w", x), bg="#ffcccc", font=("Arial", 8))
             w.grid(row=i+1, column=1, sticky="ew", padx=2, pady=1)
             self.btn_m_w.append(w)
+        
+        # Ensure m_frame itself is visible
+        m_frame.pack(fill=tk.X, padx=5, pady=5)
+        
         self.moves_m_b = [None]*3
         self.moves_m_w = [None]*3
 
@@ -192,25 +201,49 @@ class GoReplayApp:
         self.monitor_images()
 
     def run_analysis_script(self, path):
+        print(f"DEBUG: Starting background analysis script for: {path}")
         env = os.environ.copy()
         env["PYTHONUNBUFFERED"] = "1"
         env["PYTHONIOENCODING"] = "utf-8"
+        # Also set PYTHONPATH to include src
+        env["PYTHONPATH"] = SRC_DIR + os.pathsep + env.get("PYTHONPATH", "")
+        
         cmd = ["python", "-u", ANALYZE_SCRIPT, path]
         try:
-            self.process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1, env=env)
+            self.process = subprocess.Popen(
+                cmd, 
+                stdout=subprocess.PIPE, 
+                stderr=subprocess.PIPE, 
+                text=True, 
+                bufsize=1, 
+                env=env,
+                encoding='utf-8',
+                errors='replace'
+            )
             while True:
                 line = self.process.stdout.readline()
                 if not line:
-                    if self.process.poll() is not None: break
+                    if self.process.poll() is not None:
+                        break
                     continue
+                print(f"ANALYZE_LOG: {line.strip()}") # Print log to console
                 if "Total Moves:" in line:
                     self.queue.put(("set_max", int(line.split(":")[1])))
                 if "Analyzing Move" in line:
                     self.queue.put(("progress", int(line.split("Move")[1])))
+            
+            # Check for errors in stderr
+            stderr_out = self.process.stderr.read()
+            if stderr_out:
+                print(f"DEBUG ERROR from analyze_sgf: {stderr_out}")
+
             self.analyzing = False
             self.queue.put(("done", None))
-        except:
+        except Exception as e:
+            print(f"DEBUG ERROR in run_analysis_script: {e}")
             self.analyzing = False
+
+    
 
     def check_queue(self):
         try:
@@ -255,14 +288,17 @@ class GoReplayApp:
             except:
                 pass
 
-    def _upd_m_btn(self, btn, store, idx, drops):
-        if idx < len(drops):
-            drop, m = drops[idx]
-            store[idx] = m
-            btn.config(text=f"#{m}: -{drop:.1%}", state="normal")
-        else:
-            store[idx] = None
-            btn.config(text="-", state="disabled")
+    def _upd_m_btn(self, btn, store, idx, mistakes):
+        if idx < len(mistakes):
+            sc_drop, wr_drop, m = mistakes[idx]
+            if wr_drop > 0 or sc_drop > 0: # Show if either drop is positive
+                store[idx] = m
+                btn.config(text=f"#{m}: -{wr_drop:.1%} / -{sc_drop:.1f}目", state="normal")
+                return
+        
+        # Default placeholder
+        store[idx] = None
+        btn.config(text="-", state="disabled")
 
     def monitor_images(self):
         if not self.image_dir: return
@@ -419,3 +455,101 @@ class GoReplayApp:
     def goto_mistake(self, c, i):
         m = self.moves_m_b[i] if c == "b" else self.moves_m_w[i]
         if m: self.show_image(m)
+
+    def generate_full_report(self):
+        if not self.gemini or not self.game.sgf_path: return
+        self.btn_report.config(state="disabled", text="Generating...")
+        threading.Thread(target=self._run_report_task, daemon=True).start()
+
+    def _run_report_task(self):
+        import traceback
+        print("DEBUG: Report generation started...")
+        try:
+            # 0. データのロードを確認
+            self.load_analysis_data()
+            print(f"DEBUG: Loaded {len(self.game.moves)} moves for analysis.")
+
+            # 1. データの準備
+            mb, mw = self.game.calculate_mistakes()
+            print(f"DEBUG: Calculated mistakes - Black: {len(mb)}, White: {len(mw)}")
+            
+            if not mb:
+                print("DEBUG: No significant mistakes found for Black.")
+                self.root.after(0, lambda: messagebox.showinfo("Info", "黒番に顕著な悪手が見つかりませんでした。"))
+                return
+
+            # 黒番のミス上位3つのみをピックアップ
+            all_m = sorted(mb, key=lambda x:x[0], reverse=True)[:3]
+            all_m = sorted(all_m, key=lambda x:x[1]) # 手数順に並べ替え
+            print(f"DEBUG: Targeting {len(all_m)} mistake points for Black's report.")
+
+            r_dir = os.path.join(self.image_dir, "report")
+            os.makedirs(r_dir, exist_ok=True)
+            
+            r_md = f"# 対局レポート (黒番視点): {self.current_sgf_name}\n\n"
+            kn = self.gemini._load_knowledge() # AI Engineから知識ベースを取得
+            print("DEBUG: Knowledge base loaded.")
+
+            # 2. 各悪手の解析と画像生成
+            from google.genai import types
+            for i, (sc_drop, wr_drop, m_idx) in enumerate(all_m):
+                print(f"DEBUG: Analyzing Black mistake {i+1}/{len(all_m)} (Move {m_idx}, score drop {sc_drop:.1f}, winrate drop {wr_drop:.1%})...")
+                history = self.game.get_history_up_to(m_idx - 1)
+                board = self.game.get_board_at(m_idx - 1)
+                
+                # KataGoで最善手を取得
+                res = self.katago_driver.analyze_situation(history, board_size=self.game.board_size)
+                if 'top_candidates' in res and res['top_candidates']:
+                    best = res['top_candidates'][0]
+                    pv_str = best.get('future_sequence', "")
+                    pv_list = [m.strip() for m in pv_str.split("->")] if pv_str else []
+                    
+                    # 変化図画像を保存
+                    p_img = self.renderer.render_pv(board, pv_list, "B", title=f"Move {m_idx} Ref (-{wr_drop:.1%} / -{sc_drop:.1f}pts)")
+                    f_name = f"mistake_{m_idx:03d}_pv.png"
+                    p_img.save(os.path.join(r_dir, f_name))
+                    print(f"DEBUG: Image saved: {f_name}")
+                    
+                    # Geminiによる個別解説生成
+                    prompt = (
+                        f"あなたはプロ棋士。手数: {m_idx}, プレイヤー: 黒, 勝率下落: {wr_drop:.1%}, 目数下落: {sc_drop:.1f}目, "
+                        f"AI推奨: {best['move']}, 変化図: {pv_str}。\n"
+                        f"知識ベース: {kn}\n"
+                        f"黒番のプレイヤーに対して、この手がなぜ悪手なのか論理的に解説してください。\n"
+                        f"※知識ベースの用語（サカレ形など）は、この局面や変化図に実際にその形が現れている場合のみ使用してください。関係のない用語を無理に使うことは禁止します。"
+                    )
+                    
+                    print(f"DEBUG: Requesting Gemini commentary for move {m_idx}...")
+                    resp = self.gemini.client.models.generate_content(
+                        model='gemini-3-flash-preview', 
+                        contents=prompt,
+                        config=types.GenerateContentConfig(system_instruction="プロの囲碁インストラクターとして解説せよ。用語の乱用を避け、事実に基づいた論理的な解説を行うこと。")
+                    )
+                    print(f"DEBUG: Commentary received for move {m_idx}.")
+                    
+                    r_md += f"### 手数 {m_idx} (黒番のミス)\n- **勝率下落**: -{wr_drop:.1%}\n- **目数下落**: -{sc_drop:.1f}目\n- **AI推奨**: {best['move']}\n\n![参考図]({f_name})\n\n**解説**: {resp.text}\n\n---\n\n"
+
+            # 3. 総評の生成
+            print("DEBUG: Generating Black-focused summary...")
+            sum_p = (
+                f"囲碁インストラクターとして、黒番を打った大人級位者への総評（600-1000文字）を書いてください。"
+                f"対局全体を振り返り、黒番のプレイヤーが今後改善すべき点をアドバイスしてください。\n"
+                f"※知識ベース({kn})の用語は、対局の内容に合致する場合のみ言及してください。無理に用語を当てはめる必要はありません。"
+                f"データ(黒のミス): {all_m}"
+            )
+            sum_resp = self.gemini.client.models.generate_content(model='gemini-3-flash-preview', contents=sum_p)
+            r_md += f"## 黒番への総評\n\n{sum_resp.text}\n"
+            
+            # 4. ファイル保存
+            report_path = os.path.join(r_dir, "report.md")
+            with open(report_path, "w", encoding="utf-8") as f:
+                f.write(r_md)
+            
+            print(f"DEBUG: Report finished! Saved to {report_path}")
+            self.root.after(0, lambda: messagebox.showinfo("Done", f"レポートを保存しました: {report_path}"))
+        except Exception as e:
+            print("DEBUG: Error occurred in _run_report_task!")
+            traceback.print_exc()
+            self.root.after(0, lambda: messagebox.showerror("Error", str(e)))
+        finally:
+            self.root.after(0, lambda: self.btn_report.config(state="normal", text="対局レポートを生成"))

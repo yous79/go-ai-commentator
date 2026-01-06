@@ -4,6 +4,12 @@ import json
 import sys
 import time
 import threading
+
+# Add src directory to path to allow importing config
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+if SCRIPT_DIR not in sys.path:
+    sys.path.append(SCRIPT_DIR)
+
 from sgfmill import sgf, boards, common
 from PIL import Image, ImageDraw, ImageFont
 
@@ -156,16 +162,34 @@ def main():
     name = os.path.splitext(os.path.basename(path))[0]
     out = os.path.join(BASE_OUTPUT_DIR, name)
     os.makedirs(out, exist_ok=True)
+    
     print(f"Loading SGF: {path}", flush=True)
     with open(path, "rb") as f: game = sgf.Sgf_game.from_bytes(f.read())
     board_size = game.get_size()
-    engine = KataGoEngine(board_size)
-    renderer = BoardRenderer(board_size)
+    
+    # Calculate total moves
     total = 0; temp = game.get_root()
     while True:
         try: temp = temp[0]; total += 1
         except: break
     print(f"Total Moves: {total}", flush=True)
+
+    # --- Skip Check ---
+    json_path = os.path.join(out, "analysis.json")
+    if os.path.exists(json_path):
+        try:
+            with open(json_path, "r") as f:
+                existing_log = json.load(f)
+            # Check if analysis is complete (last move number matches or exceeded)
+            if len(existing_log.get("moves", [])) >= total + 1:
+                print(f"Analysis for {name} already exists and is complete. Skipping.", flush=True)
+                return
+        except:
+            pass # Continue to analysis if JSON is corrupt
+    # --- End Skip Check ---
+
+    engine = KataGoEngine(board_size)
+    renderer = BoardRenderer(board_size)
     node = game.get_root(); board = boards.Board(board_size); history = []; m_num = 0
     log = {"board_size": board_size, "moves": []}
     cols = "ABCDEFGHJKLMNOPQRST"

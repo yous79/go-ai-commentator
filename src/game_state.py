@@ -9,22 +9,33 @@ class GoGameState:
         self.total_moves = 0
     
     def load_sgf(self, path):
+        print(f"DEBUG: Attempting to load SGF: {path}")
         self.sgf_path = path
-        with open(path, "rb") as f:
-            self.sgf_game = sgf.Sgf_game.from_bytes(f.read())
-        self.board_size = self.sgf_game.get_size()
-        
-        # Calculate total moves
-        node = self.sgf_game.get_root()
-        count = 0
-        while True:
-            try:
-                node = node[0]
-                count += 1
-            except IndexError:
-                break
-        self.total_moves = count
-        self.moves = [] # Clear analysis data
+        try:
+            with open(path, "rb") as f:
+                content = f.read()
+                print(f"DEBUG: File read successful, size: {len(content)} bytes")
+                self.sgf_game = sgf.Sgf_game.from_bytes(content)
+            
+            self.board_size = self.sgf_game.get_size()
+            print(f"DEBUG: Board size detected: {self.board_size}")
+            
+            # Calculate total moves
+            node = self.sgf_game.get_root()
+            count = 0
+            while True:
+                try:
+                    node = node[0]
+                    count += 1
+                except IndexError:
+                    break
+            self.total_moves = count
+            print(f"DEBUG: Total moves detected: {self.total_moves}")
+            self.moves = [] # Clear analysis data
+            print("DEBUG: SGF loading completed successfully.")
+        except Exception as e:
+            print(f"DEBUG ERROR in load_sgf: {e}")
+            raise e
 
     def get_history_up_to(self, move_idx):
         if not self.sgf_game:
@@ -76,41 +87,41 @@ class GoGameState:
         mistakes_b = []
         mistakes_w = []
         
+        # moves[i] is the analysis result AFTER move i has been played.
+        # moves[i]['winrate'] is the winrate for the NEXT player.
+        # moves[i]['score'] is the score lead for the NEXT player.
+
         for i in range(1, len(self.moves)):
-            prev = self.moves[i-1]
-            curr = self.moves[i]
+            prev_data = self.moves[i-1]
+            curr_data = self.moves[i]
             
-            # Winrate drop calculation (perspective of Black)
-            # prev['winrate'] is at end of move i-1.
-            # curr['winrate'] is at end of move i.
+            # The player who just played move 'i'
+            is_black_just_played = (i % 2 != 0)
             
-            # If move i was Black:
-            # Drop = (Winrate before move i) - (Winrate after move i)
-            # If move i was White:
-            # Drop = (Winrate for White before move i) - (Winrate for White after move i)
-            #      = (1.0 - prev_black_wr) - (1.0 - curr_black_wr)
-            #      = curr_black_wr - prev_black_wr (Wait, this is gain for Black)
+            wr_before = prev_data.get('winrate', 0.5)
+            wr_after = curr_data.get('winrate', 0.5)
             
-            # Let's standardize: "How much did the current player hurt their own winrate?"
+            sc_before = prev_data.get('score', 0.0)
+            sc_after = curr_data.get('score', 0.0)
             
-            wr_prev = prev.get('winrate', 0.5)
-            wr_curr = curr.get('winrate', 0.5)
-            
-            is_black_turn = (i % 2 != 0) # Move 1 is Black
-            
-            if is_black_turn:
-                # Black played. Did Black's winrate drop?
-                drop = wr_prev - wr_curr
-                if drop > 0.05: # Threshold 5%
-                    mistakes_b.append((drop, i))
+            if is_black_just_played:
+                # Black played.
+                wr_drop = wr_before - (1.0 - wr_after)
+                # Score Lead: + is good for next player.
+                # If Black played, sc_before was Black's lead.
+                # sc_after is White's lead.
+                sc_drop = sc_before - (-sc_after) 
+                mistakes_b.append((sc_drop, wr_drop, i))
             else:
-                # White played. Did White's winrate drop? (i.e., Did Black's winrate rise?)
-                # White's WR before: 1.0 - wr_prev
-                # White's WR after:  1.0 - wr_curr
-                drop = (1.0 - wr_prev) - (1.0 - wr_curr)
-                if drop > 0.05:
-                    mistakes_w.append((drop, i))
+                # White played.
+                wr_drop = wr_before - (1.0 - wr_after)
+                sc_drop = sc_before - (-sc_after)
+                mistakes_w.append((sc_drop, wr_drop, i))
                     
-        mistakes_b.sort(key=lambda x: x[0], reverse=True)
-        mistakes_w.sort(key=lambda x: x[0], reverse=True)
+        # Sort by winrate drop amount (largest drop first) as requested
+        # Each element is (score_drop, winrate_drop, move_number)
+        mistakes_b.sort(key=lambda x: x[1], reverse=True)
+        mistakes_w.sort(key=lambda x: x[1], reverse=True)
+        
+        # Return top 3
         return mistakes_b[:3], mistakes_w[:3]
