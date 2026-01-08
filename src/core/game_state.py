@@ -3,70 +3,96 @@ from sgfmill import sgf, boards
 class GoGameState:
     def __init__(self):
         self.board_size = 19
-        self.moves = [] # List of {"move_number", "winrate", "score", "candidates", ...}
+        self.moves = [] 
         self.sgf_game = None
         self.sgf_path = None
         self.total_moves = 0
-    
+        
+        # New: Robust mark management (not relying strictly on SGF properties during session)
+        # { move_index: {"SQ": set(), "TR": set(), "MA": set()} }
+        self.marks_data = {} 
+
     def new_game(self, board_size=19):
-        """Initialize a new empty game with the given board size."""
         self.board_size = board_size
         self.sgf_game = sgf.Sgf_game(size=board_size)
         self.sgf_path = None
         self.total_moves = 0
         self.moves = []
+        self.marks_data = {0: {"SQ": set(), "TR": set(), "MA": set()}}
         print(f"DEBUG: New {board_size}x{board_size} game initialized.")
 
     def load_sgf(self, path):
-        print(f"DEBUG: Attempting to load SGF: {path}")
         self.sgf_path = path
         try:
             with open(path, "rb") as f:
                 content = f.read()
-                print(f"DEBUG: File read successful, size: {len(content)} bytes")
                 self.sgf_game = sgf.Sgf_game.from_bytes(content)
-            
             self.board_size = self.sgf_game.get_size()
-            print(f"DEBUG: Board size detected: {self.board_size}")
-            
             self._update_total_moves()
-            self.moves = [] # Clear analysis data
-            print("DEBUG: SGF loading completed successfully.")
+            self._import_marks_from_sgf()
+            self.moves = []
         except Exception as e:
             print(f"DEBUG ERROR in load_sgf: {e}")
             raise e
 
+    def _import_marks_from_sgf(self):
+        """Extract marks from the SGF tree into our dictionary."""
+        self.marks_data = {}
+        node = self.sgf_game.get_root()
+        idx = 0
+        while True:
+            self.marks_data[idx] = {
+                "SQ": set(node.get("SQ")) if node.has_property("SQ") else set(),
+                "TR": set(node.get("TR")) if node.has_property("TR") else set(),
+                "MA": set(node.get("MA")) if node.has_property("MA") else set(),
+            }
+            try:
+                node = node[0]
+                idx += 1
+            except (IndexError, KeyError):
+                break
+
     def _update_total_moves(self):
-        # Calculate total moves in the main branch
+        if not self.sgf_game: return
         node = self.sgf_game.get_root()
         count = 0
         while True:
             try:
                 node = node[0]
                 count += 1
-            except IndexError:
+            except (IndexError, KeyError):
                 break
         self.total_moves = count
 
+    def toggle_mark(self, move_idx, row, col, mark_type):
+        """Robust mark toggling using local dictionary."""
+        prop = {"square": "SQ", "triangle": "TR", "cross": "MA"}.get(mark_type)
+        if not prop: return False
+        
+        if move_idx not in self.marks_data:
+            self.marks_data[move_idx] = {"SQ": set(), "TR": set(), "MA": set()}
+            
+        current_set = self.marks_data[move_idx][prop]
+        point = (row, col)
+        
+        if point in current_set:
+            current_set.remove(point)
+            print(f"DEBUG: Removed {mark_type} at {point} (local)")
+        else:
+            current_set.add(point)
+            print(f"DEBUG: Added {mark_type} at {point} (local)")
+        return True
+
+    def get_marks_at(self, move_idx):
+        """Get marks for the given move index from local dictionary."""
+        return self.marks_data.get(move_idx, {"SQ": set(), "TR": set(), "MA": set()})
+
     def add_move(self, move_idx, color, row, col):
-        """Add a move to the SGF at move_idx. If col is None, it's a pass."""
-        if not self.sgf_game:
-            return False
-        
-        # Traverse to the node at move_idx
         node = self.sgf_game.get_root()
-        count = 0
-        while count < move_idx:
-            try:
-                node = node[0]
-                count += 1
-            except IndexError:
-                # If we can't reach move_idx, we can't add a move here
-                return False
+        for _ in range(move_idx):
+            try: node = node[0]
+            except: break
         
-        # Add new node as the FIRST child of the current node
-        # By using pos=0, this new move becomes the 'main' branch for subsequent 
-        # calls to node[0], allowing the UI to follow this variation.
         new_node = node.new_child(0)
         if row is None or col is None:
             new_node.set_move(color.lower(), None)
@@ -74,21 +100,17 @@ class GoGameState:
             new_node.set_move(color.lower(), (row, col))
         
         self._update_total_moves()
+        # Initialize mark entry for the new move (inherited from prev move if desired, but here we start fresh)
+        self.marks_data[move_idx + 1] = {"SQ": set(), "TR": set(), "MA": set()}
         return True
 
     def get_history_up_to(self, move_idx):
-        if not self.sgf_game:
-            return []
-        
+        if not self.sgf_game: return []
         history = []
         node = self.sgf_game.get_root()
-        # Initial position (if any) handling omitted for simplicity as typical SGF starts empty or with handicap
-        
-        count = 0
-        while count < move_idx:
+        for _ in range(move_idx):
             try:
                 node = node[0]
-                count += 1
                 color, move = node.get_move()
                 if color:
                     if move:
@@ -97,70 +119,31 @@ class GoGameState:
                         history.append(["B" if color == 'b' else "W", col_s + row_s])
                     else:
                         history.append(["B" if color == 'b' else "W", "pass"])
-            except IndexError:
-                break
+            except: break
         return history
 
     def get_board_at(self, move_idx):
-        if not self.sgf_game:
-            return boards.Board(19)
-            
         b = boards.Board(self.board_size)
         node = self.sgf_game.get_root()
-        count = 0
-        while count < move_idx:
+        for _ in range(move_idx):
             try:
                 node = node[0]
-                count += 1
                 color, move = node.get_move()
-                if color and move:
-                    b.play(move[0], move[1], color)
-            except IndexError:
-                break
+                if color and move: b.play(move[0], move[1], color)
+            except: break
         return b
 
     def calculate_mistakes(self):
-        if not self.moves or len(self.moves) < 2:
-            return [], []
-            
-        mistakes_b = []
-        mistakes_w = []
-        
-        # moves[i] is the analysis result AFTER move i has been played.
-        # moves[i]['winrate'] is the winrate for the NEXT player.
-        # moves[i]['score'] is the score lead for the NEXT player.
-
+        if not self.moves or len(self.moves) < 2: return [], []
+        mb, mw = [], []
         for i in range(1, len(self.moves)):
-            prev_data = self.moves[i-1]
-            curr_data = self.moves[i]
-            
-            # The player who just played move 'i'
-            is_black_just_played = (i % 2 != 0)
-            
-            wr_before = prev_data.get('winrate', 0.5)
-            wr_after = curr_data.get('winrate', 0.5)
-            
-            sc_before = prev_data.get('score', 0.0)
-            sc_after = curr_data.get('score', 0.0)
-            
-            if is_black_just_played:
-                # Black played.
-                wr_drop = wr_before - (1.0 - wr_after)
-                # Score Lead: + is good for next player.
-                # If Black played, sc_before was Black's lead.
-                # sc_after is White's lead.
-                sc_drop = sc_before - (-sc_after) 
-                mistakes_b.append((sc_drop, wr_drop, i))
-            else:
-                # White played.
-                wr_drop = wr_before - (1.0 - wr_after)
-                sc_drop = sc_before - (-sc_after)
-                mistakes_w.append((sc_drop, wr_drop, i))
-                    
-        # Sort by winrate drop amount (largest drop first) as requested
-        # Each element is (score_drop, winrate_drop, move_number)
-        mistakes_b.sort(key=lambda x: x[1], reverse=True)
-        mistakes_w.sort(key=lambda x: x[1], reverse=True)
-        
-        # Return top 3
-        return mistakes_b[:3], mistakes_w[:3]
+            prev, curr = self.moves[i-1], self.moves[i]
+            wr_before, wr_after = prev.get('winrate', 0.5), curr.get('winrate', 0.5)
+            sc_before, sc_after = prev.get('score', 0.0), curr.get('score', 0.0)
+            if (i % 2 != 0): # Black
+                mb.append((sc_before - (-sc_after), wr_before - (1.0 - wr_after), i))
+            else: # White
+                mw.append((sc_before - (-sc_after), wr_before - (1.0 - wr_after), i))
+        mb.sort(key=lambda x: x[1], reverse=True)
+        mw.sort(key=lambda x: x[1], reverse=True)
+        return mb[:3], mw[:3]
