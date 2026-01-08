@@ -1,9 +1,7 @@
 import os
 
 # Base Directories
-# src folder
 SRC_DIR = os.path.dirname(os.path.abspath(__file__))
-# Project root (one level up)
 PROJECT_ROOT = os.path.dirname(SRC_DIR)
 
 OUTPUT_BASE_DIR = os.path.join(PROJECT_ROOT, "output_images")
@@ -13,6 +11,9 @@ KATAGO_BASE_DIR = os.path.join(PROJECT_ROOT, "katago", "2023-06-15-windows64+kat
 KATAGO_EXE = os.path.join(KATAGO_BASE_DIR, "katago_opencl", "katago.exe")
 KATAGO_CONFIG = os.path.join(KATAGO_BASE_DIR, "katago_configs", "analysis.cfg")
 KATAGO_MODEL = os.path.join(KATAGO_BASE_DIR, "weights", "kata20bs530.bin.gz")
+
+# Scripts
+ANALYZE_SCRIPT = os.path.join(SRC_DIR, "analyze_sgf.py")
 
 # API Keys
 API_KEY_PATH = os.path.join(PROJECT_ROOT, "api_key.txt")

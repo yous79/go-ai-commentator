@@ -8,6 +8,15 @@ class GoGameState:
         self.sgf_path = None
         self.total_moves = 0
     
+    def new_game(self, board_size=19):
+        """Initialize a new empty game with the given board size."""
+        self.board_size = board_size
+        self.sgf_game = sgf.Sgf_game(size=board_size)
+        self.sgf_path = None
+        self.total_moves = 0
+        self.moves = []
+        print(f"DEBUG: New {board_size}x{board_size} game initialized.")
+
     def load_sgf(self, path):
         print(f"DEBUG: Attempting to load SGF: {path}")
         self.sgf_path = path
@@ -20,22 +29,52 @@ class GoGameState:
             self.board_size = self.sgf_game.get_size()
             print(f"DEBUG: Board size detected: {self.board_size}")
             
-            # Calculate total moves
-            node = self.sgf_game.get_root()
-            count = 0
-            while True:
-                try:
-                    node = node[0]
-                    count += 1
-                except IndexError:
-                    break
-            self.total_moves = count
-            print(f"DEBUG: Total moves detected: {self.total_moves}")
+            self._update_total_moves()
             self.moves = [] # Clear analysis data
             print("DEBUG: SGF loading completed successfully.")
         except Exception as e:
             print(f"DEBUG ERROR in load_sgf: {e}")
             raise e
+
+    def _update_total_moves(self):
+        # Calculate total moves in the main branch
+        node = self.sgf_game.get_root()
+        count = 0
+        while True:
+            try:
+                node = node[0]
+                count += 1
+            except IndexError:
+                break
+        self.total_moves = count
+
+    def add_move(self, move_idx, color, row, col):
+        """Add a move to the SGF at move_idx. If col is None, it's a pass."""
+        if not self.sgf_game:
+            return False
+        
+        # Traverse to the node at move_idx
+        node = self.sgf_game.get_root()
+        count = 0
+        while count < move_idx:
+            try:
+                node = node[0]
+                count += 1
+            except IndexError:
+                # If we can't reach move_idx, we can't add a move here
+                return False
+        
+        # Add new node as the FIRST child of the current node
+        # By using pos=0, this new move becomes the 'main' branch for subsequent 
+        # calls to node[0], allowing the UI to follow this variation.
+        new_node = node.new_child(0)
+        if row is None or col is None:
+            new_node.set_move(color.lower(), None)
+        else:
+            new_node.set_move(color.lower(), (row, col))
+        
+        self._update_total_moves()
+        return True
 
     def get_history_up_to(self, move_idx):
         if not self.sgf_game:
