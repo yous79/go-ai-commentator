@@ -33,10 +33,6 @@ class GoBoardRenderer:
             draw.text((x - w / 2, y - h / 2), text, font=font, fill=fill)
 
     def render(self, board, last_move=None, analysis_text="", history=None, show_numbers=False, marks=None):
-        """
-        board: sgfmill board
-        marks: dict like {'SQ': {(r,c),...}, 'TR': {(r,c),...}, 'MA': {(r,c),...}}
-        """
         img = Image.new("RGB", (self.image_size, self.image_size + 100), self.color_bg)
         draw = ImageDraw.Draw(img)
         
@@ -81,7 +77,7 @@ class GoBoardRenderer:
                         except: fn = self.font_number
                         self._draw_centered_text(draw, px, py, num_s, fn, num_c)
 
-        # 3. Marks (Simple and Robust)
+        # 3. Marks
         if marks:
             for prop, shape in [("SQ", "square"), ("TR", "triangle"), ("MA", "cross")]:
                 points = marks.get(prop, [])
@@ -90,7 +86,7 @@ class GoBoardRenderer:
                     stone_color = board.get(r, c)
                     mark_color = "white" if stone_color == 'b' else "black"
                     size = int(rad * 0.6)
-                    w = 5 # Maximum visibility
+                    w = 5
                     
                     if shape == "square":
                         rect = [(px-size, py-size), (px+size, py-size), (px+size, py+size), (px-size, py+size), (px-size, py-size)]
@@ -102,11 +98,7 @@ class GoBoardRenderer:
                         draw.line([px-size, py-size, px+size, py+size], fill=mark_color, width=w)
                         draw.line([px+size, py-size, px-size, py+size], fill=mark_color, width=w)
 
-        # 4. Highlight
-        if last_move and not show_numbers:
-            px, py = self.transformer.indices_to_pixel(last_move[1][0], last_move[1][1])
-            draw.rectangle([px-rad/4, py-rad/4, px+rad/4, py+rad/4], fill=self.color_last_move)
-
+        # Analysis text (bottom bar)
         if analysis_text:
             draw.rectangle([(0, self.image_size), (self.image_size, self.image_size + 100)], fill=(30, 30, 30))
             self._draw_centered_text(draw, self.image_size // 2, self.image_size + 50, analysis_text, self.font, "white")

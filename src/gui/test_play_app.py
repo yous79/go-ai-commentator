@@ -76,17 +76,11 @@ class TestPlayApp:
         board = self.game.get_board_at(self.current_move)
         history = self.game.get_history_up_to(self.current_move)
         
-        last_move = None
-        if history:
-            last_m_data = history[-1]
-            indices = self.transformer.gtp_to_indices(last_m_data[1])
-            if indices:
-                last_move = (last_m_data[0].lower(), indices)
-
         # We don't include the "Move X | Turn Y" text in the saved image for knowledge base use
         # to keep it clean, but we use the renderer to get the high-res original image.
-        img = self.renderer.render(board, last_move=last_move, analysis_text="", 
-                                   history=history, show_numbers=self.show_numbers.get())
+        img = self.renderer.render(board, last_move=None, analysis_text="", 
+                                   history=history, show_numbers=self.show_numbers.get(),
+                                   marks=self.game.get_marks_at(self.current_move))
         
         file_path = filedialog.asksaveasfilename(
             defaultextension=".png",
@@ -163,23 +157,15 @@ class TestPlayApp:
         # 1. Get Board State & Marks
         board = self.game.get_board_at(self.current_move)
         marks = self.game.get_marks_at(self.current_move)
-        
-        # 2. Get Last Move for highlight
-        last_move = None
         history = self.game.get_history_up_to(self.current_move)
-        if history:
-            last_m_data = history[-1]
-            indices = self.transformer.gtp_to_indices(last_m_data[1])
-            if indices:
-                last_move = (last_m_data[0].lower(), indices)
 
-        # 3. Render Image
+        # 2. Render Image
         turn_color = "Black" if (self.current_move % 2 == 0) else "White"
         info_text = f"Move {self.current_move} | Turn: {turn_color}"
-        img = self.renderer.render(board, last_move=last_move, analysis_text=info_text, 
+        img = self.renderer.render(board, last_move=None, analysis_text=info_text, 
                                    history=history, show_numbers=self.show_numbers.get(),
                                    marks=marks)
         
-        # 4. Update View
+        # 3. Update View
         self.board_view.update_board(img)
         self.lbl_info.config(text=info_text)
