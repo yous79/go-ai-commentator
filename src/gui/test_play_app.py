@@ -23,7 +23,11 @@ class TestPlayApp:
         # UI State
         self.current_move = 0
         self.show_numbers = tk.BooleanVar(value=True)
+        self.is_review_mode = tk.BooleanVar(value=False)
         self.current_tool = tk.StringVar(value="stone") # Tool: stone, square, triangle, cross
+        
+        # Review State
+        self.review_stones = [] # List of ((r, c), color, number)
 
         self.setup_layout()
         
@@ -51,8 +55,13 @@ class TestPlayApp:
                                 indicatoron=0, width=6, bg="#ccc", selectcolor="#aaa")
             rb.pack(side=tk.LEFT, padx=2)
 
+        # Review Toggle
+        self.btn_review = tk.Checkbutton(top_frame, text="Review Mode (1,2,3...)", variable=self.is_review_mode, 
+                                         command=self.toggle_review_mode, bg="#ffc107", indicatoron=0, width=18)
+        self.btn_review.pack(side=tk.RIGHT, padx=10)
+
         tk.Checkbutton(top_frame, text="Show Numbers", variable=self.show_numbers, 
-                       command=self.update_display, bg="#ddd").pack(side=tk.RIGHT, padx=20)
+                       command=self.update_display, bg="#ddd").pack(side=tk.RIGHT, padx=10)
 
         # Main Board
         self.board_view = BoardView(self.root, self.transformer)
@@ -66,29 +75,37 @@ class TestPlayApp:
         self.lbl_info = tk.Label(bot_frame, text="Move: 0 | Turn: Black", font=("Arial", 12, "bold"), bg="#eee")
         self.lbl_info.pack(pady=10, side=tk.LEFT, padx=20)
         
+        tk.Button(bot_frame, text="Clear Review", command=self.clear_review, width=12, bg="#f44336", fg="white").pack(side=tk.RIGHT, padx=10)
         tk.Button(bot_frame, text="Pass", command=self.pass_move, width=10, bg="#607D8B", fg="white").pack(side=tk.RIGHT, padx=10)
         tk.Button(bot_frame, text="< Undo", command=self.undo_move, width=10).pack(side=tk.RIGHT, padx=5)
         tk.Button(bot_frame, text="Save Image", command=self.save_image, width=12, bg="#4CAF50", fg="white").pack(side=tk.RIGHT, padx=20)
 
+    def toggle_review_mode(self):
+        if not self.is_review_mode.get():
+            if self.review_stones and messagebox.askyesno("Review", "検討手順をクリアしますか？"):
+                self.clear_review()
+        self.update_display()
+
+    def clear_review(self):
+        self.review_stones = []
+        self.update_display()
+
     def save_image(self):
         from tkinter import filedialog
-        # Generate the current image exactly as shown
         board = self.game.get_board_at(self.current_move)
         history = self.game.get_history_up_to(self.current_move)
         
-        # We don't include the "Move X | Turn Y" text in the saved image for knowledge base use
-        # to keep it clean, but we use the renderer to get the high-res original image.
         img = self.renderer.render(board, last_move=None, analysis_text="", 
                                    history=history, show_numbers=self.show_numbers.get(),
-                                   marks=self.game.get_marks_at(self.current_move))
+                                   marks=self.game.get_marks_at(self.current_move),
+                                   review_stones=self.review_stones)
         
         file_path = filedialog.asksaveasfilename(
             defaultextension=".png",
             filetypes=[("PNG files", "*.png")],
-            initialfile=f"knowledge_board_{self.current_move}.png",
+            initialfile=f"review_board_{self.current_move}.png",
             title="Save Board Image"
         )
-        
         if file_path:
             try:
                 img.save(file_path)
@@ -97,7 +114,7 @@ class TestPlayApp:
                 messagebox.showerror("Error", f"保存に失敗しました: {e}")
 
     def reset_game(self, size):
-        if self.game.total_moves > 0:
+        if self.game.total_moves > 0 or self.review_stones:
             if not messagebox.askyesno("Reset", "現在の対局を破棄して新しく開始しますか？"):
                 return
         
@@ -106,6 +123,7 @@ class TestPlayApp:
         self.board_view.transformer = self.transformer
         self.renderer = GoBoardRenderer(size)
         self.current_move = 0
+        self.review_stones = []
         self.update_display()
 
     def click_on_board(self, event):
@@ -114,33 +132,50 @@ class TestPlayApp:
         if res:
             row, col = res
             tool = self.current_tool.get()
-            print(f"DEBUG: Click at ({row}, {col}), Tool: {tool}")
             
+            if self.is_review_mode.get() and tool == "stone":
+                # Review Mode: Add to temporary list with number
+                color = "B" if ((self.current_move + len(self.review_stones)) % 2 == 0) else "W"
+                # Check if already occupied
+                if any(s[0] == (row, col) for s in self.review_stones): return
+                
+                num = len(self.review_stones) + 1
+                self.review_stones.append(((row, col), color, num))
+                self.update_display()
+                return
+
             if tool == "stone":
                 color = "B" if (self.current_move % 2 == 0) else "W"
                 self.play_move(color, row, col)
             else:
-                # Toggle mark at the current move
                 success = self.game.toggle_mark(self.current_move, row, col, tool)
-                print(f"DEBUG: Toggle mark {tool} success: {success}")
                 self.update_display()
 
     def pass_move(self):
+        if self.is_review_mode.get():
+            # In review mode, just skip a number? Usually not needed but for consistency:
+            color = "B" if ((self.current_move + len(self.review_stones)) % 2 == 0) else "W"
+            # We don't add passes to review_stones visualization but we need to flip color
+            # For simplicity, review mode assumes consecutive stones
+            return
+
         color = "B" if (self.current_move % 2 == 0) else "W"
         self.play_move(color, None, None)
 
     def play_move(self, color, row, col):
-        # Add to SGF tree
         success = self.game.add_move(self.current_move, color, row, col)
         if success:
             self.current_move += 1
             self.update_display()
 
     def undo_move(self):
+        if self.is_review_mode.get() and self.review_stones:
+            self.review_stones.pop()
+            self.update_display()
+            return
+
         if self.current_move > 0:
             self.current_move -= 1
-            # Note: For simplicity, we just stay at the previous node.
-            # In a full app, we might want to prune the branch.
             self.update_display()
 
     def prev_move(self, event=None):
@@ -154,18 +189,20 @@ class TestPlayApp:
             self.update_display()
 
     def update_display(self):
-        # 1. Get Board State & Marks
         board = self.game.get_board_at(self.current_move)
         marks = self.game.get_marks_at(self.current_move)
         history = self.game.get_history_up_to(self.current_move)
 
-        # 2. Render Image
-        turn_color = "Black" if (self.current_move % 2 == 0) else "White"
+        turn_idx = self.current_move + (len(self.review_stones) if self.is_review_mode.get() else 0)
+        turn_color = "Black" if (turn_idx % 2 == 0) else "White"
+        
         info_text = f"Move {self.current_move} | Turn: {turn_color}"
+        if self.is_review_mode.get():
+            info_text += f" (Review Step: {len(self.review_stones)})"
+
         img = self.renderer.render(board, last_move=None, analysis_text=info_text, 
                                    history=history, show_numbers=self.show_numbers.get(),
-                                   marks=marks)
+                                   marks=marks, review_stones=self.review_stones)
         
-        # 3. Update View
         self.board_view.update_board(img)
         self.lbl_info.config(text=info_text)

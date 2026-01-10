@@ -32,8 +32,13 @@ class GoBoardRenderer:
             w, h = draw.textsize(text, font=font)
             draw.text((x - w / 2, y - h / 2), text, font=font, fill=fill)
 
-    def render(self, board, last_move=None, analysis_text="", history=None, show_numbers=False, marks=None):
-        img = Image.new("RGB", (self.image_size, self.image_size + 100), self.color_bg)
+    def render(self, board, last_move=None, analysis_text="", history=None, show_numbers=False, marks=None, review_stones=None):
+        """
+        review_stones: [((r, c), color, number), ...]
+        """
+        # 解析テキストがある場合のみ高さを追加する
+        height = self.image_size + (100 if analysis_text else 0)
+        img = Image.new("RGB", (self.image_size, height), self.color_bg)
         draw = ImageDraw.Draw(img)
         
         # 1. Grid
@@ -45,10 +50,12 @@ class GoBoardRenderer:
             x, y = m + i * gs, m + i * gs
             draw.line([(x, m), (x, m + (sz-1)*gs)], fill=self.color_line, width=2)
             draw.line([(m, y), (m + (sz-1)*gs, y)], fill=self.color_line, width=2)
-            self._draw_centered_text(draw, x, m - 35, cols[i], self.font, "black")
-            self._draw_centered_text(draw, x, m + (sz-1)*gs + 35, cols[i], self.font, "black")
-            self._draw_centered_text(draw, m - 35, y, str(sz - i), self.font, "black")
-            self._draw_centered_text(draw, m + (sz-1)*gs + 35, y, str(sz - i), self.font, "black")
+            
+            # Labels (Top/Bottom/Left/Right)
+            self._draw_centered_text(draw, x, m - 30, cols[i], self.font, "black")
+            self._draw_centered_text(draw, x, m + (sz-1)*gs + 30, cols[i], self.font, "black")
+            self._draw_centered_text(draw, m - 30, y, str(sz - i), self.font, "black")
+            self._draw_centered_text(draw, m + (sz-1)*gs + 30, y, str(sz - i), self.font, "black")
 
         for r, c in self._get_star_points():
             px, py = self.transformer.indices_to_pixel(r, c)
@@ -77,17 +84,32 @@ class GoBoardRenderer:
                         except: fn = self.font_number
                         self._draw_centered_text(draw, px, py, num_s, fn, num_c)
 
-        # 3. Marks
+        # 3. Review Stones
+        if review_stones:
+            for (r, c), color, num in review_stones:
+                px, py = self.transformer.indices_to_pixel(r, c)
+                fill_c = self.color_black if color.lower() == 'b' else self.color_white
+                num_c = "white" if color.lower() == 'b' else "black"
+                draw.ellipse([px-rad, py-rad, px+rad, py+rad], fill=fill_c, outline="red", width=2)
+                num_s = str(num)
+                f_sz = int(rad * 1.2) if len(num_s) <= 2 else int(rad * 0.9)
+                try: fn = ImageFont.truetype("arial.ttf", f_sz)
+                except: fn = self.font_number
+                self._draw_centered_text(draw, px, py, num_s, fn, num_c)
+
+        # 4. Marks
         if marks:
             for prop, shape in [("SQ", "square"), ("TR", "triangle"), ("MA", "cross")]:
                 points = marks.get(prop, [])
                 for r, c in points:
                     px, py = self.transformer.indices_to_pixel(r, c)
                     stone_color = board.get(r, c)
+                    if not stone_color and review_stones:
+                        for (rr, cc), col, n in review_stones:
+                            if rr == r and cc == c: stone_color = col.lower(); break
                     mark_color = "white" if stone_color == 'b' else "black"
                     size = int(rad * 0.6)
                     w = 5
-                    
                     if shape == "square":
                         rect = [(px-size, py-size), (px+size, py-size), (px+size, py+size), (px-size, py+size), (px-size, py-size)]
                         draw.line(rect, fill=mark_color, width=w, joint="round")
@@ -98,11 +120,10 @@ class GoBoardRenderer:
                         draw.line([px-size, py-size, px+size, py+size], fill=mark_color, width=w)
                         draw.line([px+size, py-size, px-size, py+size], fill=mark_color, width=w)
 
-        # Analysis text (bottom bar)
+        # Bottom Analysis Bar
         if analysis_text:
             draw.rectangle([(0, self.image_size), (self.image_size, self.image_size + 100)], fill=(30, 30, 30))
             self._draw_centered_text(draw, self.image_size // 2, self.image_size + 50, analysis_text, self.font, "white")
-        
         return img
 
     def _get_star_points(self):
