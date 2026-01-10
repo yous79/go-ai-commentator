@@ -30,10 +30,18 @@ class GoReplayApp:
         self.renderer = GoBoardRenderer()
         self.katago_driver = None
         self.gemini = None
-        self.analysis_manager = AnalysisManager(queue.Queue())
+        
+        # Singleton KataGo Driver Init (called before manager)
+        self._init_ai()
+        
+        # Analysis Manager now uses shared driver and renderer
+        self.analysis_manager = AnalysisManager(queue.Queue(), self.katago_driver, self.renderer)
         self.report_generator = None
         
-        self._init_ai()
+        if self.katago_driver:
+            self.report_generator = ReportGenerator(
+                self.game, self.renderer, self.gemini, self.katago_driver
+            )
 
         # UI State
         self.current_move = 0
@@ -55,11 +63,9 @@ class GoReplayApp:
         api_key = load_api_key()
         if api_key and os.path.exists(KATAGO_EXE):
             try:
+                # Singleton KataGoDriver
                 self.katago_driver = KataGoDriver(KATAGO_EXE, KATAGO_CONFIG, KATAGO_MODEL)
                 self.gemini = GeminiCommentator(api_key, self.katago_driver)
-                self.report_generator = ReportGenerator(
-                    self.game, self.renderer, self.gemini, self.katago_driver
-                )
                 print("AI Services Initialized.")
             except Exception as e:
                 print(f"AI Init Failed: {e}")
@@ -108,105 +114,6 @@ class GoReplayApp:
         # Bottom Bar (Navigation)
         self._setup_bottom_bar()
 
-    def click_on_board(self, event):
-        if not self.info_view.edit_mode.get():
-            return
-        
-        # Get board coordinates from pixel click
-        cw, ch = self.board_view.canvas.winfo_width(), self.board_view.canvas.winfo_height()
-        res = self.transformer.pixel_to_indices(event.x, event.y, cw, ch)
-        if res:
-            row, col = res
-            color = "B" if (self.current_move % 2 == 0) else "W"
-            self.play_interactive_move(color, row, col)
-
-    def pass_move(self):
-        if not self.info_view.edit_mode.get():
-            return
-        color = "B" if (self.current_move % 2 == 0) else "W"
-        self.play_interactive_move(color, None, None)
-
-    def play_interactive_move(self, color, row, col):
-        self.info_view.btn_comment.config(state="disabled", text="Analyzing...")
-        
-        def run():
-            try:
-                # 1. Add move to GameState
-                success = self.game.add_move(self.current_move, color, row, col)
-                if not success:
-                    print("DEBUG: Failed to add move to GameState.")
-                    return
-
-                new_move_idx = self.current_move + 1
-                history = self.game.get_history_up_to(new_move_idx)
-                
-                # 2. Analyze new situation with KataGo
-                res = self.katago_driver.analyze_situation(history, board_size=self.game.board_size)
-                
-                # 3. Update Analysis Data
-                new_data = {
-                    "move_number": new_move_idx,
-                    "winrate": res.get('current_winrate_black', 0.5), # Driver already standardized this
-                    "score": res.get('current_score_lead_black', 0.0),
-                    "candidates": []
-                }
-                # Fix winrate back to hand-over perspective for internal moves if needed
-                # (Existing display logic in update_display inverts if current_move % 2 != 0)
-                # Let's ensure it matches what analyze_sgf.py produces.
-                # KataGo returns next player's winrate. 
-                # If we are at move 1 (after B1), it's W's turn. winrate is for W.
-                # GoReplayApp.update_display: 
-                # wr_black = (1.0 - wr_raw) if (self.current_move % 2 != 0) else wr_raw
-                # So if move is 1, it inverts. 
-                # Our katago_driver.analyze_situation returns 'current_winrate_black'.
-                # To be consistent with 'winrate' in JSON being 'next player', 
-                # we need to set it to next player's winrate.
-                
-                next_player_wr = 1.0 - res.get('current_winrate_black', 0.5) if (new_move_idx % 2 == 0) else res.get('current_winrate_black', 0.5)
-                # Wait, if new_move_idx is 1 (after B1), it's W's turn. 
-                # Driver returns Black's WR. We want White's WR. So 1 - Black's WR.
-                # If move_idx is odd, next is White.
-                # Correct logic for 'winrate' key (next player):
-                if new_move_idx % 2 != 0: # Next is White
-                    new_data["winrate"] = 1.0 - res.get('current_winrate_black', 0.5)
-                    new_data["score"] = -res.get('current_score_lead_black', 0.0)
-                else: # Next is Black
-                    new_data["winrate"] = res.get('current_winrate_black', 0.5)
-                    new_data["score"] = res.get('current_score_lead_black', 0.0)
-
-                for c in res.get('top_candidates', []):
-                    new_data["candidates"].append({
-                        "move": c['move'],
-                        "winrate": c.get('winrate_black', 0), # Simplified for candidate
-                        "scoreLead": c.get('score_lead_black', 0),
-                        "pv": [m.strip() for m in c.get('future_sequence', "").split("->")]
-                    })
-                
-                # Append or replace the future moves
-                self.game.moves = self.game.moves[:new_move_idx]
-                self.game.moves.append(new_data)
-                
-                # 4. Generate new board image
-                board = self.game.get_board_at(new_move_idx)
-                last_move = None
-                if row is not None:
-                    last_move = (color.lower(), (row, col))
-                
-                info_text = f"Move {new_move_idx} | Winrate: {res.get('current_winrate_black', 0.5):.1%} | Score: {res.get('current_score_lead_black', 0.0):.1f}"
-                img = self.renderer.render(board, last_move=last_move, analysis_text=info_text)
-                
-                # 5. Store in cache and update UI
-                self.image_cache[new_move_idx] = img
-                self.root.after(0, lambda: self.show_image(new_move_idx))
-                self.root.after(0, lambda: self.lbl_counter.config(text=f"{new_move_idx} / {self.game.total_moves}"))
-                self.root.after(0, lambda: self.info_view.btn_comment.config(state="normal", text="Ask KataGo Agent"))
-                
-            except Exception as e:
-                print(f"Error in play_interactive_move: {e}")
-                self.root.after(0, lambda: self.info_view.btn_comment.config(state="normal", text="Ask KataGo Agent"))
-
-        threading.Thread(target=run, daemon=True).start()
-
     def _setup_bottom_bar(self):
         bot = tk.Frame(self.root, bg="#e0e0e0", height=60)
         bot.grid(row=2, column=0, sticky="ew")
@@ -233,6 +140,8 @@ class GoReplayApp:
             self.transformer = CoordinateTransformer(board_size=self.game.board_size)
             self.board_view.transformer = self.transformer
             self.renderer = GoBoardRenderer(board_size=self.game.board_size)
+            # Update dependencies
+            self.analysis_manager.renderer = self.renderer
             if self.report_generator:
                 self.report_generator.renderer = self.renderer
         except Exception as e:
@@ -317,10 +226,11 @@ class GoReplayApp:
         wr_text, sc_text, cands = "--%", "--", []
         if moves and self.current_move < len(moves):
             d = moves[self.current_move]
-            wr_raw = d.get('winrate', 0.5)
-            wr_black = (1.0 - wr_raw) if (self.current_move % 2 != 0) else wr_raw
-            wr_text = f"{wr_black:.1%}"
-            sc_text = f"{d.get('score', 0):.1f}"
+            # No longer invert based on move number. Data is always Black's perspective.
+            wr_val = d.get('winrate', 0.5)
+            sc_val = d.get('score', 0.0)
+            wr_text = f"{wr_val:.1%}"
+            sc_text = f"{sc_val:.1f}"
             cands = d.get('candidates', [])
         
         self.info_view.update_stats(wr_text, sc_text, "")
@@ -337,14 +247,24 @@ class GoReplayApp:
 
     def _run_commentary_task(self):
         try:
+            print(f"DEBUG: Starting dynamic AI commentary for move {self.current_move}")
             h = self.game.get_history_up_to(self.current_move)
+            # Use the 3-step dynamic tool-calling method
             text = self.gemini.generate_commentary(self.current_move, h, self.game.board_size)
+            
             self.root.after(0, lambda: self._update_commentary_ui(text))
         except Exception as e:
             self.root.after(0, lambda: self._update_commentary_ui(f"Error: {e}"))
 
     def _update_commentary_ui(self, text):
-        self.info_view.set_commentary(text)
+        if text.startswith("ERROR:"):
+            # Display errors in a noticeable way
+            self.info_view.set_commentary(f"【システム警告】\n{text[6:].strip()}")
+            self.info_view.txt_commentary.config(fg="red")
+        else:
+            self.info_view.set_commentary(text)
+            self.info_view.txt_commentary.config(fg="black")
+            
         self.info_view.btn_comment.config(state="normal", text="Ask KataGo Agent")
         state = "normal" if self.gemini.last_pv else "disabled"
         self.info_view.btn_agent_pv.config(state=state)
@@ -394,6 +314,82 @@ class GoReplayApp:
         cv.pack(fill=tk.BOTH, expand=True)
         cv.create_image(0, 0, image=photo, anchor=tk.NW)
         cv.image = photo
+
+    def click_on_board(self, event):
+        if not self.info_view.edit_mode.get():
+            return
+        
+        # Get board coordinates from pixel click
+        cw, ch = self.board_view.canvas.winfo_width(), self.board_view.canvas.winfo_height()
+        res = self.transformer.pixel_to_indices(event.x, event.y, cw, ch)
+        if res:
+            row, col = res
+            color = "B" if (self.current_move % 2 == 0) else "W"
+            self.play_interactive_move(color, row, col)
+
+    def pass_move(self):
+        if not self.info_view.edit_mode.get():
+            return
+        color = "B" if (self.current_move % 2 == 0) else "W"
+        self.play_interactive_move(color, None, None)
+
+    def play_interactive_move(self, color, row, col):
+        self.info_view.btn_comment.config(state="disabled", text="Analyzing...")
+        
+        def run():
+            try:
+                # 1. Add move to GameState
+                success = self.game.add_move(self.current_move, color, row, col)
+                if not success:
+                    print("DEBUG: Failed to add move to GameState.")
+                    return
+
+                new_move_idx = self.current_move + 1
+                history = self.game.get_history_up_to(new_move_idx)
+                
+                # 2. Analyze new situation with KataGo
+                res = self.katago_driver.analyze_situation(history, board_size=self.game.board_size)
+                
+                # 3. Update Analysis Data (Always Black Perspective)
+                new_data = {
+                    "move_number": new_move_idx,
+                    "winrate": res.get('winrate', 0.5), 
+                    "score": res.get('score', 0.0),
+                    "candidates": []
+                }
+
+                for c in res.get('top_candidates', []):
+                    new_data["candidates"].append({
+                        "move": c['move'],
+                        "winrate": c.get('winrate', 0), # Already standardized by driver
+                        "scoreLead": c.get('score', 0),
+                        "pv": [m.strip() for m in c.get('future_sequence', "").split("->")]
+                    })
+                
+                # Append or replace the future moves
+                self.game.moves = self.game.moves[:new_move_idx]
+                self.game.moves.append(new_data)
+                
+                # 4. Generate new board image
+                board = self.game.get_board_at(new_move_idx)
+                last_move = None
+                if row is not None:
+                    last_move = (color.lower(), (row, col))
+                
+                info_text = f"Move {new_move_idx} | Winrate(B): {new_data['winrate']:.1%} | Score(B): {new_data['score']:.1f}"
+                img = self.renderer.render(board, last_move=last_move, analysis_text=info_text)
+                
+                # 5. Store in cache and update UI
+                self.image_cache[new_move_idx] = img
+                self.root.after(0, lambda: self.show_image(new_move_idx))
+                self.root.after(0, lambda: self.lbl_counter.config(text=f"{new_move_idx} / {self.game.total_moves}"))
+                self.root.after(0, lambda: self.info_view.btn_comment.config(state="normal", text="Ask KataGo Agent"))
+                
+            except Exception as e:
+                print(f"Error in play_interactive_move: {e}")
+                self.root.after(0, lambda: self.info_view.btn_comment.config(state="normal", text="Ask KataGo Agent"))
+
+        threading.Thread(target=run, daemon=True).start()
 
     def prev_move(self):
         if self.current_move > 0: self.show_image(self.current_move - 1)

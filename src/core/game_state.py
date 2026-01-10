@@ -113,12 +113,13 @@ class GoGameState:
                 node = node[0]
                 color, move = node.get_move()
                 if color:
+                    c_str = "B" if color == 'b' else "W"
                     if move:
                         col_s = "ABCDEFGHJKLMNOPQRST"[move[1]]
                         row_s = str(move[0] + 1)
-                        history.append(["B" if color == 'b' else "W", col_s + row_s])
+                        history.append([c_str, col_s + row_s])
                     else:
-                        history.append(["B" if color == 'b' else "W", "pass"])
+                        history.append([c_str, "pass"])
             except: break
         return history
 

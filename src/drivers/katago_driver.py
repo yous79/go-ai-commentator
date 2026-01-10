@@ -4,23 +4,41 @@ import os
 import sys
 import threading
 import time
+import queue
 
 class KataGoDriver:
-    def __init__(self, katago_path, config_path, model_path):
-        self.process = None
+    _instance = None
+    _lock = threading.Lock()
+
+    def __new__(cls, *args, **kwargs):
+        with cls._lock:
+            if cls._instance is None:
+                cls._instance = super(KataGoDriver, cls).__new__(cls)
+                cls._instance._initialized = False
+            return cls._instance
+
+    def __init__(self, katago_path=None, config_path=None, model_path=None):
+        if self._initialized:
+            return
+            
         self.katago_path = katago_path
         self.config_path = config_path
         self.model_path = model_path
-        self.lock = threading.Lock()
+        self.process = None
+        self.comm_lock = threading.Lock() 
+        self.priority_mode = threading.Event() 
         self.start_engine()
+        self._initialized = True
 
     def start_engine(self):
+        if self.process and self.process.poll() is None:
+            return
+
         cmd = [
             self.katago_path, "analysis",
             "-config", self.config_path,
             "-model", self.model_path
         ]
-        # Force utf-8 for subprocess
         env = os.environ.copy()
         env["PYTHONIOENCODING"] = "utf-8"
         
@@ -34,26 +52,36 @@ class KataGoDriver:
                 cmd,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
-                stderr=subprocess.DEVNULL, # Suppress stderr to keep console clean
+                stderr=subprocess.PIPE,
                 text=True,
                 bufsize=1,
                 startupinfo=startupinfo,
                 encoding='utf-8',
                 env=env
             )
+            threading.Thread(target=self._consume_stderr, daemon=True).start()
+            print("DEBUG: KataGo Engine started.")
         except Exception as e:
             print(f"Error starting KataGo: {e}")
 
-    def query(self, moves, board_size=19, visits=500):
-        """
-        Send a query to KataGo and return the raw response.
-        moves: list of [color, vertex] e.g. [["B", "Q16"], ["W", "D4"]]
-        """
+    def _consume_stderr(self):
+        with open("katago_debug.log", "w", encoding="utf-8") as f:
+            while self.process and self.process.poll() is None:
+                line = self.process.stderr.readline()
+                if not line: break
+                f.write(line)
+                f.flush()
+
+    def query(self, moves, board_size=19, visits=500, priority=False):
         if not self.process or self.process.poll() is not None:
             self.start_engine()
 
+        if priority:
+            self.priority_mode.set()
+        
+        query_id = f"q_{{int(time.time() * 1000)}}"
         query = {
-            "id": f"query_{int(time.time())}",
+            "id": query_id,
             "moves": moves,
             "rules": "japanese",
             "komi": 6.5,
@@ -63,85 +91,79 @@ class KataGoDriver:
             "maxVisits": visits
         }
 
-        with self.lock:
+        lock_timeout = 60 if priority else 1
+        
+        try:
+            lock_acquired = self.comm_lock.acquire(timeout=lock_timeout)
+            if not lock_acquired:
+                return {"error": "Engine busy"}
+
             try:
                 self.process.stdin.write(json.dumps(query) + "\n")
                 self.process.stdin.flush()
 
+                start_time = time.time()
                 while True:
+                    if self.process.poll() is not None:
+                        return {"error": "Engine crashed"}
+                    
                     line = self.process.stdout.readline()
-                    if not line: break
+                    if not line:
+                        if time.time() - start_time > 30:
+                            return {"error": "Read timeout"}
+                        time.sleep(0.05)
+                        continue
+                    
                     try:
                         resp = json.loads(line)
-                        if resp.get("id") == query["id"]:
+                        if resp.get("id") == query_id:
                             return resp
-                    except Exception as e:
-                        print(f"KataGo JSON Decode Error: {e}, Line: {line}")
-                        continue
-            except Exception as e:
-                print(f"KataGo communication error: {e}")
-                return None
-        return None
+                    except: continue
+            finally:
+                self.comm_lock.release()
+                if priority:
+                    self.priority_mode.clear()
+        except Exception as e:
+            if priority: self.priority_mode.clear()
+            return {"error": str(e)}
+        return {"error": "Unknown error"}
 
-    def analyze_situation(self, moves, board_size=19):
-        """
-        Gemini用の「解説に必要な情報」だけを抽出して返す関数。
-        現在の局面と、そこからの「最善手」および「読み筋（PV）」を取得する。
-        常に黒番視点の勝率・目数差に変換して返す。
-        """
-        data = self.query(moves, board_size=board_size)
-        if not data or 'moveInfos' not in data:
-            return {"error": "Failed to analyze"}
+    def analyze_situation(self, moves, board_size=19, priority=False):
+        # 厳密な座標変換をここでも保証
+        clean_moves = []
+        for m in moves:
+            if isinstance(m, list) and len(m) >= 2:
+                clean_moves.append([str(m[0]).upper(), str(m[1]).lower()])
 
-        root_info = data.get('rootInfo', {})
-        candidates = data['moveInfos']
-        
-        # KataGo returns stats for the "current player"
-        raw_winrate = root_info.get('winrate', 0.5)
-        raw_score = root_info.get('scoreLead', 0.0)
-        
-        # Determine current player: Even moves -> Black to play, Odd moves -> White to play
+        data = self.query(clean_moves, board_size=board_size, priority=priority)
+        if "error" in data: return data
+
+        root = data.get('rootInfo', {})
+        cands = data.get('moveInfos', [])
+        if not cands: return {"error": "Empty analysis results"}
+
         is_white_turn = (len(moves) % 2 != 0)
-        
-        if is_white_turn:
-            current_winrate_black = 1.0 - raw_winrate
-            current_score_lead_black = -raw_score
-        else:
-            current_winrate_black = raw_winrate
-            current_score_lead_black = raw_score
-
-        # Current situation (Black perspective)
-        result = {
-            "current_winrate_black": current_winrate_black,
-            "current_score_lead_black": current_score_lead_black,
+        res = {
+            "winrate": 1.0 - root.get('winrate', 0.5) if is_white_turn else root.get('winrate', 0.5),
+            "score": -root.get('scoreLead', 0.0) if is_white_turn else root.get('scoreLead', 0.0),
             "top_candidates": []
         }
 
-        # Extract top 3 candidates
-        for cand in candidates[:3]:
-            # Candidate stats are also from current player's perspective
-            c_wr = cand.get('winrate', 0.0)
-            c_score = cand.get('scoreLead', 0.0)
+        for i, cand in enumerate(cands[:3]):
+            pv = cand.get('pv', [])
+            pv_str = " -> ".join(pv[:6])
             
-            if is_white_turn:
-                cand_wr_black = 1.0 - c_wr
-                cand_score_black = -c_score
-            else:
-                cand_wr_black = c_wr
-                cand_score_black = c_score
+            # 重要：最善手（インデックス0）のPVを確実にログに出力する
+            if i == 0:
+                print(f"DEBUG TOOL: Captured PV list (BEST): {pv[:6]}")
 
-            pv_moves = cand.get('pv', [])
-            pv_str = " -> ".join(pv_moves[:6])
-            
-            result["top_candidates"].append({
+            res["top_candidates"].append({
                 "move": cand['move'],
-                "winrate_black": cand_wr_black, # Explicitly named for Black
-                "score_lead_black": cand_score_black,
-                "future_sequence": pv_str,
-                "visits": cand.get('visits', 0)
+                "winrate": 1.0 - cand.get('winrate', 0.5) if is_white_turn else cand.get('winrate', 0.5),
+                "score": -cand.get('scoreLead', 0.0) if is_white_turn else cand.get('scoreLead', 0.0),
+                "future_sequence": pv_str
             })
-            
-        return result
+        return res
 
     def close(self):
         if self.process:

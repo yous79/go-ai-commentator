@@ -197,12 +197,41 @@ def main():
         print(f"Analyzing Move {m_num}", flush=True)
         ans = engine.analyze(history)
         info = "No Data"; data = {"move_number": m_num, "winrate": 0.5, "score": 0.0, "candidates": []}
+        
         if ans and 'rootInfo' in ans:
-            wr, sc = ans['rootInfo'].get('winrate', 0.5), ans['rootInfo'].get('scoreLead', 0.0)
-            info = f"Winrate: {wr:.1%} | Score: {sc:.1f}"; data.update({"winrate": wr, "score": sc})
+            raw_wr = ans['rootInfo'].get('winrate', 0.5)
+            raw_sc = ans['rootInfo'].get('scoreLead', 0.0)
+            
+            # Standardize to Black's perspective
+            # m_num 0: next is Black. m_num 1: next is White.
+            is_white_next = (m_num % 2 != 0)
+            if is_white_next:
+                wr_black = 1.0 - raw_wr
+                sc_black = -raw_sc
+            else:
+                wr_black = raw_wr
+                sc_black = raw_sc
+                
+            info = f"Winrate(B): {wr_black:.1%} | Score(B): {sc_black:.1f}"
+            data.update({"winrate": wr_black, "score": sc_black})
+            
             if 'moveInfos' in ans:
                 for c in ans['moveInfos'][:10]:
-                    data["candidates"].append({"move": c['move'], "winrate": c.get('winrate', 0), "scoreLead": c.get('scoreLead', 0), "pv": c.get('pv', [])})
+                    c_wr = c.get('winrate', 0)
+                    c_sc = c.get('scoreLead', 0)
+                    if is_white_next:
+                        c_wr_black = 1.0 - c_wr
+                        c_sc_black = -c_sc
+                    else:
+                        c_wr_black = c_wr
+                        c_sc_black = c_sc
+                    data["candidates"].append({
+                        "move": c['move'], 
+                        "winrate": c_wr_black, 
+                        "scoreLead": c_sc_black, 
+                        "pv": c.get('pv', [])
+                    })
+        
         log["moves"].append(data)
         with open(os.path.join(out, "analysis.json"), "w") as f: json.dump(log, f, indent=2)
         last = None
