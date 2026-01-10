@@ -5,6 +5,7 @@ import glob
 import concurrent.futures
 from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME
 from drivers.katago_driver import KataGoDriver
+from core.shape_detector import ShapeDetector
 from prompts.templates import (
     get_unified_system_instruction,
     get_integrated_request_prompt
@@ -14,6 +15,7 @@ class GeminiCommentator:
     def __init__(self, api_key, katago_driver: KataGoDriver):
         self.client = genai.Client(api_key=api_key)
         self.katago = katago_driver
+        self.detector = ShapeDetector()
         self.last_pv = None 
         self._knowledge_cache = None
         # チャットセッションを保持するための履歴
@@ -71,8 +73,21 @@ class GeminiCommentator:
         kn = self._load_knowledge()
         player = "黒" if (move_idx % 2 == 0) else "白" 
         
+        # 幾何学的検知の実行 (事実データの作成)
+        board = getattr(self.katago, 'last_board', None)
+        shape_facts = ""
+        if board:
+            self.detector.board_size = board_size
+            shape_facts = self.detector.detect_all(board)
+            if shape_facts:
+                shape_facts = f"\n【重要：盤面から検知された事実データ】\n{shape_facts}\n"
+                print(f"DEBUG: Shape facts detected:\n{shape_facts}")
+
         sys_inst = get_unified_system_instruction(board_size, player, kn)
         user_prompt = get_integrated_request_prompt(move_idx, history)
+        
+        # 事実データをプロンプトの先頭に注入
+        full_user_prompt = shape_facts + user_prompt
         
         safety = [types.SafetySetting(category=c, threshold='BLOCK_NONE') for c in [
             'HARM_CATEGORY_HATE_SPEECH', 'HARM_CATEGORY_HARASSMENT', 
@@ -103,12 +118,11 @@ class GeminiCommentator:
             # 初回の生成リクエスト
             response = self.client.models.generate_content(
                 model=GEMINI_MODEL_NAME,
-                contents=[types.Content(role="user", parts=[types.Part(text=user_prompt)])],
+                contents=[types.Content(role="user", parts=[types.Part(text=full_user_prompt)])],
                 config=config
             )
 
             # Function Call のループ処理
-            # Flash モデル等の自動実行に対応していない場合を考慮した手動ループ
             max_iterations = 5
             for _ in range(max_iterations):
                 if not response.candidates or not response.candidates[0].content.parts:
@@ -121,16 +135,14 @@ class GeminiCommentator:
                 print(f"DEBUG: Processing Function Call: {found_fc.name}")
                 if found_fc.name == "consult_katago_tool":
                     args = found_fc.args
-                    # 履歴リストの整合性をチェック（Geminiが変な形式を渡さないように）
                     moves = args.get("moves_list", [])
                     result = consult_katago_wrapper(moves)
                     
-                    # 結果を含めて再度リクエスト
                     response = self.client.models.generate_content(
                         model=GEMINI_MODEL_NAME,
                         contents=[
-                            types.Content(role="user", parts=[types.Part(text=user_prompt)]),
-                            response.candidates[0].content, # 元の FC を含む Content
+                            types.Content(role="user", parts=[types.Part(text=full_user_prompt)]),
+                            response.candidates[0].content,
                             types.Content(role="tool", parts=[types.Part(
                                 function_response=types.FunctionResponse(name="consult_katago_tool", response=result)
                             )])
