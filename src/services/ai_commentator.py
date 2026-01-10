@@ -75,10 +75,13 @@ class GeminiCommentator:
         
         # 幾何学的検知の実行 (事実データの作成)
         board = getattr(self.katago, 'last_board', None)
+        prev_board = getattr(self.katago, 'prev_board', None)
+        last_color = getattr(self.katago, 'last_move_color', None)
+        
         shape_facts = ""
         if board:
             self.detector.board_size = board_size
-            shape_facts = self.detector.detect_all(board)
+            shape_facts = self.detector.detect_all(board, prev_board, last_color)
             if shape_facts:
                 shape_facts = f"\n【重要：盤面から検知された事実データ】\n{shape_facts}\n"
                 print(f"DEBUG: Shape facts detected:\n{shape_facts}")

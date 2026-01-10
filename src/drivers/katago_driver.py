@@ -139,18 +139,24 @@ class KataGoDriver:
             if isinstance(m, list) and len(m) >= 2:
                 clean_moves.append([str(m[0]).upper(), str(m[1]).lower()])
 
-        # 最新の盤面を再現して保持（ShapeDetector用）
+        # 最新と1手前の盤面を再現して保持（ShapeDetector用）
         from sgfmill import boards
-        b = boards.Board(board_size)
-        for c_str, m_str in clean_moves:
+        b_curr = boards.Board(board_size)
+        b_prev = boards.Board(board_size)
+        
+        for i, (c_str, m_str) in enumerate(clean_moves):
             if m_str.lower() != "pass":
                 try:
-                    # 簡易的な座標変換 (A1 -> row, col)
                     col = "ABCDEFGHJKLMNOPQRST".index(m_str[0].upper())
                     row = int(m_str[1:]) - 1
-                    b.play(row, col, c_str.lower())
+                    if i < len(clean_moves) - 1:
+                        b_prev.play(row, col, c_str.lower())
+                    b_curr.play(row, col, c_str.lower())
                 except: pass
-        self.last_board = b
+        
+        self.prev_board = b_prev
+        self.last_board = b_curr
+        self.last_move_color = clean_moves[-1][0].lower() if clean_moves else None
 
         data = self.query(clean_moves, board_size=board_size, priority=priority)
         if "error" in data: return data
