@@ -3,7 +3,7 @@ from google.genai import types
 import os
 import glob
 import concurrent.futures
-from config import KNOWLEDGE_DIR
+from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME
 from drivers.katago_driver import KataGoDriver
 from prompts.templates import (
     get_system_instruction_force_tool,
@@ -16,8 +16,12 @@ class GeminiCommentator:
         self.client = genai.Client(api_key=api_key)
         self.katago = katago_driver
         self.last_pv = None 
+        self._knowledge_cache = None
 
     def _load_knowledge(self):
+        if self._knowledge_cache:
+            return self._knowledge_cache
+
         kn_text = "\n=== 【公式例題】座標は無視せよ ===\n"
         if os.path.exists(KNOWLEDGE_DIR):
             subfolders = sorted(os.listdir(KNOWLEDGE_DIR))
@@ -32,6 +36,8 @@ class GeminiCommentator:
                             with open(f_name, "r", encoding="utf-8") as f:
                                 kn_text += f"  - [例]: {f.read().strip()}\n"
                         except: pass
+        
+        self._knowledge_cache = kn_text
         return kn_text
 
     def generate_commentary(self, move_idx, history, board_size=19):
@@ -55,7 +61,7 @@ class GeminiCommentator:
         try:
             # --- Step 1: Force Tool ---
             resp1 = self.client.models.generate_content(
-                model='gemini-3-flash-preview',
+                model=GEMINI_MODEL_NAME,
                 contents=[types.Content(role="user", parts=[types.Part(text=prompt)])],
                 config=types.GenerateContentConfig(
                     tools=[tool_decl],
@@ -93,7 +99,7 @@ class GeminiCommentator:
 
             def call_gen():
                 return self.client.models.generate_content(
-                    model='gemini-3-flash-preview',
+                    model=GEMINI_MODEL_NAME,
                     contents=[types.Content(role="user", parts=[types.Part(text=final_prompt)])],
                     config=config_talk
                 )
@@ -110,4 +116,6 @@ class GeminiCommentator:
             return final_text
 
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             return f"ERROR: システム例外 ({str(e)})"

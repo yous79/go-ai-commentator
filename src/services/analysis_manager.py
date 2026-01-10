@@ -2,16 +2,49 @@ import os
 import threading
 import time
 import json
+import queue
 from sgfmill import sgf, boards
 from config import OUTPUT_BASE_DIR
 
+class ImageWriter(threading.Thread):
+    def __init__(self, output_dir, renderer):
+        super().__init__(daemon=True)
+        self.queue = queue.Queue()
+        self.output_dir = output_dir
+        self.renderer = renderer
+        self.stop_event = threading.Event()
+
+    def run(self):
+        while not self.stop_event.is_set() or not self.queue.empty():
+            try:
+                task = self.queue.get(timeout=0.1)
+                if task is None: break
+                
+                board, last_move, analysis_text, history, m_num = task
+                try:
+                    img = self.renderer.render(board, last_move=last_move, analysis_text=analysis_text, history=history)
+                    img.save(os.path.join(self.output_dir, f"move_{m_num:03d}.png"))
+                except Exception as e:
+                    print(f"ERROR: Image write failed for move {m_num}: {e}")
+                finally:
+                    self.queue.task_done()
+            except queue.Empty:
+                continue
+
+    def add_task(self, board, last_move, analysis_text, history, m_num):
+        self.queue.put((board, last_move, analysis_text, history, m_num))
+
+    def stop(self):
+        self.stop_event.set()
+
 class AnalysisManager:
     def __init__(self, queue, katago_driver, board_renderer):
-        self.queue = queue
+        self.app_queue = queue
         self.katago = katago_driver
         self.renderer = board_renderer
         self.analyzing = False
         self.stop_requested = threading.Event()
+        self.image_writer = None
 
     def start_analysis(self, sgf_path):
         self.stop_analysis()
@@ -22,6 +55,9 @@ class AnalysisManager:
     def stop_analysis(self):
         self.stop_requested.set()
         self.analyzing = False
+        if self.image_writer:
+            self.image_writer.stop()
+            self.image_writer = None
 
     def _run_analysis_loop(self, path):
         try:
@@ -29,6 +65,10 @@ class AnalysisManager:
             out_dir = os.path.join(OUTPUT_BASE_DIR, name)
             os.makedirs(out_dir, exist_ok=True)
             
+            # Init Image Writer
+            self.image_writer = ImageWriter(out_dir, self.renderer)
+            self.image_writer.start()
+
             with open(path, "rb") as f:
                 game = sgf.Sgf_game.from_bytes(f.read())
             
@@ -40,7 +80,7 @@ class AnalysisManager:
                     temp_node = temp_node[0]
                     total_moves += 1
                 except: break
-            self.queue.put(("set_max", total_moves))
+            self.app_queue.put(("set_max", total_moves))
 
             json_path = os.path.join(out_dir, "analysis.json")
             if os.path.exists(json_path):
@@ -48,8 +88,9 @@ class AnalysisManager:
                     with open(json_path, "r") as f:
                         data = json.load(f)
                     if len(data.get("moves", [])) >= total_moves + 1:
-                        self.queue.put(("skip", None))
+                        self.app_queue.put(("skip", None))
                         self.analyzing = False
+                        self.image_writer.stop()
                         return
                 except: pass
 
@@ -83,8 +124,12 @@ class AnalysisManager:
                     })
                 
                 log["moves"].append(data)
-                with open(json_path, "w", encoding="utf-8") as f:
+                
+                # Atomic Write
+                temp_json_path = json_path + ".tmp"
+                with open(temp_json_path, "w", encoding="utf-8") as f:
                     json.dump(log, f, indent=2, ensure_ascii=False)
+                os.replace(temp_json_path, json_path)
                 
                 last_move = None
                 if m_num > 0:
@@ -92,10 +137,12 @@ class AnalysisManager:
                     if m: last_move = (c, m)
                 
                 img_text = f"Move {m_num} | Winrate(B): {data['winrate']:.1%} | Score(B): {data['score']:.1f}"
-                img = self.renderer.render(board, last_move=last_move, analysis_text=img_text, history=history)
-                img.save(os.path.join(out_dir, f"move_{m_num:03d}.png"))
                 
-                self.queue.put(("progress", m_num))
+                # Async Image Write (Clone board to avoid race conditions if board is mutated later)
+                board_copy = board.copy()
+                self.image_writer.add_task(board_copy, last_move, img_text, list(history), m_num)
+                
+                self.app_queue.put(("progress", m_num))
                 
                 try:
                     node = node[0]
@@ -113,8 +160,12 @@ class AnalysisManager:
                     break
             
             self.analyzing = False
-            self.queue.put(("done", None))
+            self.app_queue.put(("done", None))
+            if self.image_writer:
+                self.image_writer.stop()
             
         except Exception as e:
             print(f"ERROR in AnalysisManager Loop: {e}")
             self.analyzing = False
+            if self.image_writer:
+                self.image_writer.stop()

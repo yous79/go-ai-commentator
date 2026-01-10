@@ -2,9 +2,9 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 from PIL import Image
 import os
-import threading
 import queue
 import json
+import concurrent.futures
 
 from config import OUTPUT_BASE_DIR, KATAGO_EXE, KATAGO_CONFIG, KATAGO_MODEL, load_api_key
 from core.game_state import GoGameState
@@ -23,6 +23,9 @@ class GoReplayApp:
         self.root = root
         self.root.title("Go AI Analysis Agent (MVC)")
         self.root.geometry("1200x950")
+
+        # Thread Pool for UI Tasks
+        self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=3)
 
         # Logic & Services
         self.game = GoGameState()
@@ -58,6 +61,9 @@ class GoReplayApp:
         self.root.bind("<Left>", lambda e: self.prev_move())
         self.root.bind("<Right>", lambda e: self.next_move())
         self.root.bind("<Configure>", self.on_resize)
+        
+        # Cleanup on exit
+        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def _init_ai(self):
         api_key = load_api_key()
@@ -78,7 +84,7 @@ class GoReplayApp:
         menubar = tk.Menu(self.root)
         filemenu = tk.Menu(menubar, tearoff=0)
         filemenu.add_command(label="Open SGF...", command=self.open_sgf)
-        filemenu.add_command(label="Exit", command=self.root.quit)
+        filemenu.add_command(label="Exit", command=self.on_close)
         menubar.add_cascade(label="File", menu=filemenu)
         self.root.config(menu=menubar)
 
@@ -158,7 +164,7 @@ class GoReplayApp:
     def _start_queue_monitor(self):
         try:
             while True:
-                msg, d = self.analysis_manager.queue.get_nowait()
+                msg, d = self.analysis_manager.app_queue.get_nowait()
                 if msg == "set_max":
                     self.progress_bar.config(maximum=d)
                 elif msg == "progress":
@@ -173,10 +179,11 @@ class GoReplayApp:
         self.root.after(100, self._start_queue_monitor)
 
     def _sync_analysis_data(self):
+        if not self.image_dir: return
         p = os.path.join(self.image_dir, "analysis.json")
         if os.path.exists(p):
             try:
-                with open(p, "r") as f:
+                with open(p, "r", encoding="utf-8") as f:
                     d = json.load(f)
                 self.game.moves = d if isinstance(d, list) else d.get("moves", [])
                 
@@ -213,9 +220,17 @@ class GoReplayApp:
             self.root.after(2000, self._monitor_images_on_disk)
 
     def show_image(self, n):
+        if not self.image_dir: return
         p = os.path.join(self.image_dir, f"move_{n:03d}.png")
-        if os.path.exists(p) and n not in self.image_cache:
-            self.image_cache[n] = Image.open(p)
+        if os.path.exists(p):
+            # Caching strategy: Keep active moves, clear old ones if too big
+            if n not in self.image_cache:
+                if len(self.image_cache) > 200: 
+                    self.image_cache.clear()
+                try:
+                    self.image_cache[n] = Image.open(p)
+                except:
+                    return
         self.current_move = n
         self.update_display()
 
@@ -243,7 +258,8 @@ class GoReplayApp:
         if not self.gemini: return
         self.info_view.btn_comment.config(state="disabled", text="Thinking...")
         self.info_view.set_commentary("Consulting AI...")
-        threading.Thread(target=self._run_commentary_task, daemon=True).start()
+        
+        self.executor.submit(self._run_commentary_task)
 
     def _run_commentary_task(self):
         try:
@@ -272,11 +288,11 @@ class GoReplayApp:
     def generate_full_report(self):
         if not self.report_generator: return
         self.info_view.btn_report.config(state="disabled", text="Generating...")
-        threading.Thread(target=self._run_report_task, daemon=True).start()
+        self.executor.submit(self._run_report_task)
 
     def _run_report_task(self):
         try:
-            self._sync_analysis_data()
+            self.root.after(0, lambda: self._sync_analysis_data())
             path, err = self.report_generator.generate(self.current_sgf_name, self.image_dir)
             if err:
                 self.root.after(0, lambda: messagebox.showinfo("Info", err))
@@ -313,7 +329,7 @@ class GoReplayApp:
         cv = tk.Canvas(top, bg="#333")
         cv.pack(fill=tk.BOTH, expand=True)
         cv.create_image(0, 0, image=photo, anchor=tk.NW)
-        cv.image = photo
+        cv.image = photo # Keep reference
 
     def click_on_board(self, event):
         if not self.info_view.edit_mode.get():
@@ -335,61 +351,64 @@ class GoReplayApp:
 
     def play_interactive_move(self, color, row, col):
         self.info_view.btn_comment.config(state="disabled", text="Analyzing...")
+        self.executor.submit(self._execute_interactive_move, color, row, col)
         
-        def run():
-            try:
-                # 1. Add move to GameState
-                success = self.game.add_move(self.current_move, color, row, col)
-                if not success:
-                    print("DEBUG: Failed to add move to GameState.")
-                    return
+    def _execute_interactive_move(self, color, row, col):
+        try:
+            # 1. Add move to GameState
+            success = self.game.add_move(self.current_move, color, row, col)
+            if not success:
+                print("DEBUG: Failed to add move to GameState.")
+                return
 
-                new_move_idx = self.current_move + 1
-                history = self.game.get_history_up_to(new_move_idx)
-                
-                # 2. Analyze new situation with KataGo
-                res = self.katago_driver.analyze_situation(history, board_size=self.game.board_size)
-                
-                # 3. Update Analysis Data (Always Black Perspective)
-                new_data = {
-                    "move_number": new_move_idx,
-                    "winrate": res.get('winrate', 0.5), 
-                    "score": res.get('score', 0.0),
-                    "candidates": []
-                }
+            new_move_idx = self.current_move + 1
+            history = self.game.get_history_up_to(new_move_idx)
+            
+            # 2. Analyze new situation with KataGo
+            res = self.katago_driver.analyze_situation(history, board_size=self.game.board_size)
+            
+            # 3. Update Analysis Data (Always Black Perspective)
+            new_data = {
+                "move_number": new_move_idx,
+                "winrate": res.get('winrate', 0.5), 
+                "score": res.get('score', 0.0),
+                "candidates": []
+            }
 
-                for c in res.get('top_candidates', []):
-                    new_data["candidates"].append({
-                        "move": c['move'],
-                        "winrate": c.get('winrate', 0), # Already standardized by driver
-                        "scoreLead": c.get('score', 0),
-                        "pv": [m.strip() for m in c.get('future_sequence', "").split("->")]
-                    })
+            for c in res.get('top_candidates', []):
+                new_data["candidates"].append({
+                    "move": c['move'],
+                    "winrate": c.get('winrate', 0), # Already standardized by driver
+                    "scoreLead": c.get('score', 0),
+                    "pv": [m.strip() for m in c.get('future_sequence', "").split("->")]
+                })
+            
+            # Append or replace the future moves
+            self.game.moves = self.game.moves[:new_move_idx]
+            self.game.moves.append(new_data)
+            
+            # 4. Generate new board image
+            board = self.game.get_board_at(new_move_idx)
+            last_move = None
+            if row is not None:
+                last_move = (color.lower(), (row, col))
+            
+            info_text = f"Move {new_move_idx} | Winrate(B): {new_data['winrate']:.1%} | Score(B): {new_data['score']:.1f}"
+            img = self.renderer.render(board, last_move=last_move, analysis_text=info_text)
+            
+            # 5. Store in cache and update UI
+            self.image_cache[new_move_idx] = img
+            
+            def update_ui_after_move():
+                self.show_image(new_move_idx)
+                self.lbl_counter.config(text=f"{new_move_idx} / {self.game.total_moves}")
+                self.info_view.btn_comment.config(state="normal", text="Ask KataGo Agent")
                 
-                # Append or replace the future moves
-                self.game.moves = self.game.moves[:new_move_idx]
-                self.game.moves.append(new_data)
-                
-                # 4. Generate new board image
-                board = self.game.get_board_at(new_move_idx)
-                last_move = None
-                if row is not None:
-                    last_move = (color.lower(), (row, col))
-                
-                info_text = f"Move {new_move_idx} | Winrate(B): {new_data['winrate']:.1%} | Score(B): {new_data['score']:.1f}"
-                img = self.renderer.render(board, last_move=last_move, analysis_text=info_text)
-                
-                # 5. Store in cache and update UI
-                self.image_cache[new_move_idx] = img
-                self.root.after(0, lambda: self.show_image(new_move_idx))
-                self.root.after(0, lambda: self.lbl_counter.config(text=f"{new_move_idx} / {self.game.total_moves}"))
-                self.root.after(0, lambda: self.info_view.btn_comment.config(state="normal", text="Ask KataGo Agent"))
-                
-            except Exception as e:
-                print(f"Error in play_interactive_move: {e}")
-                self.root.after(0, lambda: self.info_view.btn_comment.config(state="normal", text="Ask KataGo Agent"))
-
-        threading.Thread(target=run, daemon=True).start()
+            self.root.after(0, update_ui_after_move)
+            
+        except Exception as e:
+            print(f"Error in play_interactive_move: {e}")
+            self.root.after(0, lambda: self.info_view.btn_comment.config(state="normal", text="Ask KataGo Agent"))
 
     def prev_move(self):
         if self.current_move > 0: self.show_image(self.current_move - 1)
@@ -400,3 +419,8 @@ class GoReplayApp:
     def goto_mistake(self, color, idx):
         m = self.moves_m_b[idx] if color == "b" else self.moves_m_w[idx]
         if m is not None: self.show_image(m)
+        
+    def on_close(self):
+        self.analysis_manager.stop_analysis()
+        self.executor.shutdown(wait=False)
+        self.root.destroy()

@@ -21,6 +21,9 @@ API_KEY_PATH = os.path.join(PROJECT_ROOT, "api_key.txt")
 # Knowledge Base
 KNOWLEDGE_DIR = os.path.join(PROJECT_ROOT, "knowledge")
 
+# Gemini Settings
+GEMINI_MODEL_NAME = 'gemini-3-flash-preview'
+
 # Helper Functions
 def load_api_key():
     if os.path.exists(API_KEY_PATH):

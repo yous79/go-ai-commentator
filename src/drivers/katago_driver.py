@@ -11,11 +11,12 @@ class KataGoDriver:
     _lock = threading.Lock()
 
     def __new__(cls, *args, **kwargs):
-        with cls._lock:
-            if cls._instance is None:
-                cls._instance = super(KataGoDriver, cls).__new__(cls)
-                cls._instance._initialized = False
-            return cls._instance
+        if not cls._instance:
+            with cls._lock:
+                if not cls._instance:
+                    cls._instance = super(KataGoDriver, cls).__new__(cls)
+                    cls._instance._initialized = False
+        return cls._instance
 
     def __init__(self, katago_path=None, config_path=None, model_path=None):
         if self._initialized:
@@ -79,7 +80,7 @@ class KataGoDriver:
         if priority:
             self.priority_mode.set()
         
-        query_id = f"q_{{int(time.time() * 1000)}}"
+        query_id = f"q_{int(time.time() * 1000)}"
         query = {
             "id": query_id,
             "moves": moves,
@@ -118,7 +119,10 @@ class KataGoDriver:
                         resp = json.loads(line)
                         if resp.get("id") == query_id:
                             return resp
-                    except: continue
+                    except json.JSONDecodeError:
+                        with open("katago_err.log", "a") as errf:
+                            errf.write(f"JSON Error: {line}\n")
+                        continue
             finally:
                 self.comm_lock.release()
                 if priority:
@@ -143,9 +147,21 @@ class KataGoDriver:
         if not cands: return {"error": "Empty analysis results"}
 
         is_white_turn = (len(moves) % 2 != 0)
+        
+        # KataGo returns score from current player's perspective.
+        # We normalize everything to Black's perspective for consistent internal storage.
+        # If it is White's turn, root['scoreLead'] is White's lead. Black's lead is -scoreLead.
+        # root['winrate'] is White's winrate. Black's winrate is 1.0 - winrate.
+        
+        current_winrate = root.get('winrate', 0.5)
+        current_score = root.get('scoreLead', 0.0)
+        
+        final_winrate = 1.0 - current_winrate if is_white_turn else current_winrate
+        final_score = -current_score if is_white_turn else current_score
+        
         res = {
-            "winrate": 1.0 - root.get('winrate', 0.5) if is_white_turn else root.get('winrate', 0.5),
-            "score": -root.get('scoreLead', 0.0) if is_white_turn else root.get('scoreLead', 0.0),
+            "winrate": final_winrate,
+            "score": final_score,
             "top_candidates": []
         }
 
@@ -153,14 +169,13 @@ class KataGoDriver:
             pv = cand.get('pv', [])
             pv_str = " -> ".join(pv[:6])
             
-            # 重要：最善手（インデックス0）のPVを確実にログに出力する
-            if i == 0:
-                print(f"DEBUG TOOL: Captured PV list (BEST): {pv[:6]}")
-
+            c_win = cand.get('winrate', 0.5)
+            c_score = cand.get('scoreLead', 0.0)
+            
             res["top_candidates"].append({
                 "move": cand['move'],
-                "winrate": 1.0 - cand.get('winrate', 0.5) if is_white_turn else cand.get('winrate', 0.5),
-                "score": -cand.get('scoreLead', 0.0) if is_white_turn else cand.get('scoreLead', 0.0),
+                "winrate": 1.0 - c_win if is_white_turn else c_win,
+                "score": -c_score if is_white_turn else c_score,
                 "future_sequence": pv_str
             })
         return res
