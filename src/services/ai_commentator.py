@@ -10,6 +10,7 @@ from prompts.templates import (
     get_unified_system_instruction,
     get_integrated_request_prompt
 )
+from sgfmill import boards
 
 class GeminiCommentator:
     def __init__(self, api_key, katago_driver: KataGoDriver):
@@ -22,35 +23,50 @@ class GeminiCommentator:
         self.chat_history = []
 
     def _load_knowledge(self):
+        """知識ベースをカテゴリー別に構造化してロードする"""
         if self._knowledge_cache: return self._knowledge_cache
-        kn_text = "\n=== 【公式例題】座標は無視せよ ===\n"
-        if os.path.exists(KNOWLEDGE_DIR):
-            import glob
-            for subdir in sorted(os.listdir(KNOWLEDGE_DIR)):
-                sub_path = os.path.join(KNOWLEDGE_DIR, subdir)
-                if os.path.isdir(sub_path):
-                    term = subdir.split("_")[-1]
-                    kn_text += f"\n◆ 用語: {term}\n"
-                    for f_name in glob.glob(os.path.join(sub_path, "*.txt")):
-                        try:
-                            with open(f_name, "r", encoding="utf-8") as f:
-                                kn_text += f"  - [例]: {f.read().strip()}\n"
-                        except: pass
+        
+        kn_text = "\n=== 囲碁知識ベース (用語辞書) ===\n"
+        if not os.path.exists(KNOWLEDGE_DIR):
+            return kn_text
+
+        # カテゴリーごとにスキャン
+        for category in sorted(os.listdir(KNOWLEDGE_DIR)):
+            cat_path = os.path.join(KNOWLEDGE_DIR, category)
+            if not os.path.isdir(cat_path): continue
+            
+            cat_label = "【重要：悪形・失着】" if "bad_shapes" in category else "【一般手筋・概念】"
+            kn_text += f"\n{cat_label}\n"
+            
+            # 各用語フォルダをスキャン
+            for term_dir in sorted(os.listdir(cat_path)):
+                term_path = os.path.join(cat_path, term_dir)
+                if not os.path.isdir(term_path): continue
+                
+                term_name = term_dir.replace("_", " ").title()
+                kn_text += f"◆ {term_name}:\n"
+                
+                # テキストファイルの内容を集約
+                import glob
+                for f_name in glob.glob(os.path.join(term_path, "*.txt")):
+                    try:
+                        with open(f_name, "r", encoding="utf-8") as f:
+                            content = f.read().strip()
+                            if content:
+                                kn_text += f"  - {content}\n"
+                    except: pass
+        
         self._knowledge_cache = kn_text
         return kn_text
 
     def _analyze_pv_shapes(self, base_board, pv_list, start_color):
         """Simulatorを使用してPVの変化を検知"""
         all_facts = []
-        # ジェネレーターから盤面状態を順次受け取る
         for move_str, sim_board, prev_board, current_color in self.simulator.simulate_pv(base_board, pv_list, start_color):
-            if not prev_board: continue # パス等
-            
-            # ここで検知 (ShapeDetectorはステートレス)
+            if not prev_board: continue
             facts = self.detector.detect_all(sim_board, prev_board, current_color)
             if facts:
                 all_facts.append(f"  [進行中 {move_str}]:\n{facts}")
-        
         return "\n".join(all_facts) if all_facts else "特になし"
 
     def consult_katago_tool(self, history, board_size=19):
@@ -62,7 +78,6 @@ class GeminiCommentator:
         if res['top_candidates']:
             self.last_pv = res['top_candidates'][0]['future_sequence'].split(" -> ")
 
-        # 現在の盤面を復元 (Simulator使用)
         self.simulator.board_size = board_size
         self.detector.board_size = board_size
         curr_b, _, _ = self.simulator.reconstruct(history)
@@ -72,7 +87,6 @@ class GeminiCommentator:
         for c in res['top_candidates']:
             pv_str = c.get('future_sequence', "")
             pv_list = [m.strip() for m in pv_str.split("->")] if pv_str else []
-            # 将来予測
             future_facts = self._analyze_pv_shapes(curr_b, pv_list, player_color)
             candidates_data.append({
                 "move": c['move'],
@@ -93,7 +107,6 @@ class GeminiCommentator:
         kn = self._load_knowledge()
         player = "黒" if (move_idx % 2 == 0) else "白" 
         
-        # 現在の盤面検知 (Simulator使用)
         self.simulator.board_size = board_size
         self.detector.board_size = board_size
         curr_b, prev_b, last_c = self.simulator.reconstruct(history)

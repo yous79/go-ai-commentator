@@ -10,6 +10,8 @@ from sgfmill import boards
 from utils.board_renderer import GoBoardRenderer
 
 class TermGenerator:
+    """囲碁用語に基づいて盤面画像を生成するクラス"""
+    
     def __init__(self, board_size=9, image_size=500):
         self.board_size = board_size
         self.renderer = GoBoardRenderer(board_size, image_size=image_size)
@@ -50,10 +52,9 @@ class TermGenerator:
         board.play(c, c + 1, opp)
         target = (c + 1, c + 1)
         board.play(*target, color)
-        return self._save(board, target, f"{'黒' if color=='b' else '白'}のハネ", f"hane_{color}.png", output_dir)
+        return self._save(board, target, f"{'黒' if color=='b' else 'white' if color=='w' else ''}のハネ", f"hane_{color}.png", output_dir)
 
     def generate_atari_basic(self, color='b', output_dir="output_terms"):
-        """基本：中央でのアタリ"""
         board = boards.Board(self.board_size)
         opp = 'w' if color == 'b' else 'b'
         c = self.board_size // 2
@@ -61,44 +62,32 @@ class TermGenerator:
         board.play(c+1, c, color); board.play(c-1, c, color)
         target = (c, c+1)
         board.play(*target, color)
-        text = f"アタリ (中央): ダメが残り1つ (座標 {self.cols[c-1]}{c+1})"
+        text = f"アタリ (中央): ダメが残り1つ"
         return self._save(board, target, text, f"atari_basic_{color}.png", output_dir)
 
-    def generate_atari_edge(self, color='b', output_dir="output_terms"):
-        """バリエーション1：1線（端）でのアタリ"""
-        board = boards.Board(self.board_size)
-        opp = 'w' if color == 'b' else 'b'
-        # 1線(端)に相手の石を置く
-        board.play(0, 4, opp)
-        # 端なので、2方向を塞げばアタリになる
-        board.play(0, 3, color)
-        target = (1, 4)
-        board.play(*target, color)
-        text = "アタリ (端): 盤面の端を利用してダメを1つにする"
-        return self._save(board, target, text, f"atari_edge_{color}.png", output_dir)
-
-    def generate_atari_group(self, color='b', output_dir="output_terms"):
-        """バリエーション2：複数の石（連）へのアタリ"""
+    def generate_nimoku_no_atama(self, color='b', output_dir="output_terms"):
+        """
+        二目の頭をハネる: 互いに2石ずつ競り合っている状態から相手の頭を抑える
+        """
         board = boards.Board(self.board_size)
         opp = 'w' if color == 'b' else 'b'
         c = self.board_size // 2
-        # 相手の石が2つ並んでいる (4, 4) と (4, 5)
+        
+        # 相手の2石を並べる (D4, D5相当)
+        board.play(c-1, c, opp)
         board.play(c, c, opp)
-        board.play(c, c+1, opp)
         
-        # 周囲のダメを5箇所埋める (合計6箇所のうち5箇所)
-        # (3, 4), (3, 5), (5, 4), (5, 5), (4, 3), (4, 6)
-        surrounds = [(c-1, c), (c-1, c+1), (c+1, c), (c+1, c+1), (c, c-1)]
-        for r, col_idx in surrounds:
-            board.play(r, col_idx, color)
-            
-        # 最後のダメ (c, c+2) が空いている状態で、
-        # アタリを確定させた最後の一手 (c, c-1) を強調表示する
-        # ※surroundsの最後 (c, c-1) が target に相当する
-        target = (c, c-1)
+        # 自分の支えとなる2石を並べる (E4, E5相当)
+        board.play(c-1, c+1, color)
+        board.play(c, c+1, color)
         
-        text = "アタリ (連): 複数の石の共通ダメが残り1つの状態"
-        return self._save(board, target, text, f"atari_group_{color}.png", output_dir)
+        # 相手の「頭」をハネる決定打 (D6相当)
+        target = (c+1, c)
+        board.play(*target, color)
+        
+        c_name = "黒" if color == 'b' else "白"
+        text = f"{c_name}が「二目の頭」をハネた形"
+        return self._save(board, target, text, f"nimoku_no_atama_{color}.png", output_dir)
 
 if __name__ == "__main__":
     gen = TermGenerator(9)
@@ -107,6 +96,5 @@ if __name__ == "__main__":
         gen.generate_nobi(color)
         gen.generate_hane(color)
         gen.generate_atari_basic(color)
-        gen.generate_atari_edge(color)
-        gen.generate_atari_group(color)
-    print(f"Generated Atari patterns in {os.path.abspath('output_terms')}")
+        gen.generate_nimoku_no_atama(color)
+    print(f"Generated accurate 'Nimoku no Atama' in {os.path.abspath('output_terms')}")
