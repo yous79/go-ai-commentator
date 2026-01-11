@@ -12,8 +12,14 @@ class BoardSimulator:
         curr = boards.Board(self.board_size)
         prev = boards.Board(self.board_size)
         
-        for i, (c_str, m_str) in enumerate(history):
-            if not m_str or m_str.lower() == "pass":
+        for i, move_data in enumerate(history):
+            # 履歴データの形式チェック (リスト/タプルで長さ2以上)
+            if not isinstance(move_data, (list, tuple)) or len(move_data) < 2:
+                continue
+            
+            c_str, m_str = move_data[0], move_data[1]
+            
+            if not m_str or (isinstance(m_str, str) and m_str.lower() == "pass"):
                 if i < len(history) - 1:
                     # パスの場合でも手番が進むので、prevの状態管理が必要ならここに記述
                     # 今回は盤面配置のみ重要なのでスキップ

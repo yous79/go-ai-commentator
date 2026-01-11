@@ -1,183 +1,135 @@
 from google import genai
 from google.genai import types
 import os
-import concurrent.futures
+import asyncio
+import threading
+import json
 from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME
-from drivers.katago_driver import KataGoDriver
-from core.shape_detector import ShapeDetector
-from core.board_simulator import BoardSimulator
-from prompts.templates import (
-    get_unified_system_instruction,
-    get_integrated_request_prompt
-)
-from sgfmill import boards
+from prompts.templates import get_unified_system_instruction, get_integrated_request_prompt
 
 class GeminiCommentator:
-    def __init__(self, api_key, katago_driver: KataGoDriver):
+    def __init__(self, api_key):
         self.client = genai.Client(api_key=api_key)
-        self.katago = katago_driver
-        self.detector = ShapeDetector()
-        self.simulator = BoardSimulator()
         self.last_pv = None 
         self._knowledge_cache = None
-        self.chat_history = []
+        self.mcp_config = {
+            "katago": {
+                "command": "python",
+                "args": [os.path.join(os.path.dirname(os.path.dirname(__file__)), "mcp_server.py")]
+            }
+        }
 
     def _load_knowledge(self):
-        """知識ベースをカテゴリー別に構造化してロードする"""
         if self._knowledge_cache: return self._knowledge_cache
-        
         kn_text = "\n=== 囲碁知識ベース (用語辞書) ===\n"
-        if not os.path.exists(KNOWLEDGE_DIR):
-            return kn_text
-
-        # カテゴリーごとにスキャン
-        for category in sorted(os.listdir(KNOWLEDGE_DIR)):
-            cat_path = os.path.join(KNOWLEDGE_DIR, category)
-            if not os.path.isdir(cat_path): continue
-            
-            cat_label = "【重要：悪形・失着】" if "bad_shapes" in category else "【一般手筋・概念】"
-            kn_text += f"\n{cat_label}\n"
-            
-            # 各用語フォルダをスキャン
-            for term_dir in sorted(os.listdir(cat_path)):
-                term_path = os.path.join(cat_path, term_dir)
-                if not os.path.isdir(term_path): continue
-                
-                term_name = term_dir.replace("_", " ").title()
-                kn_text += f"◆ {term_name}:\n"
-                
-                # テキストファイルの内容を集約
-                import glob
-                for f_name in glob.glob(os.path.join(term_path, "*.txt")):
-                    try:
-                        with open(f_name, "r", encoding="utf-8") as f:
-                            content = f.read().strip()
-                            if content:
-                                kn_text += f"  - {content}\n"
-                    except: pass
-        
+        if os.path.exists(KNOWLEDGE_DIR):
+            for category in sorted(os.listdir(KNOWLEDGE_DIR)):
+                cat_path = os.path.join(KNOWLEDGE_DIR, category)
+                if not os.path.isdir(cat_path): continue
+                cat_label = "【重要：悪形・失着】" if "bad_shapes" in category else "【一般手筋・概念】"
+                kn_text += f"\n{cat_label}\n"
+                for term_dir in sorted(os.listdir(cat_path)):
+                    term_path = os.path.join(cat_path, term_dir)
+                    if not os.path.isdir(term_path): continue
+                    kn_text += f"◆ {term_dir.replace('_', ' ').title()}:\n"
+                    import glob
+                    for f_name in glob.glob(os.path.join(term_path, "*.txt")):
+                        try:
+                            with open(f_name, "r", encoding="utf-8") as f:
+                                kn_text += f"  - {f.read().strip()}\n"
+                        except: pass
         self._knowledge_cache = kn_text
         return kn_text
 
-    def _analyze_pv_shapes(self, base_board, pv_list, start_color):
-        """Simulatorを使用してPVの変化を検知"""
-        all_facts = []
-        for move_str, sim_board, prev_board, current_color in self.simulator.simulate_pv(base_board, pv_list, start_color):
-            if not prev_board: continue
-            facts = self.detector.detect_all(sim_board, prev_board, current_color)
-            if facts:
-                all_facts.append(f"  [進行中 {move_str}]:\n{facts}")
-        return "\n".join(all_facts) if all_facts else "特になし"
-
-    def consult_katago_tool(self, history, board_size=19):
-        """Geminiが呼び出すツール本体"""
-        print(f"DEBUG: Tool called by Gemini. Analyzing history of length {len(history)}.")
-        res = self.katago.analyze_situation(history, board_size=board_size, priority=True)
-        if "error" in res: return {"error": res["error"]}
-        
-        if res['top_candidates']:
-            self.last_pv = res['top_candidates'][0]['future_sequence'].split(" -> ")
-
-        self.simulator.board_size = board_size
-        self.detector.board_size = board_size
-        curr_b, _, _ = self.simulator.reconstruct(history)
-        player_color = "B" if len(history) % 2 == 0 else "W"
-        
-        candidates_data = []
-        for c in res['top_candidates']:
-            pv_str = c.get('future_sequence', "")
-            pv_list = [m.strip() for m in pv_str.split("->")] if pv_str else []
-            future_facts = self._analyze_pv_shapes(curr_b, pv_list, player_color)
-            candidates_data.append({
-                "move": c['move'],
-                "winrate_black": f"{c['winrate']:.1%}",
-                "score_lead_black": f"{c['score']:.1f}",
-                "future_sequence": pv_str,
-                "future_shape_analysis": future_facts
-            })
-        return {
-            "winrate_black": f"{res['winrate']:.1%}",
-            "score_lead_black": f"{res['score']:.1f}",
-            "top_candidates": candidates_data
-        }
-
     def generate_commentary(self, move_idx, history, board_size=19):
-        """統合知能モードによる解説生成"""
-        self.last_pv = None
         kn = self._load_knowledge()
-        player = "黒" if (move_idx % 2 == 0) else "白" 
-        
-        self.simulator.board_size = board_size
-        self.detector.board_size = board_size
-        curr_b, prev_b, last_c = self.simulator.reconstruct(history)
-        
-        shape_facts = self.detector.detect_all(curr_b, prev_b, last_c)
-        if shape_facts:
-            shape_facts = f"\n【重要：現時点の盤面から検知された事実】\n{shape_facts}\n"
-
+        player = "黒" if (move_idx % 2 == 0) else "白"
         sys_inst = get_unified_system_instruction(board_size, player, kn)
         user_prompt = get_integrated_request_prompt(move_idx, history)
-        full_user_prompt = shape_facts + user_prompt
         
         safety = [types.SafetySetting(category=c, threshold='BLOCK_NONE') for c in [
             'HARM_CATEGORY_HATE_SPEECH', 'HARM_CATEGORY_HARASSMENT', 
             'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'HARM_CATEGORY_DANGEROUS_CONTENT'
         ]]
 
-        config = types.GenerateContentConfig(
-            system_instruction=sys_inst,
-            tools=[types.Tool(function_declarations=[types.FunctionDeclaration(
-                name="consult_katago_tool",
-                description="KataGoを使用して現在の盤面を解析し、将来の変化図における形状変化も予測します。",
-                parameters=types.Schema(type="OBJECT", properties={
-                    "moves_list": types.Schema(
-                        type="ARRAY", 
-                        items=types.Schema(type="ARRAY", items=types.Schema(type="STRING")),
-                        description="対局の着手履歴 [[カラー, 座標], ...]"
-                    )
-                }, required=["moves_list"])
-            )])],
-            safety_settings=safety
-        )
-
         try:
-            def consult_katago_wrapper(moves_list):
-                return self.consult_katago_tool(moves_list, board_size)
-
             response = self.client.models.generate_content(
                 model=GEMINI_MODEL_NAME,
-                contents=[types.Content(role="user", parts=[types.Part(text=full_user_prompt)])],
-                config=config
+                contents=user_prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=sys_inst,
+                    tools=[
+                        {
+                            "function_declarations": [
+                                {
+                                    "name": "katago_analyze",
+                                    "description": "KataGoで盤面を解析します。",
+                                    "parameters": {"type": "OBJECT", "properties": {"history": {"type": "ARRAY", "items": {"type": "ARRAY", "items": {"type": "STRING"}}}}, "required": ["history"]}
+                                },
+                                {
+                                    "name": "detect_shapes",
+                                    "description": "悪形や手筋を検出します。",
+                                    "parameters": {"type": "OBJECT", "properties": {"history": {"type": "ARRAY", "items": {"type": "ARRAY", "items": {"type": "STRING"}}}}, "required": ["history"]}
+                                }
+                            ]
+                        }
+                    ],
+                    tool_config=types.ToolConfig(function_calling_config=types.FunctionCallingConfig(mode='AUTO')),
+                    safety_settings=safety
+                )
             )
 
-            max_iterations = 5
-            for _ in range(max_iterations):
-                if not response.candidates or not response.candidates[0].content.parts: break
-                found_fc = next((p.function_call for p in response.candidates[0].content.parts if p.function_call), None)
-                if not found_fc: break
-                
-                if found_fc.name == "consult_katago_tool":
-                    args = found_fc.args
-                    moves = args.get("moves_list", [])
-                    result = consult_katago_wrapper(moves)
-                    response = self.client.models.generate_content(
-                        model=GEMINI_MODEL_NAME,
-                        contents=[
-                            types.Content(role="user", parts=[types.Part(text=full_user_prompt)]),
-                            response.candidates[0].content,
-                            types.Content(role="tool", parts=[types.Part(
-                                function_response=types.FunctionResponse(name="consult_katago_tool", response=result)
-                            )])
-                        ],
-                        config=config
-                    )
-                else: break
+            final_response = self._process_mcp_requests(response, history, board_size, sys_inst, safety)
+            
+            return final_response.text if final_response.text else "解析に失敗しました。"
 
-            return response.text if response.text else "解析データに基づいた回答が得られませんでした。"
         except Exception as e:
             import traceback
             traceback.print_exc()
-            return f"ERROR: 統合知能モード例外 ({str(e)})"
+            return f"ERROR: MCP連携モード例外 ({str(e)})\n"
 
-    def reset_chat(self):
-        self.chat_history = []
+    def _process_mcp_requests(self, response, history, board_size, sys_inst, safety):
+        from mcp_server import handle_call_tool 
+        
+        max_iters = 5
+        current_resp = response
+        
+        for _ in range(max_iters):
+            if not current_resp.candidates or not current_resp.candidates[0].content.parts:
+                break
+            
+            fc = next((p.function_call for p in current_resp.candidates[0].content.parts if p.function_call), None)
+            if not fc: break
+            
+            print(f"DEBUG: Relaying to MCP tool: {fc.name}")
+            args = fc.args
+            
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            mcp_res_list = loop.run_until_complete(handle_call_tool(fc.name, args))
+            loop.close()
+            
+            result_data = mcp_res_list[0].text if mcp_res_list else "Error"
+            
+            if fc.name == "katago_analyze":
+                try:
+                    data = json.loads(result_data)
+                    if data.get('top_candidates'):
+                        self.last_pv = data['top_candidates'][0]['future_sequence'].split(" -> ")
+                except: pass
+
+            next_prompt = get_integrated_request_prompt(len(history), history)
+            
+            current_resp = self.client.models.generate_content(
+                model=GEMINI_MODEL_NAME,
+                contents=[
+                    types.Content(role="user", parts=[types.Part(text=next_prompt)]),
+                    current_resp.candidates[0].content,
+                    types.Content(role="tool", parts=[types.Part(
+                        function_response=types.FunctionResponse(name=fc.name, response={"result": result_data})
+                    )])
+                ],
+                config=types.GenerateContentConfig(system_instruction=sys_inst, safety_settings=safety)
+            )
+            
+        return current_resp

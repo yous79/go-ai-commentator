@@ -67,12 +67,15 @@ class GoReplayApp:
 
     def _init_ai(self):
         api_key = load_api_key()
-        if api_key and os.path.exists(KATAGO_EXE):
+        if api_key:
             try:
-                # Singleton KataGoDriver
+                # Note: AICommentator now manages its own MCP-based connection
+                self.gemini = GeminiCommentator(api_key)
+                
+                # AnalysisManager still needs a driver for background tasks
+                # We reuse the singleton KataGoDriver here for now.
                 self.katago_driver = KataGoDriver(KATAGO_EXE, KATAGO_CONFIG, KATAGO_MODEL)
-                self.gemini = GeminiCommentator(api_key, self.katago_driver)
-                print("AI Services Initialized.")
+                print("AI Services (MCP-ready) Initialized.")
             except Exception as e:
                 print(f"AI Init Failed: {e}")
 
