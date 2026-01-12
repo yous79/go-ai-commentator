@@ -1,397 +1,840 @@
-INFO:     Started server process [38764]
+DEBUG: KataGo Engine started.
+INFO:     Started server process [28984]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:60465 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60475 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60788 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60791 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60790 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60789 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60792 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60793 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60821 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60822 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61095 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61096 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61097 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61098 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61099 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61100 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61101 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61102 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61130 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61132 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61131 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61133 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61134 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57672 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57673 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57674 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57675 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57676 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57677 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57678 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57679 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57680 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57681 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57682 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57683 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57684 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57685 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57686 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57687 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57688 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57689 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57690 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57691 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57695 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57696 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57697 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57698 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57699 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57700 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57701 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57702 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57703 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57704 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57705 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57706 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57707 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57708 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57709 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57710 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57711 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57712 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57713 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57714 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55840 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55841 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55842 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55843 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55844 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55845 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55847 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55846 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55848 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55849 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55850 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55851 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55852 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55853 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55854 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55855 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55856 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55857 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55858 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55859 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:54749 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54752 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54754 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54755 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54756 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54757 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54758 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54759 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54760 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54761 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54762 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54763 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54764 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54765 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54766 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54767 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54768 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54769 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54770 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54771 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54772 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64192 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56203 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56204 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     Started server process [34756]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:59550 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59551 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59552 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59553 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59554 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59555 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59556 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59557 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59558 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59559 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59561 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59562 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59563 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59564 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59565 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59566 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59567 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59568 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: KataGo Engine started.
+INFO:     Started server process [9024]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:50638 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50639 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50640 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50641 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50642 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50643 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50644 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50645 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50646 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50647 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50648 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50649 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50650 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50651 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: KataGo Engine started.
+INFO:     Started server process [30928]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:60534 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60535 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60536 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60537 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60538 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60539 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60540 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60543 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60544 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60545 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60546 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60547 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60548 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60549 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60550 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60551 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60552 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60553 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60554 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60556 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: KataGo Engine started.
+INFO:     Started server process [4156]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:51811 - "GET /health HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51812 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51813 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51814 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51815 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51817 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51818 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51819 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51820 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51821 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51822 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51823 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51824 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51825 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51826 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51827 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51828 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51829 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51830 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG DRIVER: 'ownership' field is missing or None in rootInfo.
+INFO:     127.0.0.1:51831 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: KataGo Engine started.
+INFO:     Started server process [52964]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:64131 - "GET /health HTTP/1.1" 200 OK
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64133 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64132 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64134 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64135 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64136 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64139 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64138 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64137 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64142 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64141 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64140 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64143 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64144 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64145 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64146 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64147 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64148 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64149 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64150 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64151 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64154 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64152 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64153 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64155 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64156 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64157 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64158 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64159 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64160 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64161 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64162 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64163 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64164 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64165 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64166 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64167 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64168 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64170 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64169 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64171 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64172 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64174 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64173 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64175 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64176 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64177 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64178 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64179 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64180 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64181 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64182 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64183 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64184 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64185 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64186 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64187 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64188 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64190 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64189 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64191 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64192 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64193 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64194 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64195 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64196 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64197 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64198 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64199 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64200 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64201 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64202 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64203 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64204 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64205 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64206 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64207 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64208 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64209 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64210 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64211 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64212 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64213 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64214 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64215 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64216 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64217 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64218 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64219 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64220 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64221 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64222 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64223 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64224 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64225 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 56, in analyze
+    res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+TypeError: KataGoDriver.analyze_situation() got an unexpected keyword argument 'visits'
+INFO:     127.0.0.1:64226 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+DEBUG: KataGo Engine started.
+INFO:     Started server process [52752]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:63343 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63344 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63345 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63346 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63347 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63348 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63349 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63350 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63351 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63352 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63353 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63354 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: KataGo Engine started.
+INFO:     Started server process [48172]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:63365 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63366 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63367 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63368 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63369 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63370 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63371 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63372 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63373 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63374 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62048 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62049 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: KataGo Engine started.
+INFO:     Started server process [12248]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:59157 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59158 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59159 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59160 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59161 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59162 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59165 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59166 - "POST /analyze HTTP/1.1" 200 OK
+Task exception was never retrieved
+future: <Task finished name='Task-22' coro=<IocpProactor.accept.<locals>.accept_coro() done, defined at C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\asyncio\windows_events.py:564> exception=OSError(22, '指定されたネットワーク名は利用できません。', None, 64, None)>
+Traceback (most recent call last):
+  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\asyncio\windows_events.py", line 567, in accept_coro
+    await future
+  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\asyncio\windows_events.py", line 804, in _poll
+    value = callback(transferred, key, ov)
+  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\asyncio\windows_events.py", line 556, in finish_accept
+    ov.getresult()
+    ~~~~~~~~~~~~^^
+OSError: [WinError 64] 指定されたネットワーク名は利用できません。
+Accept failed on a socket
+socket: <asyncio.TransportSocket fd=572, family=2, type=1, proto=6, laddr=('127.0.0.1', 8000)>
+Traceback (most recent call last):
+  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\asyncio\proactor_events.py", line 843, in loop
+    conn, addr = f.result()
+                 ~~~~~~~~^^
+OSError: [WinError 64] 指定されたネットワーク名は利用できません。
+DEBUG: KataGo Engine started.
+INFO:     Started server process [34356]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:64254 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64256 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64255 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64257 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64258 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64259 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64260 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64261 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64262 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64263 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64265 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64266 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64267 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64268 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64269 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64270 - "POST /analyze HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64271 - "POST /analyze HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64272 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64273 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64274 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64275 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64276 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64277 - "POST /analyze HTTP/1.1" 200 OK
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:64278 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:64280 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:64283 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:64286 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:64288 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51813 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51814 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51815 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51816 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51817 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51818 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51819 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51820 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51822 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51823 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51826 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51827 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51828 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51829 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
-    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: not enough values to unpack (expected 4, got 3)
-INFO:     127.0.0.1:51830 - "POST /analyze HTTP/1.1" 500 Internal Server Error
-INFO:     Started server process [37908]
+DEBUG: KataGo Engine started.
+INFO:     Started server process [44632]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:64282 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64283 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64284 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64286 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64285 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64291 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64292 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64293 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64294 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64295 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64296 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64297 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64298 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65108 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65109 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58278 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58279 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58280 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58281 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:51835 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64152 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64156 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64158 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64159 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64160 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64161 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64162 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64163 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64164 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64165 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64166 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64167 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64168 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64169 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64170 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64171 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64172 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64173 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64174 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64175 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53461 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53462 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53463 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53464 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53465 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53466 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53467 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53468 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53469 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53470 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53471 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53472 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64935 - "POST /detect HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64941 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-INFO:     127.0.0.1:60372 - "POST /detect HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60375 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55814 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55817 - "POST /detect HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61931 - "POST /analyze HTTP/1.1" 200 OK
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\site-packages\sgfmill\common.py", line 22, in opponent_of
-    return _opponents[colour]
-           ~~~~~~~~~~^^^^^^^^
-KeyError: 'b,'
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 101, in detect
-    curr_b, prev_b, last_c = simulator.reconstruct(clean_history)
-                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\core\board_simulator.py", line 28, in reconstruct
-    prev.play(row, col, c_str.lower())
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\site-packages\sgfmill\boards.py", line 188, in play
-    opponent = opponent_of(colour)
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\site-packages\sgfmill\common.py", line 24, in opponent_of
-    raise ValueError
-ValueError
-INFO:     127.0.0.1:61934 - "POST /detect HTTP/1.1" 500 Internal Server Error
-INFO:     127.0.0.1:63891 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63892 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63893 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63894 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63895 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63896 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63897 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63898 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63899 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63900 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63901 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63902 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63903 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63904 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63905 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63906 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63907 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63908 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63909 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63910 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63911 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63912 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63913 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63914 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63915 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63916 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63917 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54763 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55716 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58918 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52796 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52797 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52798 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52799 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52800 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52801 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52802 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52803 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52804 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52805 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52806 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52807 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52808 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52809 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52810 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52811 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52812 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52814 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52815 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52816 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52817 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52818 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52819 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52820 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52821 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52822 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52823 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52828 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\site-packages\sgfmill\common.py", line 22, in opponent_of
-    return _opponents[colour]
-           ~~~~~~~~~~^^^^^^^^
-KeyError: 'e7'
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 101, in detect
-    curr_b, prev_b, last_c = simulator.reconstruct(clean_history)
-                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\core\board_simulator.py", line 29, in reconstruct
-    curr.play(row, col, c_str.lower())
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\site-packages\sgfmill\boards.py", line 188, in play
-    opponent = opponent_of(colour)
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\site-packages\sgfmill\common.py", line 24, in opponent_of
-    raise ValueError
-ValueError
-INFO:     127.0.0.1:52831 - "POST /detect HTTP/1.1" 500 Internal Server Error
-INFO:     127.0.0.1:60020 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56033 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56037 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56039 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56040 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56041 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56042 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56043 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56044 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56045 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56046 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56047 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56048 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56049 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56050 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56051 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56052 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56053 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56054 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56055 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56056 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56057 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56058 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56059 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56060 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56061 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56062 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56063 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56064 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56065 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56806 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56809 - "POST /detect HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65275 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65280 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65282 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65283 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65284 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65285 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65286 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65287 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65288 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65289 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65290 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65291 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65292 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65293 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65294 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65295 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65296 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65297 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65298 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65299 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65300 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65301 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65302 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65303 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65304 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65305 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65306 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65307 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65308 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55346 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55350 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55352 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55354 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55355 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55356 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55357 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55358 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55359 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55360 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55361 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55362 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55363 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55364 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55365 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55366 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55367 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55368 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55369 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55370 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55371 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55372 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55373 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55374 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55375 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55376 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55377 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55378 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55379 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55380 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55381 - "POST /detect HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55385 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55386 - "POST /detect HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62065 - "POST /analyze HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62066 - "POST /detect HTTP/1.1" 200 OK
+INFO:     Started server process [24752]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:58293 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58295 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58294 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58296 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58297 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58298 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58299 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58300 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58301 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58302 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58303 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58304 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58305 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58306 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58307 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58308 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58309 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58310 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58311 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: KataGo Engine started.
+INFO:     Started server process [45528]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:60226 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60227 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60228 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60229 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60230 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60231 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60232 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60233 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60234 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60235 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60236 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60237 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60239 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60240 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60241 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60245 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60246 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60247 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60248 - "POST /analyze HTTP/1.1" 200 OK

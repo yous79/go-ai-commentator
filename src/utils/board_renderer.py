@@ -34,7 +34,7 @@ class GoBoardRenderer:
 
     def render(self, board, last_move=None, analysis_text="", history=None, show_numbers=False, marks=None, review_stones=None):
         """
-        review_stones: [((r, c), color, number), ...]
+        純粋な盤面レンダリング (Ownershipオーバーレイを削除)
         """
         # 解析テキストがある場合のみ高さを追加する
         height = self.image_size + (100 if analysis_text else 0)
@@ -51,7 +51,7 @@ class GoBoardRenderer:
             draw.line([(x, m), (x, m + (sz-1)*gs)], fill=self.color_line, width=2)
             draw.line([(m, y), (m + (sz-1)*gs, y)], fill=self.color_line, width=2)
             
-            # Labels (Top/Bottom/Left/Right)
+            # Labels
             self._draw_centered_text(draw, x, m - 30, cols[i], self.font, "black")
             self._draw_centered_text(draw, x, m + (sz-1)*gs + 30, cols[i], self.font, "black")
             self._draw_centered_text(draw, m - 30, y, str(sz - i), self.font, "black")
@@ -65,7 +65,8 @@ class GoBoardRenderer:
         stone_to_num = {}
         if history and show_numbers:
             for i, mv in enumerate(history):
-                idx = self.transformer.gtp_to_indices(mv[1])
+                from core.coordinate_transformer import CoordinateTransformer
+                idx = CoordinateTransformer.gtp_to_indices_static(mv[1])
                 if idx: stone_to_num[idx] = i + 1
 
         rad = gs // 2 - 2
@@ -108,8 +109,7 @@ class GoBoardRenderer:
                         for (rr, cc), col, n in review_stones:
                             if rr == r and cc == c: stone_color = col.lower(); break
                     mark_color = "white" if stone_color == 'b' else "black"
-                    size = int(rad * 0.6)
-                    w = 5
+                    size = int(rad * 0.6); w = 5
                     if shape == "square":
                         rect = [(px-size, py-size), (px+size, py-size), (px+size, py+size), (px-size, py+size), (px-size, py-size)]
                         draw.line(rect, fill=mark_color, width=w, joint="round")
@@ -137,7 +137,8 @@ class GoBoardRenderer:
         draw = ImageDraw.Draw(img)
         curr_color = starting_color
         for i, m_str in enumerate(pv_list[:10]):
-            idx_pair = self.transformer.gtp_to_indices(m_str)
+            from core.coordinate_transformer import CoordinateTransformer
+            idx_pair = CoordinateTransformer.gtp_to_indices_static(m_str)
             if idx_pair:
                 px, py = self.transformer.indices_to_pixel(idx_pair[0], idx_pair[1])
                 fill = self.color_black if curr_color == "B" else self.color_white

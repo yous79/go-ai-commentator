@@ -42,7 +42,7 @@ class AnalysisManager:
         self.stop_requested = threading.Event()
         self.image_writer = None
         self.api_url = "http://127.0.0.1:8000/analyze"
-        self.batch_size = 4 # 並列リクエスト数
+        self.batch_size = 2 # 安定性のために並列数を2に下げる
 
     def start_analysis(self, sgf_path):
         self.stop_analysis()
@@ -56,12 +56,20 @@ class AnalysisManager:
         if self.image_writer: self.image_writer.stop()
 
     def _analyze_single_move(self, m_num, history, board_size):
-        """APIを叩いて1手分を解析する (スレッド用)"""
+        # 0手目（初期状態）は解析をスキップして固定値を返す
+        if m_num == 0:
+            return 0, {
+                "winrate_black": 0.47, # コミありの初期勝率
+                "score_lead_black": 0.0,
+                "ownership_black": [0.0] * (board_size * board_size),
+                "top_candidates": []
+            }
+
         for attempt in range(5):
-            if self.stop_requested.is_set(): return None
+            if self.stop_requested.is_set(): return m_num, None
             try:
                 resp = requests.post(self.api_url, 
-                                     json={"history": history, "board_size": board_size}, 
+                                     json={"history": history, "board_size": board_size, "visits": 500}, 
                                      timeout=60)
                 if resp.status_code == 200:
                     return m_num, resp.json()
@@ -81,7 +89,6 @@ class AnalysisManager:
                 game = sgf.Sgf_game.from_bytes(f.read())
             board_size = game.get_size()
             
-            # 全手順の展開と履歴の構築
             nodes = []
             curr_node = game.get_root()
             while True:
@@ -92,7 +99,6 @@ class AnalysisManager:
             total_moves = len(nodes)
             self.app_queue.put(("set_max", total_moves))
             
-            # 手数ごとの history と board 状態を事前に準備
             all_tasks = []
             history = []
             temp_board = boards.Board(board_size)
@@ -105,14 +111,12 @@ class AnalysisManager:
                 elif color: # pass
                     history.append(["B" if color == 'b' else "W", "pass"])
                 
-                # スナップショットを保存
                 all_tasks.append({
                     "m_num": m_num,
                     "history": list(history),
                     "board": temp_board.copy()
                 })
 
-            # 並列解析の実行
             log = {"board_size": board_size, "moves": [None] * total_moves}
             completed_count = 0
 
@@ -122,22 +126,19 @@ class AnalysisManager:
                 for future in concurrent.futures.as_completed(future_to_move):
                     if self.stop_requested.is_set(): break
                     
-                    m_num, ans = future.result()
+                    res = future.result()
+                    if not res: continue
+                    m_num, ans = res
                     if ans:
-                        # データの整理
-                        move_data = {
-                            "move_number": m_num,
-                            "winrate": ans.get('winrate_black', 0.5),
-                            "score": ans.get('score_lead_black', 0.0),
-                            "candidates": [{
-                                "move": c['move'], "winrate": c.get('winrate_black', 0.5),
-                                "scoreLead": c.get('score_lead_black', 0.0),
-                                "pv": [m.strip() for m in c.get('future_sequence', "").split("->")]
-                            } for c in ans.get('top_candidates', [])]
-                        }
+                        move_data = ans
+                        move_data["move_number"] = m_num
+                        # Alias for UI
+                        move_data["winrate"] = ans.get("winrate_black")
+                        move_data["score"] = ans.get("score_lead_black")
+                        move_data["candidates"] = ans.get("top_candidates", [])
+                        
                         log["moves"][m_num] = move_data
                         
-                        # 画像生成（順次）
                         task_info = all_tasks[m_num]
                         img_text = f"Move {m_num} | Winrate(B): {move_data['winrate']:.1%} | Score(B): {move_data['score']:.1f}"
                         self.image_writer.add_task(task_info["board"], None, img_text, task_info["history"], m_num)
@@ -145,15 +146,19 @@ class AnalysisManager:
                         completed_count += 1
                         self.app_queue.put(("progress", completed_count))
                         
-                        # JSON更新
+                        # Save
                         json_path = os.path.join(out_dir, "analysis.json")
                         with open(json_path + ".tmp", "w", encoding="utf-8") as f:
                             json.dump(log, f, indent=2, ensure_ascii=False)
-                        os.replace(json_path + ".tmp", json_path)
+                        
+                        for _ in range(5):
+                            try:
+                                os.replace(json_path + ".tmp", json_path)
+                                break
+                            except PermissionError: time.sleep(0.1)
 
             self.analyzing = False
             self.app_queue.put(("done", None))
         except Exception as e:
-            print(f"FATAL ERROR in Batch Analysis: {e}")
             traceback.print_exc()
             self.analyzing = False

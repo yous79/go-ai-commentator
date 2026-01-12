@@ -72,7 +72,7 @@ class InfoView(tk.Frame):
         # 6. モード切替
         mode_frame = tk.Frame(self, bg="#f0f0f0")
         mode_frame.pack(fill=tk.X, pady=5)
-        self.review_mode = tk.BooleanVar(value=True)
+        self.review_mode = tk.BooleanVar(value=False) # デフォルトOFF
         tk.Checkbutton(mode_frame, text="候補手の表示", variable=self.review_mode, 
                        command=self.callbacks['update_display'], bg="#f0f0f0").pack(side=tk.LEFT)
         self.edit_mode = tk.BooleanVar(value=False)

@@ -19,9 +19,7 @@ class KataGoDriver:
         return cls._instance
 
     def __init__(self, katago_path=None, config_path=None, model_path=None):
-        if self._initialized:
-            return
-            
+        if self._initialized: return
         self.katago_path = katago_path
         self.config_path = config_path
         self.model_path = model_path
@@ -32,55 +30,34 @@ class KataGoDriver:
         self._initialized = True
 
     def start_engine(self):
-        if self.process and self.process.poll() is None:
-            return
-
-        cmd = [
-            self.katago_path, "analysis",
-            "-config", self.config_path,
-            "-model", self.model_path
-        ]
+        if self.process and self.process.poll() is None: return
+        cmd = [self.katago_path, "analysis", "-config", self.config_path, "-model", self.model_path]
         env = os.environ.copy()
         env["PYTHONIOENCODING"] = "utf-8"
-        
         try:
             startupinfo = None
             if os.name == 'nt':
                 startupinfo = subprocess.STARTUPINFO()
                 startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-
-            self.process = subprocess.Popen(
-                cmd,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                bufsize=1,
-                startupinfo=startupinfo,
-                encoding='utf-8',
-                env=env
-            )
+            self.process = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                            text=True, bufsize=1, startupinfo=startupinfo, encoding='utf-8', env=env)
             threading.Thread(target=self._consume_stderr, daemon=True).start()
             print("DEBUG: KataGo Engine started.")
-        except Exception as e:
-            print(f"Error starting KataGo: {e}")
+        except Exception as e: print(f"Error starting KataGo: {e}")
 
     def _consume_stderr(self):
         with open("katago_debug.log", "w", encoding="utf-8") as f:
             while self.process and self.process.poll() is None:
                 line = self.process.stderr.readline()
                 if not line: break
-                f.write(line)
-                f.flush()
+                f.write(line); f.flush()
 
     def query(self, moves, board_size=19, visits=500, priority=False):
-        if not self.process or self.process.poll() is not None:
-            self.start_engine()
-
-        if priority:
-            self.priority_mode.set()
+        if not self.process or self.process.poll() is not None: self.start_engine()
+        if priority: self.priority_mode.set()
+        query_id = f"q_{{int(time.time() * 1000)}}"
         
-        query_id = f"q_{int(time.time() * 1000)}"
+        # KataGo Analysis Query Format
         query = {
             "id": query_id,
             "moves": moves,
@@ -89,116 +66,87 @@ class KataGoDriver:
             "boardXSize": board_size,
             "boardYSize": board_size,
             "includePolicy": False,
+            "includeOwnership": True,
+            "includeOwnershipStdev": False,
             "maxVisits": visits
         }
-
-        lock_timeout = 60 if priority else 1
         
+        lock_timeout = 60 if priority else 1
         try:
             lock_acquired = self.comm_lock.acquire(timeout=lock_timeout)
-            if not lock_acquired:
-                return {"error": "Engine busy"}
-
+            if not lock_acquired: return {"error": "Engine busy"}
             try:
-                self.process.stdin.write(json.dumps(query) + "\n")
-                self.process.stdin.flush()
-
+                self.process.stdin.write(json.dumps(query) + "\n"); self.process.stdin.flush()
                 start_time = time.time()
                 while True:
-                    if self.process.poll() is not None:
-                        return {"error": "Engine crashed"}
-                    
+                    if self.process.poll() is not None: return {"error": "Engine crashed"}
                     line = self.process.stdout.readline()
                     if not line:
-                        if time.time() - start_time > 30:
-                            return {"error": "Read timeout"}
-                        time.sleep(0.05)
-                        continue
-                    
+                        if time.time() - start_time > 30: return {"error": "Read timeout"}
+                        time.sleep(0.05); continue
                     try:
                         resp = json.loads(line)
                         if resp.get("id") == query_id:
                             return resp
-                    except json.JSONDecodeError:
-                        with open("katago_err.log", "a") as errf:
-                            errf.write(f"JSON Error: {line}\n")
-                        continue
+                    except: continue
             finally:
                 self.comm_lock.release()
-                if priority:
-                    self.priority_mode.clear()
+                if priority: self.priority_mode.clear()
         except Exception as e:
             if priority: self.priority_mode.clear()
             return {"error": str(e)}
         return {"error": "Unknown error"}
 
-    def analyze_situation(self, moves, board_size=19, priority=False):
-        # 厳密な座標変換をここでも保証
+    def analyze_situation(self, moves, board_size=19, priority=False, visits=500):
         clean_moves = []
         for m in moves:
-            if isinstance(m, list) and len(m) >= 2:
+            if isinstance(m, (list, tuple)) and len(m) >= 2:
                 clean_moves.append([str(m[0]).upper(), str(m[1]).lower()])
 
-        # 最新と1手前の盤面を再現して保持（ShapeDetector用）
-        from sgfmill import boards
-        b_curr = boards.Board(board_size)
-        b_prev = boards.Board(board_size)
-        
-        for i, (c_str, m_str) in enumerate(clean_moves):
-            if m_str.lower() != "pass":
-                try:
-                    col = "ABCDEFGHJKLMNOPQRST".index(m_str[0].upper())
-                    row = int(m_str[1:]) - 1
-                    if i < len(clean_moves) - 1:
-                        b_prev.play(row, col, c_str.lower())
-                    b_curr.play(row, col, c_str.lower())
-                except: pass
-        
-        self.prev_board = b_prev
-        self.last_board = b_curr
-        self.last_move_color = clean_moves[-1][0].lower() if clean_moves else None
-
-        data = self.query(clean_moves, board_size=board_size, priority=priority)
+        data = self.query(clean_moves, board_size=board_size, priority=priority, visits=visits)
         if "error" in data: return data
 
         root = data.get('rootInfo', {})
         cands = data.get('moveInfos', [])
-        if not cands: return {"error": "Empty analysis results"}
+        if not cands and not root: return {"error": "Empty analysis results"}
 
-        is_white_turn = (len(moves) % 2 != 0)
+        # 手番の特定 (次に打つのが白か黒か)
+        is_white_turn = (len(clean_moves) % 2 != 0)
         
-        # KataGo returns score from current player's perspective.
-        # We normalize everything to Black's perspective for consistent internal storage.
-        # If it is White's turn, root['scoreLead'] is White's lead. Black's lead is -scoreLead.
-        # root['winrate'] is White's winrate. Black's winrate is 1.0 - winrate.
-        
+        # 基本評価値の正規化 (黒番視点)
         current_winrate = root.get('winrate', 0.5)
         current_score = root.get('scoreLead', 0.0)
         
         final_winrate = 1.0 - current_winrate if is_white_turn else current_winrate
         final_score = -current_score if is_white_turn else current_score
         
+        # Ownershipの抽出と正規化
+        raw_ownership = root.get('ownership')
+        if raw_ownership:
+            # KataGoはNextPlayer視点で返すため、白番なら反転させる
+            final_ownership = [-v for v in raw_ownership] if is_white_turn else raw_ownership
+        else:
+            final_ownership = []
+
         res = {
-            "winrate": final_winrate,
-            "score": final_score,
+            "winrate": final_winrate, 
+            "score": final_score, 
+            "ownership": final_ownership, 
             "top_candidates": []
         }
 
-        for i, cand in enumerate(cands[:3]):
+        # 候補手の正規化
+        for cand in cands[:3]:
             pv = cand.get('pv', [])
-            pv_str = " -> ".join(pv[:6])
-            
             c_win = cand.get('winrate', 0.5)
             c_score = cand.get('scoreLead', 0.0)
-            
             res["top_candidates"].append({
                 "move": cand['move'],
                 "winrate": 1.0 - c_win if is_white_turn else c_win,
                 "score": -c_score if is_white_turn else c_score,
-                "future_sequence": pv_str
+                "future_sequence": " -> ".join(pv[:6])
             })
         return res
 
     def close(self):
-        if self.process:
-            self.process.terminate()
+        if self.process: self.process.terminate()

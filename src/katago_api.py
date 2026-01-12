@@ -23,6 +23,7 @@ simulator = BoardSimulator()
 class AnalysisRequest(BaseModel):
     history: list
     board_size: int = 19
+    visits: int = 500
 
 def sanitize_history(history):
     if not history: return []
@@ -49,23 +50,29 @@ async def analyze(req: AnalysisRequest):
     try:
         clean_history = sanitize_history(req.history)
         
-        # Retry logic
+        # KataGo Analysis
         res = {"error": "Engine initialization failed"}
         for attempt in range(3):
-            res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True)
+            res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
             if "error" not in res: break
-            if res.get("error") not in ["Engine busy", "Lock timeout"]: break
             time.sleep(0.5 * (attempt + 1))
 
         if "error" in res:
             return JSONResponse(status_code=503, content=res)
         
+        # 確実に実データを変数に保持
+        final_wr = res.get('winrate', 0.5)
+        final_score = res.get('score', 0.0)
+        final_own = res.get('ownership', [])
+        
+        # Future Shape Analysis (PV解析)
         curr_b, _, _ = simulator.reconstruct(clean_history)
         player_color = "B" if len(clean_history) % 2 == 0 else "W"
         
-        for cand in res.get('top_candidates', []):
+        top_cands = res.get('top_candidates', [])
+        for cand in top_cands:
             pv_str = cand.get('future_sequence', "")
-            pv_list = [m.strip() for m in pv_str.split(">>")] if pv_str else []
+            pv_list = [m.strip() for m in pv_str.split(" -> ")] if pv_str else []
             all_future_facts = []
             for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
                 if not prev_b: continue
@@ -73,22 +80,13 @@ async def analyze(req: AnalysisRequest):
                 if facts: all_future_facts.append(f"  [{m_str}の局面]:\n{facts}")
             cand["future_shape_analysis"] = "\n".join(all_future_facts) if all_future_facts else "特になし"
             
-        # Normalize for Black Perspective
-        normalized_res = {
-            "winrate_black": res.get('winrate', 0.5),
-            "score_lead_black": res.get('score', 0.0),
-            "top_candidates": []
+        # 最終的なレスポンスの構築
+        return {
+            "winrate_black": final_wr,
+            "score_lead_black": final_score,
+            "ownership_black": final_own,
+            "top_candidates": top_cands
         }
-        for cand in res.get('top_candidates', []):
-            normalized_res["top_candidates"].append({
-                "move": cand['move'],
-                "winrate_black": cand.get('winrate', 0.5),
-                "score_lead_black": cand.get('score', 0.0),
-                "future_sequence": cand.get('future_sequence', ""),
-                "future_shape_analysis": cand.get("future_shape_analysis", "")
-            })
-            
-        return normalized_res
 
     except Exception as e:
         traceback.print_exc()

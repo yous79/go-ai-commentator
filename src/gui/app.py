@@ -112,7 +112,7 @@ class GoReplayApp:
         callbacks = {'comment': self.generate_commentary, 'report': self.generate_full_report,
                      'agent_pv': self.show_agent_pv, 'show_pv': self.show_pv, 'goto': self.goto_mistake,
                      'pass': self.pass_move, 'update_display': self.update_display,
-                     'goto_move': self.show_image} # Added goto_move
+                     'goto_move': self.show_image}
         self.info_view = InfoView(self.paned, callbacks)
         self.paned.add(self.info_view)
         self._setup_bottom_bar()
@@ -146,7 +146,6 @@ class GoReplayApp:
         self.current_sgf_name = os.path.splitext(os.path.basename(path))[0]
         self.image_dir = os.path.join(OUTPUT_BASE_DIR, self.current_sgf_name)
         
-        # Update renderer for report generator
         if self.report_generator:
             self.report_generator.renderer = self.renderer
             
@@ -159,9 +158,13 @@ class GoReplayApp:
             while True:
                 msg, d = self.analysis_manager.app_queue.get_nowait()
                 if msg == "set_max": self.progress_bar.config(maximum=d)
-                elif msg == "progress": self.lbl_status.config(text=f"Progress: {d} / {int(self.progress_bar['maximum'])}")
+                elif msg == "progress":
+                    progress_text = f"Progress: {d} / {int(self.progress_bar['maximum'])}"
+                    self.lbl_status.config(text=progress_text)
+                    print(f"DEBUG: {progress_text}")
                 elif msg == "done" or msg == "skip":
                     self.lbl_status.config(text="Analysis Ready")
+                    print("DEBUG: Analysis Ready")
                     self._sync_analysis_data()
         except queue.Empty: pass
         self.root.after(100, self._start_queue_monitor)
@@ -218,23 +221,22 @@ class GoReplayApp:
         wr_text, sc_text, cands = "--%", "--", []
         if moves and self.current_move < len(moves):
             d = moves[self.current_move]
-            # 両方のキー名をチェック
-            wr_val = d.get('winrate', d.get('winrate_black', 0.5))
-            sc_val = d.get('score', d.get('score_lead_black', 0.0))
-            wr_text = f"{wr_val:.1%}"
-            sc_text = f"{sc_val:.1f}"
-            cands = d.get('candidates', [])
+            if d is not None:
+                wr_val = d.get('winrate_black', 0.5)
+                sc_val = d.get('score_lead_black', 0.0)
+                wr_text = f"{wr_val:.1%}"
+                sc_text = f"{sc_val:.1f}"
+                cands = d.get('candidates', [])
+        
         self.info_view.update_stats(wr_text, sc_text, "")
         self.lbl_counter.config(text=f"{self.current_move} / {self.game.total_moves}")
         
-        # Update winrate graph
         if moves:
-            # Noneを除去したリストを作成するか、あるいはNoneを直前の値で埋める
             wrs = []
             last_valid_wr = 0.5
             for m in moves:
                 if m is not None:
-                    last_valid_wr = m.get('winrate', m.get('winrate_black', 0.5))
+                    last_valid_wr = m.get('winrate_black', 0.5)
                 wrs.append(last_valid_wr)
             self.info_view.update_graph(wrs, self.current_move)
 
@@ -296,7 +298,6 @@ class GoReplayApp:
         top = tk.Toplevel(self.root); top.title(title); top.geometry("750x800")
         board = self.game.get_board_at(self.current_move)
         start_color = "W" if (self.current_move % 2 != 0) else "B"
-        # render ではなく render_pv を使用し、引数名を starting_color に修正
         img = self.renderer.render_pv(board, pv_list, starting_color=start_color, title=title)
         from PIL import ImageTk
         photo = ImageTk.PhotoImage(img)
@@ -325,15 +326,15 @@ class GoReplayApp:
                 history = self.game.get_history_up_to(new_move_idx)
                 resp = requests.post("http://127.0.0.1:8000/analyze", json={"history": history, "board_size": self.game.board_size}, timeout=30)
                 res = resp.json()
-                new_data = {"move_number": new_move_idx, "winrate": res.get('winrate_black', 0.5), "score": res.get('score_lead_black', 0.0), "candidates": []}
+                new_data = {"move_number": new_move_idx, "winrate_black": res.get('winrate_black', 0.5), "score_lead_black": res.get('score_lead_black', 0.0), "candidates": []}
                 for c in res.get('top_candidates', []):
-                    new_data["candidates"].append({"move": c['move'], "winrate": c.get('winrate_black', 0), "scoreLead": c.get('score_lead_black', 0),
+                    new_data["candidates"].append({"move": c['move'], "winrate_black": c.get('winrate_black', 0), "score_lead_black": c.get('score_lead_black', 0),
                                                    "pv": [m.strip() for m in c.get('future_sequence', "").split("->")]})
                 self.game.moves = self.game.moves[:new_move_idx]
                 self.game.moves.append(new_data)
                 board = self.game.get_board_at(new_move_idx)
                 last_move = (color.lower(), (row, col)) if row is not None else None
-                img = self.renderer.render(board, last_move=last_move, analysis_text=f"Move {new_move_idx} | Winrate(B): {new_data['winrate']:.1%} | Score(B): {new_data['score']:.1f}")
+                img = self.renderer.render(board, last_move=last_move, analysis_text=f"Move {new_move_idx} | Winrate(B): {new_data['winrate_black']:.1%} | Score(B): {new_data['score_lead_black']:.1f}")
                 self.image_cache[new_move_idx] = img
                 self.root.after(0, lambda: self.show_image(new_move_idx))
                 self.root.after(0, lambda: self.lbl_counter.config(text=f"{new_move_idx} / {self.game.total_moves}"))

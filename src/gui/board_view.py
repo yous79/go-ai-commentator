@@ -12,25 +12,37 @@ class BoardView(tk.Frame):
     def bind_click(self, callback):
         self.canvas.bind("<Button-1>", callback)
 
-    def update_board(self, pil_image, review_mode=False, candidates=None):
-        cw, ch = max(self.canvas.winfo_width(), 100), max(self.canvas.winfo_height(), 100)
+    def update_board(self, pil_image, show_candidates=False, candidates=None):
+        self.original_image = pil_image
+        self.show_candidates = show_candidates
+        self.candidates = candidates if candidates else []
+        self.refresh_display()
+
+    def refresh_display(self):
+        if not hasattr(self, 'original_image') or self.original_image is None:
+            return
+
+        cw, ch = self.canvas.winfo_width(), self.canvas.winfo_height()
+        if cw < 10 or ch < 10: 
+            self.after(100, self.refresh_display)
+            return
+
+        # 1. Resize base image to fit canvas
+        iw, ih = self.original_image.size
+        ratio = min(cw / iw, ch / ih)
+        nw, nh = int(iw * ratio), int(ih * ratio)
         
-        # PIL image already has the status bar (e.g., 850x950)
-        img_w, img_h = pil_image.size
+        resized_img = self.original_image.resize((nw, nh), Image.Resampling.LANCZOS)
+        self.current_photo = ImageTk.PhotoImage(resized_img)
         
-        # Resize image to fit canvas while preserving aspect ratio
-        ratio = min(cw / img_w, ch / img_h)
-        nw, nh = int(img_w * ratio), int(img_h * ratio)
-        res = pil_image.resize((nw, nh), Image.Resampling.LANCZOS)
-        
-        self.current_photo = ImageTk.PhotoImage(res)
+        # 2. Draw on canvas
         self.canvas.delete("all")
-        self.canvas.create_image(cw//2, ch//2, image=self.current_photo, anchor=tk.CENTER)
+        ox, oy = (cw - nw) // 2, (ch - nh) // 2
+        self.canvas.create_image(ox, oy, image=self.current_photo, anchor=tk.NW)
         
-        if review_mode and candidates:
-            # Overlays need to know the board-only area (excluding status bar)
-            ox, oy = (cw - nw)//2, (ch - nh)//2
-            self._draw_overlays(candidates, nw, nh, ox, oy)
+        # 3. Draw candidates overlay
+        if self.show_candidates and self.candidates:
+            self._draw_overlays(self.candidates, nw, nh, ox, oy)
 
     def _draw_overlays(self, candidates, nw, nh, ox, oy):
         # Re-use coordinate conversion from transformer
