@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import uvicorn
 import os
@@ -14,7 +15,7 @@ from config import KATAGO_EXE, KATAGO_CONFIG, KATAGO_MODEL
 
 app = FastAPI(title="KataGo Intelligence Service")
 
-# Singleton engine in this process
+# Singleton engine
 katago = KataGoDriver(KATAGO_EXE, KATAGO_CONFIG, KATAGO_MODEL)
 detector = ShapeDetector()
 simulator = BoardSimulator()
@@ -24,16 +25,20 @@ class AnalysisRequest(BaseModel):
     board_size: int = 19
 
 def sanitize_history(history):
-    """どんな形式の履歴が来ても [[color, coord], ...] に整える"""
     if not history: return []
-    # 1D list ['B', 'D4', ...] -> 2D list
     if isinstance(history[0], str):
         new_h = []
         for i in range(0, len(history), 2):
             if i+1 < len(history): new_h.append([history[i], history[i+1]])
         return new_h
-    # 既に2Dの場合も、各要素がペアであることを保証
     return [m for m in history if isinstance(m, (list, tuple)) and len(m) >= 2]
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"error": "Internal Server Error", "detail": str(exc), "traceback": traceback.format_exc()},
+    )
 
 @app.get("/health")
 async def health():
@@ -52,34 +57,42 @@ async def analyze(req: AnalysisRequest):
             if res.get("error") not in ["Engine busy", "Lock timeout"]: break
             time.sleep(0.5 * (attempt + 1))
 
-        # Normalize response to explicit Black Perspective keys
-        normalized_res = {
-            "winrate_black": res.get('winrate', 0.5),
-            "score_lead_black": res.get('score', 0.0),
-            "top_candidates": []
-        }
+        if "error" in res:
+            return JSONResponse(status_code=503, content=res)
+        
+        curr_b, _, _ = simulator.reconstruct(clean_history)
+        player_color = "B" if len(clean_history) % 2 == 0 else "W"
         
         for cand in res.get('top_candidates', []):
             pv_str = cand.get('future_sequence', "")
-            pv_list = [m.strip() for m in pv_str.split("->")] if pv_str else []
+            pv_list = [m.strip() for m in pv_str.split(">>")] if pv_str else []
             all_future_facts = []
             for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
                 if not prev_b: continue
                 facts = detector.detect_all(sim_b, prev_b, c_color)
                 if facts: all_future_facts.append(f"  [{m_str}の局面]:\n{facts}")
+            cand["future_shape_analysis"] = "\n".join(all_future_facts) if all_future_facts else "特になし"
             
+        # Normalize for Black Perspective
+        normalized_res = {
+            "winrate_black": res.get('winrate', 0.5),
+            "score_lead_black": res.get('score', 0.0),
+            "top_candidates": []
+        }
+        for cand in res.get('top_candidates', []):
             normalized_res["top_candidates"].append({
                 "move": cand['move'],
                 "winrate_black": cand.get('winrate', 0.5),
                 "score_lead_black": cand.get('score', 0.0),
-                "future_sequence": pv_str,
-                "future_shape_analysis": "\n".join(all_future_facts) if all_future_facts else "特になし"
+                "future_sequence": cand.get('future_sequence', ""),
+                "future_shape_analysis": cand.get("future_shape_analysis", "")
             })
             
         return normalized_res
+
     except Exception as e:
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(status_code=500, content={"error": str(e), "traceback": traceback.format_exc()})
 
 @app.post("/detect")
 async def detect(req: AnalysisRequest):
@@ -90,7 +103,7 @@ async def detect(req: AnalysisRequest):
         return {"facts": facts if facts else "特筆すべき形状は検出されませんでした。"}
     except Exception as e:
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(status_code=500, content={"error": str(e), "traceback": traceback.format_exc()})
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")

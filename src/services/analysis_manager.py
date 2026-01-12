@@ -95,6 +95,7 @@ class AnalysisManager:
                             break
                         else:
                             print(f"DEBUG: Analysis API returned {resp.status_code}, retrying {attempt+1}...")
+                            print(f"DEBUG API RESPONSE: {resp.text}") # エラー詳細を表示
                     except Exception as e:
                         print(f"DEBUG: Analysis API request error: {e}, retrying {attempt+1}...")
                     

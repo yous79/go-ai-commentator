@@ -33,15 +33,12 @@ class GoReplayApp:
         self.renderer = GoBoardRenderer()
         self.gemini = None
         
-        # Initialize AI (API Service + Gemini)
         self._init_ai()
         
-        # AnalysisManager now uses API
         self.analysis_manager = AnalysisManager(queue.Queue(), self.renderer)
         self.report_generator = None
         
         if self.gemini:
-            # ReportGenerator now uses API instead of direct driver
             self.report_generator = ReportGenerator(self.game, self.renderer, self.gemini)
 
         self.current_move = 0
@@ -63,20 +60,45 @@ class GoReplayApp:
         api_key = load_api_key()
         if api_key:
             try:
-                # 常駐APIサーバーの死活監視と自動起動
-                try:
-                    requests.get("http://127.0.0.1:8000/health", timeout=1)
-                except:
-                    print("Starting KataGo API Service...")
-                    api_script = os.path.join(SRC_DIR, "katago_api.py")
-                    subprocess.Popen([sys.executable, api_script], 
-                                     creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
-                    time.sleep(5) # ロード時間確保
+                # 1. 常駐APIサーバーの死活監視と自動起動
+                self._ensure_api_server()
 
                 self.gemini = GeminiCommentator(api_key)
-                print("AI Services (Pure API Mode) Initialized.")
+                print("AI Services (Resident API Mode) Initialized.")
             except Exception as e:
                 print(f"AI Init Failed: {e}")
+
+    def _ensure_api_server(self):
+        """APIサーバーが起動しているか確認し、なければ起動する"""
+        try:
+            requests.get("http://127.0.0.1:8000/health", timeout=1)
+            print("API Server is already running.")
+            return
+        except:
+            print("Starting KataGo API Service...")
+            api_script = os.path.join(SRC_DIR, "katago_api.py")
+            log_file = os.path.join(SRC_DIR, "api_server.log")
+            
+            # ログファイルに出力しながらバックグラウンド起動
+            with open(log_file, "a") as f:
+                subprocess.Popen(
+                    [sys.executable, api_script],
+                    stdout=f,
+                    stderr=f,
+                    creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
+                )
+            
+            # 起動待機ループ (最大10秒)
+            for _ in range(10):
+                try:
+                    time.sleep(1)
+                    requests.get("http://127.0.0.1:8000/health", timeout=1)
+                    print("API Server started successfully.")
+                    return
+                except:
+                    print("Waiting for API Server...")
+            
+            print("WARNING: API Server failed to respond in time.")
 
     def setup_layout(self):
         self.root.rowconfigure(1, weight=1)

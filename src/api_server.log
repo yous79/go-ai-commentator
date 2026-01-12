@@ -1,0 +1,156 @@
+INFO:     Started server process [38764]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+DEBUG: KataGo Engine started.
+INFO:     127.0.0.1:54749 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54752 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54754 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54755 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54756 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54757 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54758 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54759 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54760 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54761 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54762 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54763 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54764 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54765 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54766 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54767 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54768 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54769 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54770 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54771 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54772 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64192 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56203 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56204 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64271 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64272 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64273 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64274 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64275 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64276 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64277 - "POST /analyze HTTP/1.1" 200 OK
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:64278 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:64280 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:64283 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:64286 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:64288 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51813 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51814 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51815 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51816 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51817 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51818 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51819 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51820 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51822 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51823 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51826 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51827 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51828 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51829 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 70, in analyze
+    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+INFO:     127.0.0.1:51830 - "POST /analyze HTTP/1.1" 500 Internal Server Error

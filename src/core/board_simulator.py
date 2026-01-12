@@ -44,8 +44,9 @@ class BoardSimulator:
 
         for move_str in pv_list:
             if not move_str or move_str.lower() == "pass":
+                # パスの場合も4つの値を返す (current_colorを含める)
+                yield move_str, sim_board.copy(), None, current_color
                 current_color = 'w' if current_color == 'b' else 'b'
-                yield move_str, sim_board.copy(), None
                 continue
 
             prev_state = sim_board.copy()
