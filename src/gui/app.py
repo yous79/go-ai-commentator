@@ -9,6 +9,7 @@ import concurrent.futures
 import requests
 import subprocess
 import sys
+import traceback
 
 from config import OUTPUT_BASE_DIR, load_api_key, SRC_DIR
 from core.game_state import GoGameState
@@ -60,45 +61,30 @@ class GoReplayApp:
         api_key = load_api_key()
         if api_key:
             try:
-                # 1. 常駐APIサーバーの死活監視と自動起動
                 self._ensure_api_server()
-
                 self.gemini = GeminiCommentator(api_key)
-                print("AI Services (Resident API Mode) Initialized.")
+                print("AI Services (Pure API Mode) Initialized.")
             except Exception as e:
                 print(f"AI Init Failed: {e}")
+                traceback.print_exc()
 
     def _ensure_api_server(self):
-        """APIサーバーが起動しているか確認し、なければ起動する"""
         try:
             requests.get("http://127.0.0.1:8000/health", timeout=1)
-            print("API Server is already running.")
             return
         except:
             print("Starting KataGo API Service...")
             api_script = os.path.join(SRC_DIR, "katago_api.py")
             log_file = os.path.join(SRC_DIR, "api_server.log")
-            
-            # ログファイルに出力しながらバックグラウンド起動
             with open(log_file, "a") as f:
-                subprocess.Popen(
-                    [sys.executable, api_script],
-                    stdout=f,
-                    stderr=f,
-                    creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
-                )
-            
-            # 起動待機ループ (最大10秒)
+                subprocess.Popen([sys.executable, api_script], stdout=f, stderr=f,
+                                 creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
             for _ in range(10):
                 try:
                     time.sleep(1)
                     requests.get("http://127.0.0.1:8000/health", timeout=1)
-                    print("API Server started successfully.")
                     return
-                except:
-                    print("Waiting for API Server...")
-            
-            print("WARNING: API Server failed to respond in time.")
+                except: pass
 
     def setup_layout(self):
         self.root.rowconfigure(1, weight=1)
@@ -158,6 +144,11 @@ class GoReplayApp:
 
         self.current_sgf_name = os.path.splitext(os.path.basename(path))[0]
         self.image_dir = os.path.join(OUTPUT_BASE_DIR, self.current_sgf_name)
+        
+        # Update renderer for report generator
+        if self.report_generator:
+            self.report_generator.renderer = self.renderer
+            
         self.lbl_status.config(text="Starting Analysis...")
         self.analysis_manager.start_analysis(path)
         self._monitor_images_on_disk()
@@ -185,7 +176,10 @@ class GoReplayApp:
                 for i in range(3):
                     self._upd_mistake_ui("b", i, mb); self._upd_mistake_ui("w", i, mw)
                 self.update_display()
-            except: pass
+            except (PermissionError, json.JSONDecodeError): pass
+            except Exception as e:
+                print(f"Sync Error: {e}")
+                traceback.print_exc()
 
     def _upd_mistake_ui(self, color, idx, mistakes):
         store = self.moves_m_b if color == "b" else self.moves_m_w
@@ -223,8 +217,11 @@ class GoReplayApp:
         wr_text, sc_text, cands = "--%", "--", []
         if moves and self.current_move < len(moves):
             d = moves[self.current_move]
-            wr_text = f"{d.get('winrate', 0.5):.1%}"
-            sc_text = f"{d.get('score', 0.0):.1f}"
+            # 両方のキー名をチェック
+            wr_val = d.get('winrate', d.get('winrate_black', 0.5))
+            sc_val = d.get('score', d.get('score_lead_black', 0.0))
+            wr_text = f"{wr_val:.1%}"
+            sc_text = f"{sc_val:.1f}"
             cands = d.get('candidates', [])
         self.info_view.update_stats(wr_text, sc_text, "")
         self.lbl_counter.config(text=f"{self.current_move} / {self.game.total_moves}")
@@ -243,7 +240,9 @@ class GoReplayApp:
             text = self.gemini.generate_commentary(self.current_move, h, self.game.board_size)
             self.root.after(0, lambda: self._update_commentary_ui(text))
         except Exception as e:
-            self.root.after(0, lambda: self._update_commentary_ui(f"Error: {e}"))
+            traceback.print_exc()
+            err_msg = f"Error: {e}"
+            self.root.after(0, lambda: self._update_commentary_ui(err_msg))
 
     def _update_commentary_ui(self, text):
         self.info_view.set_commentary(text)
@@ -265,6 +264,7 @@ class GoReplayApp:
             else:
                 self.root.after(0, lambda: messagebox.showinfo("Done", f"Report saved: {path}"))
         except Exception as e:
+            traceback.print_exc()
             err_msg = str(e)
             self.root.after(0, lambda: messagebox.showerror("Error", err_msg))
         finally:
@@ -311,9 +311,9 @@ class GoReplayApp:
                 history = self.game.get_history_up_to(new_move_idx)
                 resp = requests.post("http://127.0.0.1:8000/analyze", json={"history": history, "board_size": self.game.board_size}, timeout=30)
                 res = resp.json()
-                new_data = {"move_number": new_move_idx, "winrate": res.get('winrate', 0.5), "score": res.get('score', 0.0), "candidates": []}
+                new_data = {"move_number": new_move_idx, "winrate": res.get('winrate_black', 0.5), "score": res.get('score_lead_black', 0.0), "candidates": []}
                 for c in res.get('top_candidates', []):
-                    new_data["candidates"].append({"move": c['move'], "winrate": c.get('winrate', 0), "scoreLead": c.get('score', 0),
+                    new_data["candidates"].append({"move": c['move'], "winrate": c.get('winrate_black', 0), "scoreLead": c.get('score_lead_black', 0),
                                                    "pv": [m.strip() for m in c.get('future_sequence', "").split("->")]})
                 self.game.moves = self.game.moves[:new_move_idx]
                 self.game.moves.append(new_data)
@@ -323,7 +323,9 @@ class GoReplayApp:
                 self.image_cache[new_move_idx] = img
                 self.root.after(0, lambda: self.show_image(new_move_idx))
                 self.root.after(0, lambda: self.lbl_counter.config(text=f"{new_move_idx} / {self.game.total_moves}"))
-            except Exception as e: print(f"Error in interactive move: {e}")
+            except Exception as e:
+                print(f"Error in interactive move: {e}")
+                traceback.print_exc()
             finally: self.root.after(0, lambda: self.info_view.btn_comment.config(state="normal", text="Ask KataGo Agent"))
         self.executor.submit(run)
 

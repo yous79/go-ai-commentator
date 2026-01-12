@@ -135,16 +135,27 @@ class GoGameState:
         return b
 
     def calculate_mistakes(self):
-        if not self.moves or len(self.moves) < 2: return [], []
+        if not self.moves or len(self.moves) < 2: 
+            return [], []
+        
         mb, mw = [], []
-        for i in range(1, len(self.moves)):
-            prev, curr = self.moves[i-1], self.moves[i]
-            wr_before, wr_after = prev.get('winrate', 0.5), curr.get('winrate', 0.5)
-            sc_before, sc_after = prev.get('score', 0.0), curr.get('score', 0.0)
-            if (i % 2 != 0): # Black
-                mb.append((sc_before - (-sc_after), wr_before - (1.0 - wr_after), i))
-            else: # White
-                mw.append((sc_before - (-sc_after), wr_before - (1.0 - wr_after), i))
+        # インデックス範囲を moves の長さに厳密に合わせる
+        max_idx = len(self.moves)
+        for i in range(1, max_idx):
+            try:
+                prev, curr = self.moves[i-1], self.moves[i]
+                wr_before = prev.get('winrate', prev.get('winrate_black', 0.5))
+                wr_after = curr.get('winrate', curr.get('winrate_black', 0.5))
+                sc_before = prev.get('score', prev.get('score_lead_black', 0.0))
+                sc_after = curr.get('score', curr.get('score_lead_black', 0.0))
+                
+                if (i % 2 != 0): # Black
+                    mb.append((sc_before - sc_after, wr_before - wr_after, i))
+                else: # White
+                    mw.append((sc_before - sc_after, wr_before - wr_after, i))
+            except (IndexError, KeyError):
+                continue
+                
         mb.sort(key=lambda x: x[1], reverse=True)
         mw.sort(key=lambda x: x[1], reverse=True)
         return mb[:3], mw[:3]

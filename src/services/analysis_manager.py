@@ -127,7 +127,18 @@ class AnalysisManager:
                 try:
                     with open(json_path + ".tmp", "w", encoding="utf-8") as f:
                         json.dump(log, f, indent=2, ensure_ascii=False)
-                    os.replace(json_path + ".tmp", json_path)
+                    
+                    # Windowsのファイルロック競合対策リトライ
+                    success = False
+                    for _ in range(5):
+                        try:
+                            os.replace(json_path + ".tmp", json_path)
+                            success = True
+                            break
+                        except PermissionError:
+                            time.sleep(0.1)
+                    if not success:
+                        print(f"DEBUG: Could not replace {json_path} after retries.")
                 except Exception as e:
                     print(f"JSON Write Error: {e}")
                 
