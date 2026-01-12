@@ -262,7 +262,7 @@ class GoReplayApp:
             if err:
                 self.root.after(0, lambda: messagebox.showinfo("Info", err))
             else:
-                self.root.after(0, lambda: messagebox.showinfo("Done", f"Report saved: {path}"))
+                self.root.after(0, lambda: messagebox.showinfo("Done", f"PDFレポートを生成しました:\n{path}"))
         except Exception as e:
             traceback.print_exc()
             err_msg = str(e)
