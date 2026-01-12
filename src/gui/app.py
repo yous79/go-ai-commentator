@@ -111,7 +111,8 @@ class GoReplayApp:
         
         callbacks = {'comment': self.generate_commentary, 'report': self.generate_full_report,
                      'agent_pv': self.show_agent_pv, 'show_pv': self.show_pv, 'goto': self.goto_mistake,
-                     'pass': self.pass_move, 'update_display': self.update_display}
+                     'pass': self.pass_move, 'update_display': self.update_display,
+                     'goto_move': self.show_image} # Added goto_move
         self.info_view = InfoView(self.paned, callbacks)
         self.paned.add(self.info_view)
         self._setup_bottom_bar()
@@ -225,6 +226,18 @@ class GoReplayApp:
             cands = d.get('candidates', [])
         self.info_view.update_stats(wr_text, sc_text, "")
         self.lbl_counter.config(text=f"{self.current_move} / {self.game.total_moves}")
+        
+        # Update winrate graph
+        if moves:
+            # Noneを除去したリストを作成するか、あるいはNoneを直前の値で埋める
+            wrs = []
+            last_valid_wr = 0.5
+            for m in moves:
+                if m is not None:
+                    last_valid_wr = m.get('winrate', m.get('winrate_black', 0.5))
+                wrs.append(last_valid_wr)
+            self.info_view.update_graph(wrs, self.current_move)
+
         img = self.image_cache[self.current_move]
         self.board_view.update_board(img, self.info_view.review_mode.get(), cands)
 
@@ -283,7 +296,8 @@ class GoReplayApp:
         top = tk.Toplevel(self.root); top.title(title); top.geometry("750x800")
         board = self.game.get_board_at(self.current_move)
         start_color = "W" if (self.current_move % 2 != 0) else "B"
-        img = self.renderer.render(board, pv_list=pv_list, start_color=start_color, title=title)
+        # render ではなく render_pv を使用し、引数名を starting_color に修正
+        img = self.renderer.render_pv(board, pv_list, starting_color=start_color, title=title)
         from PIL import ImageTk
         photo = ImageTk.PhotoImage(img)
         cv = tk.Canvas(top, bg="#333"); cv.pack(fill=tk.BOTH, expand=True)

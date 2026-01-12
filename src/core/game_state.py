@@ -144,6 +144,9 @@ class GoGameState:
         for i in range(1, max_idx):
             try:
                 prev, curr = self.moves[i-1], self.moves[i]
+                if prev is None or curr is None:
+                    continue # まだ解析が終わっていない手はスキップ
+                
                 wr_before = prev.get('winrate', prev.get('winrate_black', 0.5))
                 wr_after = curr.get('winrate', curr.get('winrate_black', 0.5))
                 sc_before = prev.get('score', prev.get('score_lead_black', 0.0))
