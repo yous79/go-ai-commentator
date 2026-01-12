@@ -260,10 +260,13 @@ class GoReplayApp:
         try:
             self.root.after(0, lambda: self._sync_analysis_data())
             path, err = self.report_generator.generate(self.current_sgf_name, self.image_dir)
-            msg = err if err else f"Report saved: {path}"
-            self.root.after(0, lambda: messagebox.showinfo("Info", msg))
+            if err:
+                self.root.after(0, lambda: messagebox.showinfo("Info", err))
+            else:
+                self.root.after(0, lambda: messagebox.showinfo("Done", f"Report saved: {path}"))
         except Exception as e:
-            self.root.after(0, lambda: messagebox.showerror("Error", str(e)))
+            err_msg = str(e)
+            self.root.after(0, lambda: messagebox.showerror("Error", err_msg))
         finally:
             self.root.after(0, lambda: self.info_view.btn_report.config(state="normal", text="対局レポートを生成"))
 

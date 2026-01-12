@@ -5,122 +5,96 @@ import asyncio
 import json
 import traceback
 import re
+import requests
 from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME
 from core.knowledge_manager import KnowledgeManager
-from prompts.templates import get_unified_system_instruction, get_integrated_request_prompt
+from prompts.templates import get_unified_system_instruction
 
 class GeminiCommentator:
     def __init__(self, api_key):
         self.client = genai.Client(api_key=api_key)
         self.last_pv = None 
         self.knowledge_manager = KnowledgeManager(KNOWLEDGE_DIR)
+        self.api_url = "http://127.0.0.1:8000"
 
     def generate_commentary(self, move_idx, history, board_size=19):
-        # 知識ベースの全量取得 (将来的には検知結果に応じたフィルタリングも可能)
-        kn = self.knowledge_manager.get_all_knowledge_text()
-        
-        player = "黒" if (move_idx % 2 == 0) else "白"
-        sys_inst = get_unified_system_instruction(board_size, player, kn)
-        user_prompt = get_integrated_request_prompt(move_idx, history)
-        
-        safety = [types.SafetySetting(category=c, threshold='BLOCK_NONE') for c in [
-            'HARM_CATEGORY_HATE_SPEECH', 'HARM_CATEGORY_HARASSMENT', 
-            'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'HARM_CATEGORY_DANGEROUS_CONTENT',
-            'HARM_CATEGORY_CIVIC_INTEGRITY'
-        ]]
-
-        tools_config = [{
-            "function_declarations": [
-                {
-                    "name": "katago_analyze",
-                    "description": "KataGoで盤面を解析します。",
-                    "parameters": {"type": "OBJECT", "properties": {"history": {"type": "ARRAY", "items": {"type": "ARRAY", "items": {"type": "STRING"}}}}, "required": ["history"]}
-                },
-                {
-                    "name": "detect_shapes",
-                    "description": "盤面の悪形を検出します。",
-                    "parameters": {"type": "OBJECT", "properties": {"history": {"type": "ARRAY", "items": {"type": "ARRAY", "items": {"type": "STRING"}}}}, "required": ["history"]}
-                }
-            ]
-        }]
-
+        """【事実先行型】先に解析を完了させ、確定データをGeminiに渡して解説を生成させる"""
         try:
-            print(f"--- AI COMMENTARY START (Move {move_idx}) ---")
-            contents_history = [types.Content(role="user", parts=[types.Part(text=user_prompt)])]
-            max_iters = 5
-            final_text = ""
+            print(f"--- FACT-FIRST AI COMMENTARY START (Move {move_idx}) ---")
+            
+            # 1. 解析データの先行取得 (Sync API Call)
+            print("DEBUG: Pre-fetching KataGo analysis...")
+            ana_resp = requests.post(f"{self.api_url}/analyze", json={"history": history, "board_size": board_size}, timeout=45)
+            ana_data = ana_resp.json()
+            
+            print("DEBUG: Pre-fetching shape detection...")
+            det_resp = requests.post(f"{self.api_url}/detect", json={"history": history, "board_size": board_size}, timeout=15)
+            det_data = det_resp.json()
 
-            for i in range(max_iters):
-                print(f"DEBUG: Attempt {i+1}...")
-                resp = self.client.models.generate_content(
-                    model=GEMINI_MODEL_NAME,
-                    contents=contents_history,
-                    config=types.GenerateContentConfig(
-                        system_instruction=sys_inst, tools=tools_config,
-                        tool_config=types.ToolConfig(function_calling_config=types.FunctionCallingConfig(mode='AUTO')),
-                        safety_settings=safety
-                    )
+            # 2. データの整理
+            best = ana_data.get('top_candidates', [{}])[0]
+            self.last_pv = best.get('future_sequence', "").split(" -> ")
+            
+            fact_summary = (
+                f"【最新の確定解析データ（引用必須）】\n"
+                f"- 黒の勝率: {ana_data.get('winrate_black', '不明')}\n"
+                f"- 目数差: {ana_data.get('score_lead_black', '不明')}目（正の値は黒リード）\n"
+                f"- AIの推奨手: {best.get('move', 'なし')}\n"
+                f"- 推奨進行: {best.get('future_sequence', 'なし')}\n"
+                f"- 盤面の形状事実: {det_data.get('facts', '特筆すべき形状なし')}\n"
+                f"- 推奨手の将来予測: {best.get('future_shape_analysis', '特になし')}\n"
+            )
+            print(f"DEBUG DATA READY: {ana_data.get('winrate_black')} / {best.get('move')}")
+
+            # 3. プロンプトの構築
+            kn = self.knowledge_manager.get_all_knowledge_text()
+            player = "黒" if (move_idx % 2 == 0) else "白"
+            sys_inst = get_unified_system_instruction(board_size, player, kn)
+            
+            user_prompt = (
+                f"{fact_summary}\n"
+                f"あなたは上記の確定データのみを根拠に語るプロの囲碁インストラクターです。\n"
+                f"上記データに含まれない架空の数値（勝率など）を生成することは厳禁です。\n"
+                f"現在の手数（{move_idx}手目、{player}番）を踏まえ、この局面のポイントを詳しく解説してください。"
+            )
+
+            # 4. 生成リクエスト (自律ツールなしのシングルショット、あるいは必要に応じた対話)
+            safety = [types.SafetySetting(category=c, threshold='BLOCK_NONE') for c in [
+                'HARM_CATEGORY_HATE_SPEECH', 'HARM_CATEGORY_HARASSMENT', 
+                'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                'HARM_CATEGORY_CIVIC_INTEGRITY'
+            ]]
+
+            response = self.client.models.generate_content(
+                model=GEMINI_MODEL_NAME,
+                contents=[types.Content(role="user", parts=[types.Part(text=user_prompt)])],
+                config=types.GenerateContentConfig(
+                    system_instruction=sys_inst,
+                    safety_settings=safety
                 )
-                if not resp.candidates or not resp.candidates[0].content or not resp.candidates[0].content.parts:
-                    break
-                
-                contents_history.append(resp.candidates[0].content)
-                parts = resp.candidates[0].content.parts
-                for p in parts:
-                    if p.text: final_text += p.text
-                
-                fcs = [p.function_call for p in parts if p.function_call]
-                if not fcs:
-                    if final_text: break
-                    continue
+            )
 
-                tool_results = []
-                for fc in fcs:
-                    print(f"DEBUG: Executing tool '{fc.name}'...")
-                    res_data_str = self._call_mcp_tool_sync(fc.name, fc.args)
-                    
-                    try:
-                        res_obj = json.loads(res_data_str)
-                    except:
-                        res_obj = {"error": res_data_str}
+            final_text = response.text if response.text else "【エラー】解説の生成に失敗しました。"
 
-                    if fc.name == "katago_analyze" and isinstance(res_obj, dict):
-                        if res_obj.get('top_candidates'):
-                            self.last_pv = res_obj['top_candidates'][0]['future_sequence'].split(" -> ")
-
-                    tool_results.append(types.Part(
-                        function_response=types.FunctionResponse(name=fc.name, response=res_obj)
-                    ))
-
-                contents_history.append(types.Content(role="tool", parts=tool_results))
-                
-                if i == 0: 
-                    contents_history.append(types.Content(role="user", parts=[types.Part(
-                        text="ありがとうございます。あなたのこれまでの洞察を、たった今得られたKataGoの正確なデータで裏付け、より洗練されたプロの解説として完成させてください。"
-                    )]))
-
-            has_winrate = any(x in final_text for x in ["%", "％", "勝率"])
-            has_move = re.search(r"[A-T][0-9]{1,2}", final_text.upper()) is not None
+            # --- 品質ガード (捏造チェック) ---
+            # 先行データと照合
+            real_wr_val = str(ana_data.get('winrate_black', ''))
+            real_move = str(best.get('move', ''))
             
-            if not final_text or not has_winrate or not has_move:
-                print(f"DEBUG GUARD FAILED: WR:{has_winrate} Move:{has_move}")
-                return "【Error】AI failed to generate a valid commentary based on analysis data."
-            
+            # 数値が含まれているか (簡易的な照合)
+            has_wr = any(x in final_text for x in ["%", "％", "勝率"])
+            has_move = real_move.upper() in final_text.upper() if real_move else True
+
+            if not has_wr or not has_move:
+                print(f"DEBUG GUARD FAILED: WR:{has_wr} Move:{has_move}")
+                # 捏造または欠落があった場合の救済（あるいはエラー）
+                return f"【解析結果】\n{fact_summary}\n\n(AIが詳細な解説を生成できませんでしたが、上記データがKataGoによる事実です。)"
+
             return final_text
+
         except Exception as e:
             traceback.print_exc()
             return f"SYSTEM ERROR: {str(e)}"
-
-    def _call_mcp_tool_sync(self, name, args):
-        from mcp_server import handle_call_tool 
-        try:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            mcp_res_list = loop.run_until_complete(handle_call_tool(name, args))
-            loop.close()
-            if mcp_res_list and hasattr(mcp_res_list[0], 'text'): return mcp_res_list[0].text
-            return "Error: Invalid response"
-        except Exception as e: return f"Error: {str(e)}"
 
     def reset_chat(self):
         pass

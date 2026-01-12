@@ -29,10 +29,13 @@ class ReportGenerator:
             board = self.game.get_board_at(m_idx - 1)
             
             try:
-                resp = requests.post(self.api_url, json={"history": history, "board_size": self.game.board_size}, timeout=30)
+                resp = requests.post(self.api_url, json={"history": history, "board_size": self.game.board_size}, timeout=40)
+                if resp.status_code != 200:
+                    print(f"Report API Error at Move {m_idx}: {resp.status_code}")
+                    continue
                 res = resp.json()
             except Exception as e:
-                print(f"Report Error at Move {m_idx}: {e}")
+                print(f"Report Request Failed at Move {m_idx}: {e}")
                 continue
 
             if 'top_candidates' in res and res['top_candidates']:

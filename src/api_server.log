@@ -154,3 +154,244 @@ Traceback (most recent call last):
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ValueError: not enough values to unpack (expected 4, got 3)
 INFO:     127.0.0.1:51830 - "POST /analyze HTTP/1.1" 500 Internal Server Error
+INFO:     Started server process [37908]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+DEBUG: KataGo Engine started.
+INFO:     127.0.0.1:51835 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64152 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64156 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64158 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64159 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64160 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64161 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64162 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64163 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64164 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64165 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64166 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64167 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64168 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64169 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64170 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64171 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64172 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64173 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64174 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64175 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53461 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53462 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53463 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53464 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53465 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53466 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53467 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53468 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53469 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53470 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53471 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53472 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64935 - "POST /detect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64941 - "POST /analyze HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:60372 - "POST /detect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60375 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55814 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55817 - "POST /detect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61931 - "POST /analyze HTTP/1.1" 200 OK
+Traceback (most recent call last):
+  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\site-packages\sgfmill\common.py", line 22, in opponent_of
+    return _opponents[colour]
+           ~~~~~~~~~~^^^^^^^^
+KeyError: 'b,'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 101, in detect
+    curr_b, prev_b, last_c = simulator.reconstruct(clean_history)
+                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\youst\go-ai-commentator\src\core\board_simulator.py", line 28, in reconstruct
+    prev.play(row, col, c_str.lower())
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\site-packages\sgfmill\boards.py", line 188, in play
+    opponent = opponent_of(colour)
+  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\site-packages\sgfmill\common.py", line 24, in opponent_of
+    raise ValueError
+ValueError
+INFO:     127.0.0.1:61934 - "POST /detect HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:63891 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63892 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63893 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63894 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63895 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63896 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63897 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63898 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63899 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63900 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63901 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63902 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63903 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63904 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63905 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63906 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63907 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63908 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63909 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63910 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63911 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63912 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63913 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63914 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63915 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63916 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63917 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54763 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55716 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58918 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52796 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52797 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52798 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52799 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52800 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52801 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52802 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52803 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52804 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52805 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52806 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52807 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52808 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52809 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52810 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52811 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52812 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52814 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52815 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52816 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52817 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52818 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52819 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52820 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52821 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52822 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52823 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52828 - "POST /analyze HTTP/1.1" 503 Service Unavailable
+Traceback (most recent call last):
+  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\site-packages\sgfmill\common.py", line 22, in opponent_of
+    return _opponents[colour]
+           ~~~~~~~~~~^^^^^^^^
+KeyError: 'e7'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\youst\go-ai-commentator\src\katago_api.py", line 101, in detect
+    curr_b, prev_b, last_c = simulator.reconstruct(clean_history)
+                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\youst\go-ai-commentator\src\core\board_simulator.py", line 29, in reconstruct
+    curr.play(row, col, c_str.lower())
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\site-packages\sgfmill\boards.py", line 188, in play
+    opponent = opponent_of(colour)
+  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\site-packages\sgfmill\common.py", line 24, in opponent_of
+    raise ValueError
+ValueError
+INFO:     127.0.0.1:52831 - "POST /detect HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:60020 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56033 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56037 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56039 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56040 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56041 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56042 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56043 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56044 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56045 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56046 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56047 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56048 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56049 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56050 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56051 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56052 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56053 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56054 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56055 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56056 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56057 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56058 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56059 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56060 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56061 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56062 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56063 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56064 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56065 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56806 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56809 - "POST /detect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65275 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65280 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65282 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65283 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65284 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65285 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65286 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65287 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65288 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65289 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65290 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65291 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65292 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65293 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65294 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65295 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65296 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65297 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65298 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65299 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65300 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65301 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65302 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65303 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65304 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65305 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65306 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65307 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65308 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55346 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55350 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55352 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55354 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55355 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55356 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55357 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55358 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55359 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55360 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55361 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55362 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55363 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55364 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55365 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55366 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55367 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55368 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55369 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55370 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55371 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55372 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55373 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55374 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55375 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55376 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55377 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55378 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55379 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55380 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55381 - "POST /detect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55385 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55386 - "POST /detect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62065 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62066 - "POST /detect HTTP/1.1" 200 OK
