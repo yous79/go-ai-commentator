@@ -27,13 +27,18 @@ class BoardView(tk.Frame):
             self.after(100, self.refresh_display)
             return
 
-        # 1. Resize base image to fit canvas
-        iw, ih = self.original_image.size
-        ratio = min(cw / iw, ch / ih)
-        nw, nh = int(iw * ratio), int(ih * ratio)
-        
-        resized_img = self.original_image.resize((nw, nh), Image.Resampling.LANCZOS)
-        self.current_photo = ImageTk.PhotoImage(resized_img)
+        try:
+            # 1. Resize base image to fit canvas
+            iw, ih = self.original_image.size
+            ratio = min(cw / iw, ch / ih)
+            nw, nh = int(iw * ratio), int(ih * ratio)
+            
+            resized_img = self.original_image.resize((nw, nh), Image.Resampling.LANCZOS)
+            self.current_photo = ImageTk.PhotoImage(resized_img)
+        except Exception as e:
+            # 画像が不完全な場合は更新をスキップ
+            print(f"Skipping display update due to image loading error: {e}")
+            return
         
         # 2. Draw on canvas
         self.canvas.delete("all")

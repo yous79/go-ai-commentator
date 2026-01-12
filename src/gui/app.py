@@ -210,8 +210,13 @@ class GoReplayApp:
         if not self.image_dir: return
         p = os.path.join(self.image_dir, f"move_{n:03d}.png")
         if os.path.exists(p) and n not in self.image_cache:
-            try: self.image_cache[n] = Image.open(p)
-            except: return
+            try:
+                img = Image.open(p)
+                img.load() # 完全に読み込めるかチェック
+                self.image_cache[n] = img
+            except Exception as e:
+                # ファイル書き込み中の場合はスキップして次回に期待する
+                return
         self.current_move = n
         self.update_display()
 
