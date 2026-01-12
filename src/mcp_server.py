@@ -2,26 +2,14 @@ import asyncio
 import os
 import sys
 import json
-
-# Add current directory to path for imports
-SRC_DIR = os.path.dirname(os.path.abspath(__file__))
-if SRC_DIR not in sys.path:
-    sys.path.append(SRC_DIR)
+import requests
 
 from mcp.server.models import InitializationOptions
 from mcp.server import NotificationOptions, Server
 from mcp.server.stdio import stdio_server
 import mcp.types as types
 
-from drivers.katago_driver import KataGoDriver
-from core.shape_detector import ShapeDetector
-from core.board_simulator import BoardSimulator
-from config import KATAGO_EXE, KATAGO_CONFIG, KATAGO_MODEL
-
-# Initialize Components
-katago = KataGoDriver(KATAGO_EXE, KATAGO_CONFIG, KATAGO_MODEL)
-detector = ShapeDetector()
-simulator = BoardSimulator()
+API_URL = "http://127.0.0.1:8000"
 
 server = Server("katago-analyzer")
 
@@ -30,7 +18,7 @@ async def handle_list_tools() -> list[types.Tool]:
     return [
         types.Tool(
             name="katago_analyze",
-            description="囲碁の盤面をKataGoで解析します。historyを受け取り、勝率、目数差、PV、将来の形状変化を返します。",
+            description="囲碁の盤面をKataGoで解析します。履歴(history)を渡してください。",
             inputSchema={
                 "type": "OBJECT",
                 "properties": {
@@ -59,37 +47,25 @@ async def handle_call_tool(
     if not arguments: raise ValueError("Args required")
     history = arguments.get("history", [])
     
-    # History Sanitization: If 1D list of strings, convert to 2D list of pairs
+    # 履歴データのサニタイズ（1次元リストを2次元ペアに変換）
     if history and isinstance(history[0], str):
-        # Assuming format ['B', 'D4', 'W', 'Q16', ...]
-        new_history = []
+        new_h = []
         for i in range(0, len(history), 2):
-            if i + 1 < len(history):
-                new_history.append([history[i], history[i+1]])
-        history = new_history
+            if i + 1 < len(history): new_h.append([history[i], history[i+1]])
+        history = new_h
 
-    board_size = arguments.get("board_size", 19)
+    try:
+        if name == "katago_analyze":
+            resp = requests.post(f"{API_URL}/analyze", json={"history": history}, timeout=60)
+            resp.raise_for_status()
+            return [types.TextContent(type="text", text=json.dumps(resp.json(), indent=2, ensure_ascii=False))]
 
-    if name == "katago_analyze":
-        res = katago.analyze_situation(history, board_size=board_size, priority=True)
-        if "error" in res: return [types.TextContent(type="text", text=f"Error: {res['error']}")]
-        
-        curr_b, _, _ = simulator.reconstruct(history)
-        player_color = "B" if len(history) % 2 == 0 else "W"
-        for cand in res.get('top_candidates', []):
-            pv_list = [m.strip() for m in cand.get('future_sequence', "").split("->")]
-            all_future_facts = []
-            for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-                if not prev_b: continue
-                facts = detector.detect_all(sim_b, prev_b, c_color)
-                if facts: all_future_facts.append(f"  [{m_str}の局面]:\n{facts}")
-            cand["future_shape_analysis"] = "\n".join(all_future_facts) if all_future_facts else "特になし"
-        return [types.TextContent(type="text", text=json.dumps(res, indent=2, ensure_ascii=False))]
-
-    elif name == "detect_shapes":
-        curr_b, prev_b, last_c = simulator.reconstruct(history)
-        facts = detector.detect_all(curr_b, prev_b, last_c)
-        return [types.TextContent(type="text", text=facts if facts else "特筆すべき形状は検出されませんでした。")]
+        elif name == "detect_shapes":
+            resp = requests.post(f"{API_URL}/detect", json={"history": history}, timeout=10)
+            resp.raise_for_status()
+            return [types.TextContent(type="text", text=resp.json()["facts"])]
+    except Exception as e:
+        return [types.TextContent(type="text", text=f"API Error: {str(e)}")]
     
     raise ValueError(f"Unknown tool: {name}")
 

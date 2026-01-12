@@ -14,5 +14,5 @@ class AkiSankakuDetector(BaseShape):
                         diag = (r if empty[0]==r+1 else r+1, c if empty[1]==c+1 else c+1)
                         if self._get_stone(curr_board, *diag) == color:
                             coords = sorted([self._to_coord(*p) for p in stones])
-                            messages.append(f"  - 座標 {coords} に「アキ三角」を検知。効率の悪い重い形です。")
+                            messages.append(f"  - 座標 {coords} に「アキ三角」を検知。不安定で攻められやすい弱い形です。")
         return "bad", messages

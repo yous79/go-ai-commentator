@@ -16,5 +16,5 @@ class NimokuAtamaDetector(BaseShape):
                             # 支えのチェック
                             if self._get_stone(curr_board, nr, nc+1) == opp or self._get_stone(curr_board, nr, nc-1) == opp or \
                                self._get_stone(curr_board, nr+1, nc) == opp or self._get_stone(curr_board, nr-1, nc) == opp:
-                                messages.append(f"  - 石 {[self._to_coord(r,c), self._to_coord(nr,nc)]} が 座標 {self._to_coord(head_r, head_c)} で「二目の頭」をハネられた窮屈な形になっています。")
+                                messages.append(f"  - 石 {[self._to_coord(r,c), self._to_coord(nr,nc)]} が 座標 {self._to_coord(head_r, head_c)} で「二目の頭」をハネられた非常に弱い形になっています。")
         return "bad", messages
