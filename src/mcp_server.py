@@ -2,14 +2,15 @@ import asyncio
 import os
 import sys
 import json
-import requests
 
 from mcp.server.models import InitializationOptions
 from mcp.server import NotificationOptions, Server
 from mcp.server.stdio import stdio_server
 import mcp.types as types
 
-API_URL = "http://127.0.0.1:8000"
+# Use the centralized API client
+from services.api_client import api_client
+
 KNOWLEDGE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "knowledge"))
 
 server = Server("katago-analyzer")
@@ -24,6 +25,7 @@ async def handle_list_resources() -> list[types.Resource]:
             mimeType="application/json"
         )
     ]
+    # (既存のリソース走査ロジック)
     # 01_bad_shapes
     shapes_dir = os.path.join(KNOWLEDGE_ROOT, "01_bad_shapes")
     if os.path.exists(shapes_dir):
@@ -51,29 +53,26 @@ async def handle_list_resources() -> list[types.Resource]:
 @server.read_resource()
 async def handle_read_resource(uri: str) -> str:
     if uri == "mcp://game/current/sgf":
-        try:
-            resp = requests.get(f"{API_URL}/game/state", timeout=5)
-            resp.raise_for_status()
-            state = resp.json()
-            # 情報を人間（AI）が読みやすい要約に整形
-            summary = [
-                "### Current Game Session Summary",
-                f"- Current Move Index: {state.get('current_move_index', 0)}",
-                f"- Total Moves: {state.get('total_moves', 0)}",
-                f"- Metadata: {json.dumps(state.get('metadata', {}), ensure_ascii=False)}",
-                "\n--- Recent Move History (Up to last 5) ---"
-            ]
-            hist = state.get('history', [])
-            curr_idx = state.get('current_move_index', 0)
-            # 現在の手数付近の履歴を表示
-            start = max(0, curr_idx - 5)
-            for i in range(start, min(len(hist), curr_idx + 1)):
-                move = hist[i]
-                summary.append(f"Move {i}: {move}")
-            
-            return "\n".join(summary)
-        except Exception as e:
-            return f"Error fetching game state: {str(e)}"
+        state = api_client.get_game_state()
+        if not state:
+            return "Error: Could not fetch game state from API server."
+        
+        summary = [
+            "### Current Game Session Summary",
+            f"- Current Move Index: {state.get('current_move_index', 0)}",
+            f"- Total Moves: {state.get('total_moves', 0)}",
+            f"- Metadata: {json.dumps(state.get('metadata', {}), ensure_ascii=False)}",
+            "\n--- Recent Move History (Up to last 5) ---"
+        ]
+        # (履歴要約ロジック)
+        hist = state.get('history', [])
+        curr_idx = state.get('current_move_index', 0)
+        start = max(0, curr_idx - 5)
+        for i in range(start, min(len(hist), curr_idx + 1)):
+            summary.append(f"Move {i}: {hist[i]}")
+        return "\n".join(summary)
+
+    # (既存の知識ベース読み込みロジック)
 
     if uri.startswith("mcp://knowledge/shapes/"):
         item_id = uri.replace("mcp://knowledge/shapes/", "")
@@ -141,18 +140,15 @@ async def handle_call_tool(
             if i + 1 < len(history): new_h.append([history[i], history[i+1]])
         history = new_h
 
-    try:
-        if name == "katago_analyze":
-            resp = requests.post(f"{API_URL}/analyze", json={"history": history}, timeout=60)
-            resp.raise_for_status()
-            return [types.TextContent(type="text", text=json.dumps(resp.json(), indent=2, ensure_ascii=False))]
+    if name == "katago_analyze":
+        res = api_client.analyze_move(history)
+        if res:
+            return [types.TextContent(type="text", text=json.dumps(res, indent=2, ensure_ascii=False))]
+        return [types.TextContent(type="text", text="API Error: Analysis failed.")]
 
-        elif name == "detect_shapes":
-            resp = requests.post(f"{API_URL}/detect", json={"history": history}, timeout=10)
-            resp.raise_for_status()
-            return [types.TextContent(type="text", text=resp.json()["facts"])]
-    except Exception as e:
-        return [types.TextContent(type="text", text=f"API Error: {str(e)}")]
+    elif name == "detect_shapes":
+        facts = api_client.detect_shapes(history)
+        return [types.TextContent(type="text", text=facts)]
     
     raise ValueError(f"Unknown tool: {name}")
 
