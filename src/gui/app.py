@@ -5,6 +5,7 @@ import os
 import time
 import queue
 import json
+import threading
 import concurrent.futures
 import requests
 import subprocess
@@ -151,7 +152,30 @@ class GoReplayApp:
             
         self.lbl_status.config(text="Starting Analysis...")
         self.analysis_manager.start_analysis(path)
+        self._sync_game_state_to_api() # 初回同期
         self._monitor_images_on_disk()
+
+    def _sync_game_state_to_api(self):
+        """現在の対局状態をAPIサーバーに送信する（動的MCPリソース用）"""
+        try:
+            history = self.game.get_history_up_to(self.current_move)
+            metadata = self.game.get_metadata()
+            state = {
+                "history": history,
+                "current_move_index": self.current_move,
+                "total_moves": self.game.total_moves,
+                "metadata": metadata
+            }
+            def send():
+                try:
+                    r = requests.post("http://127.0.0.1:8000/game/state", json=state, timeout=2)
+                    if r.status_code != 200:
+                        print(f"API Sync Failed: {r.status_code} - {r.text}")
+                except Exception as ex:
+                    print(f"API Sync Thread Error: {ex}")
+            threading.Thread(target=send, daemon=True).start()
+        except Exception as e:
+            print(f"API Sync Warning: {e}")
 
     def _start_queue_monitor(self):
         try:
@@ -180,6 +204,7 @@ class GoReplayApp:
                 for i in range(3):
                     self._upd_mistake_ui("b", i, mb); self._upd_mistake_ui("w", i, mw)
                 self.update_display()
+                self._sync_game_state_to_api() # 解析データ同期後に更新
             except (PermissionError, json.JSONDecodeError): pass
             except Exception as e:
                 print(f"Sync Error: {e}")
@@ -219,6 +244,7 @@ class GoReplayApp:
                 return
         self.current_move = n
         self.update_display()
+        self._sync_game_state_to_api() # 移動時に同期
 
     def update_display(self):
         if self.current_move not in self.image_cache: return

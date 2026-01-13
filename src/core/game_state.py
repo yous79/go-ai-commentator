@@ -35,6 +35,17 @@ class GoGameState:
             print(f"DEBUG ERROR in load_sgf: {e}")
             raise e
 
+    def get_metadata(self):
+        """SGFのルートノードから対局者名やコミなどのメタデータを取得する"""
+        if not self.sgf_game:
+            return {}
+        root = self.sgf_game.get_root()
+        metadata = {}
+        for key in ["PB", "PW", "KM", "RE", "DT", "EV"]:
+            if root.has_property(key):
+                metadata[key] = root.get(key)
+        return metadata
+
     def _import_marks_from_sgf(self):
         """Extract marks from the SGF tree into our dictionary."""
         self.marks_data = {}

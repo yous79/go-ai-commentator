@@ -16,7 +16,14 @@ server = Server("katago-analyzer")
 
 @server.list_resources()
 async def handle_list_resources() -> list[types.Resource]:
-    resources = []
+    resources = [
+        types.Resource(
+            uri="mcp://game/current/sgf",
+            name="Current Game State",
+            description="Real-time metadata, history, and current move information for the active game session.",
+            mimeType="application/json"
+        )
+    ]
     # 01_bad_shapes
     shapes_dir = os.path.join(KNOWLEDGE_ROOT, "01_bad_shapes")
     if os.path.exists(shapes_dir):
@@ -43,6 +50,31 @@ async def handle_list_resources() -> list[types.Resource]:
 
 @server.read_resource()
 async def handle_read_resource(uri: str) -> str:
+    if uri == "mcp://game/current/sgf":
+        try:
+            resp = requests.get(f"{API_URL}/game/state", timeout=5)
+            resp.raise_for_status()
+            state = resp.json()
+            # 情報を人間（AI）が読みやすい要約に整形
+            summary = [
+                "### Current Game Session Summary",
+                f"- Current Move Index: {state.get('current_move_index', 0)}",
+                f"- Total Moves: {state.get('total_moves', 0)}",
+                f"- Metadata: {json.dumps(state.get('metadata', {}), ensure_ascii=False)}",
+                "\n--- Recent Move History (Up to last 5) ---"
+            ]
+            hist = state.get('history', [])
+            curr_idx = state.get('current_move_index', 0)
+            # 現在の手数付近の履歴を表示
+            start = max(0, curr_idx - 5)
+            for i in range(start, min(len(hist), curr_idx + 1)):
+                move = hist[i]
+                summary.append(f"Move {i}: {move}")
+            
+            return "\n".join(summary)
+        except Exception as e:
+            return f"Error fetching game state: {str(e)}"
+
     if uri.startswith("mcp://knowledge/shapes/"):
         item_id = uri.replace("mcp://knowledge/shapes/", "")
         base_path = os.path.join(KNOWLEDGE_ROOT, "01_bad_shapes", item_id)

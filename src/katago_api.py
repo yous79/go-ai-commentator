@@ -25,6 +25,16 @@ class AnalysisRequest(BaseModel):
     board_size: int = 19
     visits: int = 500
 
+class GameState(BaseModel):
+    history: list = []
+    current_move_index: int = 0
+    total_moves: int = 0
+    metadata: dict = {}
+    last_update: float = 0
+
+# In-memory session state
+current_game_state = GameState()
+
 def sanitize_history(history):
     if not history: return []
     if isinstance(history[0], str):
@@ -91,6 +101,17 @@ async def analyze(req: AnalysisRequest):
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"error": str(e), "traceback": traceback.format_exc()})
+
+@app.post("/game/state")
+async def update_game_state(state: GameState):
+    global current_game_state
+    current_game_state = state
+    current_game_state.last_update = time.time()
+    return {"status": "updated"}
+
+@app.get("/game/state")
+async def get_game_state():
+    return current_game_state
 
 @app.post("/detect")
 async def detect(req: AnalysisRequest):
