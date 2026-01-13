@@ -2,55 +2,88 @@ from core.shapes.base_shape import BaseShape
 
 class NimokuAtamaDetector(BaseShape):
     def detect(self, curr_board, prev_board=None, last_move_color=None):
-        messages = []
+        raw_hits = [] # [(victim_coords, attacker_coord), ...]
+        
         for r in range(self.board_size):
             for c in range(self.board_size):
                 color = self._get_stone(curr_board, r, c)
                 if color not in ['b', 'w']: continue
                 opp = 'w' if color == 'b' else 'b'
 
-                # dr, dc は自軍二目の伸びる方向
-                for dr, dc in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
-                    # 1. 自軍の構成チェック: 厳密に「二目」か？
+                # 2方向（右、下）を基準にペアを走査
+                for dr, dc in [(1, 0), (0, 1)]:
                     r1, c1 = r, c
                     r2, c2 = r + dr, c + dc
-                    r_prev, c_prev = r - dr, c - dc # 後ろ
-                    r_head, c_head = r2 + dr, c2 + dc # 頭の地点
-                    
-                    # 自軍の石が2つ並んでいて、かつその後ろが自分ではないこと
-                    if self._get_stone(curr_board, r2, c2) == color and \
-                       self._get_stone(curr_board, r_prev, c_prev) != color:
-                        
-                        # さらに、頭の地点(r_head, c_head)が自分ではないこと（3つ並びを除外）
-                        if self._get_stone(curr_board, r_head, c_head) == color:
-                            continue
+                    if self._get_stone(curr_board, r2, c2) != color: continue
 
-                        # 2. 相手の構成チェック: 横に2つ以上並走しているか
+                    # 二目の前後を特定
+                    directions = [
+                        {'tail': (r1-dr, c1-dc), 'head': (r2+dr, c2+dc), 'pair': ((r1, c1), (r2, c2))},
+                        {'tail': (r2+dr, c2+dc), 'head': (r1-dr, c1-dc), 'pair': ((r2, c2), (r1, c1))}
+                    ]
+
+                    for d in directions:
+                        t_r, t_c = d['tail']
+                        h_r, h_c = d['head']
+                        p1, p2 = d['pair']
+
+                        # 自軍が厳密に「二目」か
+                        if self._get_stone(curr_board, t_r, t_c) == color: continue
+                        if self._get_stone(curr_board, h_r, h_c) == color: continue
+
+                        # 横のラインをチェック
                         side_dr, side_dc = dc, dr
                         for mult in [1, -1]:
-                            opp1_r, opp1_c = r1 + side_dr * mult, c1 + side_dc * mult
-                            opp2_r, opp2_c = r2 + side_dr * mult, c2 + side_dc * mult
+                            s1_r, s1_c = p1[0] + side_dr * mult, p1[1] + side_dc * mult
+                            s2_r, s2_c = p2[0] + side_dr * mult, p2[1] + side_dc * mult
                             
-                            # 自軍二目のそれぞれの横に相手の石が「2つ並んで」並走している
-                            if self._get_stone(curr_board, opp1_r, opp1_c) == opp and \
-                               self._get_stone(curr_board, opp2_r, opp2_c) == opp:
+                            if self._get_stone(curr_board, s1_r, s1_c) == opp and \
+                               self._get_stone(curr_board, s2_r, s2_c) == opp:
                                 
-                                # 3. かつ、その相手の並びから頭(r_head, c_head)をハネているか
-                                if self._get_stone(curr_board, r_head, c_head) == opp:
+                                if self._get_stone(curr_board, h_r, h_c) == opp:
+                                    # 1. 【先制の利】反対側の頭が空点か
+                                    os_r, os_c = h_r + side_dr * (-mult), h_c + side_dc * (-mult)
+                                    if self._get_stone(curr_board, os_r, os_c) != '.': continue
                                     
-                                    # 4. 【決定的な先制の利】反対側の頭が「空点」であることを確認
-                                    # 相手にハネられた地点の反対側の斜め前 (Side Y) を算出
-                                    other_side_r, other_side_c = r2 + dr + side_dr * (-mult), c2 + dc + side_dc * (-mult)
-                                    if self._get_stone(curr_board, other_side_r, other_side_c) != '.':
-                                        # 反対側が空いていない（＝既に自分が叩き返している、または包囲されている）場合は
-                                        # 「二目の頭」という先制の急所打ちの段階ではないため除外
-                                        continue
+                                    # 2. 【孤立性】周囲に味方がいないか（二目自身を除く）
+                                    has_neighbor = False
+                                    nimoku_coords = [p1, p2]
+                                    for nr in [-1, 0, 1]:
+                                        for nc in [-1, 0, 1]:
+                                            if nr == 0 and nc == 0: continue
+                                            cr, cc = h_r + nr, h_c + nc
+                                            if (cr, cc) not in nimoku_coords:
+                                                if self._get_stone(curr_board, cr, cc) == color:
+                                                    has_neighbor = True; break
+                                        if has_neighbor: break
+                                    
+                                    if not has_neighbor:
+                                        # 候補として一時保存
+                                        raw_hits.append({
+                                            'victim_pair': set(nimoku_coords),
+                                            'attacker': (h_r, h_c),
+                                            'msg': f"  - 座標 {[self._to_coord(p1[0], p1[1]), self._to_coord(p2[0], p2[1])]} の二目に対し、相手が {self._to_coord(h_r, h_c)} をハネて「二目の頭」を叩いています。"
+                                        })
 
-                                    messages.append(
-                                        f"  - 座標 {[self._to_coord(r1,c1), self._to_coord(r2,c2)]} の二目に対し、"
-                                        f"相手が先に {self._to_coord(r_head, c_head)} をハネて「二目の頭」を叩いています。"
-                                    )
-                                    break
-        
-        # 重複を排除して返す
-        return "bad" if messages else None, list(set(messages))
+        # 3. 相互叩き合いの相殺ロジック
+        final_messages = []
+        excluded_indices = set()
+
+        for i, hit1 in enumerate(raw_hits):
+            if i in excluded_indices: continue
+            
+            is_mutual = False
+            for j, hit2 in enumerate(raw_hits):
+                if i == j: continue
+                # hit1の攻撃者が、hit2の被害者ペアの一部である
+                # かつ、hit2の攻撃者が、hit1の被害者ペアの一部である
+                if hit1['attacker'] in hit2['victim_pair'] and \
+                   hit2['attacker'] in hit1['victim_pair']:
+                    is_mutual = True
+                    excluded_indices.add(j)
+                    break
+            
+            if not is_mutual:
+                final_messages.append(hit1['msg'])
+
+        return "bad" if final_messages else None, final_messages
