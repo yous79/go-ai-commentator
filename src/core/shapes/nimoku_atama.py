@@ -37,9 +37,18 @@ class NimokuAtamaDetector(BaseShape):
                                 
                                 # 3. かつ、その相手の並びから頭(r_head, c_head)をハネているか
                                 if self._get_stone(curr_board, r_head, c_head) == opp:
+                                    
+                                    # 4. 【決定的な先制の利】反対側の頭が「空点」であることを確認
+                                    # 相手にハネられた地点の反対側の斜め前 (Side Y) を算出
+                                    other_side_r, other_side_c = r2 + dr + side_dr * (-mult), c2 + dc + side_dc * (-mult)
+                                    if self._get_stone(curr_board, other_side_r, other_side_c) != '.':
+                                        # 反対側が空いていない（＝既に自分が叩き返している、または包囲されている）場合は
+                                        # 「二目の頭」という先制の急所打ちの段階ではないため除外
+                                        continue
+
                                     messages.append(
-                                        f"  - 座標 {[self._to_coord(r1,c1), self._to_coord(r2,c2)]} の厳密な二目に対し、"
-                                        f"横に並走する相手の石が {self._to_coord(r_head, c_head)} で「二目の頭」をハネています。"
+                                        f"  - 座標 {[self._to_coord(r1,c1), self._to_coord(r2,c2)]} の二目に対し、"
+                                        f"相手が先に {self._to_coord(r_head, c_head)} をハネて「二目の頭」を叩いています。"
                                     )
                                     break
         
