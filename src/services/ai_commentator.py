@@ -1,35 +1,30 @@
 from google import genai
 from google.genai import types
 import os
-import asyncio
 import json
 import traceback
-import re
-import requests
 from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME
 from core.knowledge_manager import KnowledgeManager
 from prompts.templates import get_unified_system_instruction
+from services.api_client import api_client
 
 class GeminiCommentator:
     def __init__(self, api_key):
         self.client = genai.Client(api_key=api_key)
         self.last_pv = None 
         self.knowledge_manager = KnowledgeManager(KNOWLEDGE_DIR)
-        self.api_url = "http://127.0.0.1:8000"
 
     def generate_commentary(self, move_idx, history, board_size=19):
         """【事実先行型】先に解析を完了させ、確定データをGeminiに渡して解説を生成させる"""
         try:
-            print(f"--- FACT-FIRST AI COMMENTARY START (Move {move_idx}) ---")
+            print(f"--- AI COMMENTARY START (Move {move_idx}) ---")
             
-            # 1. 解析データの先行取得 (Sync API Call)
-            print("DEBUG: Pre-fetching KataGo analysis...")
-            ana_resp = requests.post(f"{self.api_url}/analyze", json={"history": history, "board_size": board_size}, timeout=45)
-            ana_data = ana_resp.json()
+            # 1. 解析データの先行取得 (API Client Singleton)
+            ana_data = api_client.analyze_move(history, board_size, visits=100, include_pv=True)
+            if not ana_data:
+                return "【エラー】KataGoによる解析データの取得に失敗しました。サーバーの状態を確認してください。"
             
-            print("DEBUG: Pre-fetching shape detection...")
-            det_resp = requests.post(f"{self.api_url}/detect", json={"history": history, "board_size": board_size}, timeout=15)
-            det_data = det_resp.json()
+            facts = api_client.detect_shapes(history)
 
             # 2. データの整理
             best = ana_data.get('top_candidates', [{}])[0]
@@ -41,10 +36,10 @@ class GeminiCommentator:
                 f"- 目数差: {ana_data.get('score_lead_black', '不明')}目（正の値は黒リード）\n"
                 f"- AIの推奨手: {best.get('move', 'なし')}\n"
                 f"- 推奨進行: {best.get('future_sequence', 'なし')}\n"
-                f"- 盤面の形状事実: {det_data.get('facts', '特筆すべき形状なし')}\n"
+                f"- 盤面の形状事実: {facts}\n"
                 f"- 推奨手の将来予測: {best.get('future_shape_analysis', '特になし')}\n"
             )
-            print(f"DEBUG DATA READY: {ana_data.get('winrate_black')} / {best.get('move')}")
+            print(f"DEBUG DATA READY: Winrate(B): {ana_data.get('winrate_black')}")
 
             # 3. プロンプトの構築
             kn = self.knowledge_manager.get_all_knowledge_text()

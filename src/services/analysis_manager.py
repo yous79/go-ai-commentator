@@ -8,6 +8,7 @@ import traceback
 import concurrent.futures
 from sgfmill import sgf, boards
 from config import OUTPUT_BASE_DIR
+from services.api_client import api_client
 
 class ImageWriter(threading.Thread):
     def __init__(self, output_dir, renderer):
@@ -41,8 +42,7 @@ class AnalysisManager:
         self.analyzing = False
         self.stop_requested = threading.Event()
         self.image_writer = None
-        self.api_url = "http://127.0.0.1:8000/analyze"
-        self.batch_size = 4 # 並列数を戻して高速化
+        self.batch_size = 4
 
     def start_analysis(self, sgf_path):
         self.stop_analysis()
@@ -56,32 +56,19 @@ class AnalysisManager:
         if self.image_writer: self.image_writer.stop()
 
     def _analyze_single_move(self, m_num, history, board_size):
-        # 0手目（初期状態）は解析をスキップして固定値を返す
         if m_num == 0:
             return 0, {
-                "winrate_black": 0.47, # コミありの初期勝率
+                "winrate_black": 0.47,
                 "score_lead_black": 0.0,
                 "ownership_black": [0.0] * (board_size * board_size),
                 "top_candidates": []
             }
 
-        for attempt in range(5):
-            if self.stop_requested.is_set(): return m_num, None
-            try:
-                # 高速モード(include_pv_shapes=False)で解析を要求
-                resp = requests.post(self.api_url, 
-                                     json={
-                                         "history": history, 
-                                         "board_size": board_size, 
-                                         "visits": 100,
-                                         "include_pv_shapes": False
-                                     }, 
-                                     timeout=60)
-                if resp.status_code == 200:
-                    return m_num, resp.json()
-            except: pass
-            time.sleep(2.0 * (attempt + 1)) # リトライ間隔を延長
-        return m_num, None
+        if self.stop_requested.is_set(): return m_num, None
+        
+        # クライアント経由で解析（リトライは内蔵）
+        res = api_client.analyze_move(history, board_size, visits=100, include_pv=False)
+        return m_num, res
 
     def _run_batch_analysis(self, path):
         try:
