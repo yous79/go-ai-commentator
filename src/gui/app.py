@@ -156,9 +156,16 @@ class GoReplayApp:
         self._monitor_images_on_disk()
 
     def _sync_game_state_to_api(self):
-        """現在の対局状態をAPIサーバーに送信する（動的MCPリソース用）"""
+        """現在の対局状態をAPIサーバーに送信する（軽量版）"""
+        if hasattr(self, "_is_syncing") and self._is_syncing:
+            return
+            
         try:
-            history = self.game.get_history_up_to(self.current_move)
+            self._is_syncing = True
+            # 履歴を直近10手に制限して負荷を軽減
+            full_history = self.game.get_history_up_to(self.current_move)
+            history = full_history[-10:] if len(full_history) > 10 else full_history
+            
             metadata = self.game.get_metadata()
             state = {
                 "history": history,
@@ -168,14 +175,13 @@ class GoReplayApp:
             }
             def send():
                 try:
-                    r = requests.post("http://127.0.0.1:8000/game/state", json=state, timeout=2)
-                    if r.status_code != 200:
-                        print(f"API Sync Failed: {r.status_code} - {r.text}")
-                except Exception as ex:
-                    print(f"API Sync Thread Error: {ex}")
+                    requests.post("http://127.0.0.1:8000/game/state", json=state, timeout=3)
+                except: pass
+                finally: self._is_syncing = False
+
             threading.Thread(target=send, daemon=True).start()
         except Exception as e:
-            print(f"API Sync Warning: {e}")
+            self._is_syncing = False
 
     def _start_queue_monitor(self):
         try:
@@ -204,7 +210,7 @@ class GoReplayApp:
                 for i in range(3):
                     self._upd_mistake_ui("b", i, mb); self._upd_mistake_ui("w", i, mw)
                 self.update_display()
-                self._sync_game_state_to_api() # 解析データ同期後に更新
+                # ここでの同期を削除（show_imageに任せる）
             except (PermissionError, json.JSONDecodeError): pass
             except Exception as e:
                 print(f"Sync Error: {e}")

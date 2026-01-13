@@ -6,6 +6,7 @@ import os
 import json
 import time
 import traceback
+import asyncio
 
 # Core imports
 from drivers.katago_driver import KataGoDriver
@@ -20,10 +21,14 @@ katago = KataGoDriver(KATAGO_EXE, KATAGO_CONFIG, KATAGO_MODEL)
 detector = ShapeDetector()
 simulator = BoardSimulator()
 
+# Request Queue Lock
+engine_lock = asyncio.Lock()
+
 class AnalysisRequest(BaseModel):
     history: list
     board_size: int = 19
-    visits: int = 500
+    visits: int = 100
+    include_pv_shapes: bool = True # デフォルトは詳細解析あり
 
 class GameState(BaseModel):
     history: list = []
@@ -57,50 +62,56 @@ async def health():
 
 @app.post("/analyze")
 async def analyze(req: AnalysisRequest):
-    try:
-        clean_history = sanitize_history(req.history)
-        
-        # KataGo Analysis
-        res = {"error": "Engine initialization failed"}
-        for attempt in range(3):
-            res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
-            if "error" not in res: break
-            time.sleep(0.5 * (attempt + 1))
-
-        if "error" in res:
-            return JSONResponse(status_code=503, content=res)
-        
-        # 確実に実データを変数に保持
-        final_wr = res.get('winrate', 0.5)
-        final_score = res.get('score', 0.0)
-        final_own = res.get('ownership', [])
-        
-        # Future Shape Analysis (PV解析)
-        curr_b, _, _ = simulator.reconstruct(clean_history)
-        player_color = "B" if len(clean_history) % 2 == 0 else "W"
-        
-        top_cands = res.get('top_candidates', [])
-        for cand in top_cands:
-            pv_str = cand.get('future_sequence', "")
-            pv_list = [m.strip() for m in pv_str.split(" -> ")] if pv_str else []
-            all_future_facts = []
-            for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-                if not prev_b: continue
-                facts = detector.detect_all(sim_b, prev_b, c_color)
-                if facts: all_future_facts.append(f"  [{m_str}の局面]:\n{facts}")
-            cand["future_shape_analysis"] = "\n".join(all_future_facts) if all_future_facts else "特になし"
+    async with engine_lock:
+        try:
+            print(f"DEBUG: Starting analysis for {len(req.history)} moves (PV shapes: {req.include_pv_shapes})")
+            clean_history = sanitize_history(req.history)
             
-        # 最終的なレスポンスの構築
-        return {
-            "winrate_black": final_wr,
-            "score_lead_black": final_score,
-            "ownership_black": final_own,
-            "top_candidates": top_cands
-        }
+            # KataGo Analysis
+            res = {"error": "Engine initialization failed"}
+            for attempt in range(3):
+                res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+                if "error" not in res: break
+                await asyncio.sleep(0.5 * (attempt + 1))
 
-    except Exception as e:
-        traceback.print_exc()
-        return JSONResponse(status_code=500, content={"error": str(e), "traceback": traceback.format_exc()})
+            if "error" in res:
+                return JSONResponse(status_code=503, content=res)
+            
+            # 確実に実データを変数に保持
+            final_wr = res.get('winrate', 0.5)
+            final_score = res.get('score', 0.0)
+            final_own = res.get('ownership', [])
+            
+            # Future Shape Analysis (PV解析)
+            top_candidates = res.get('top_candidates', [])
+            if req.include_pv_shapes:
+                curr_b, _, _ = simulator.reconstruct(clean_history)
+                player_color = "B" if len(clean_history) % 2 == 0 else "W"
+                
+                for cand in top_candidates:
+                    pv_str = cand.get('future_sequence', "")
+                    pv_list = [m.strip() for m in pv_str.split(" -> ")] if pv_str else []
+                    all_future_facts = []
+                    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
+                        if not prev_b: continue
+                        facts = detector.detect_all(sim_b, prev_b, c_color)
+                        if facts: all_future_facts.append(f"  [{m_str}の局面]:\n{facts}")
+                    cand["future_shape_analysis"] = "\n".join(all_future_facts) if all_future_facts else "特になし"
+            else:
+                for cand in top_candidates:
+                    cand["future_shape_analysis"] = "（高速解析モード：個別検討で表示）"
+                
+            print(f"DEBUG: Analysis complete. Winrate(B): {final_wr:.1%}")
+            return {
+                "winrate_black": final_wr,
+                "score_lead_black": final_score,
+                "ownership_black": final_own,
+                "top_candidates": top_candidates
+            }
+
+        except Exception as e:
+            traceback.print_exc()
+            return JSONResponse(status_code=500, content={"error": str(e), "traceback": traceback.format_exc()})
 
 @app.post("/game/state")
 async def update_game_state(state: GameState):

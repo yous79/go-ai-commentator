@@ -1,6 +1,10 @@
 import tkinter as tk
 import sys
 import os
+import subprocess
+import time
+import requests
+from utils.process_manager import kill_process_on_port, kill_legacy_katago
 
 # Add src directory to sys.path to handle modular imports
 SRC_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -9,7 +13,39 @@ if SRC_DIR not in sys.path:
 
 from gui.app import GoReplayApp
 
+def start_api_server():
+    """APIサーバーをクリーンな状態で自動起動し、準備ができるまで待機する"""
+    print("--- System Startup: Initializing Intelligence Infrastructure ---")
+    kill_process_on_port(8000)
+    kill_legacy_katago()
+    
+    api_script = os.path.join(SRC_DIR, "katago_api.py")
+    log_file_path = os.path.join(SRC_DIR, "api_server.log")
+    
+    # サーバーをバックグラウンド起動
+    print(f"Launching API Server: {api_script}")
+    with open(log_file_path, "w", encoding="utf-8") as log_file:
+        proc = subprocess.Popen([sys.executable, api_script], 
+                                stdout=log_file, stderr=log_file, 
+                                creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+    
+    # サーバーの準備ができるまで待機
+    for i in range(20):
+        try:
+            resp = requests.get("http://127.0.0.1:8000/health", timeout=1)
+            if resp.status_code == 200:
+                print("API Server is Ready.")
+                return proc
+        except:
+            time.sleep(1)
+            if i % 5 == 0: print(f"Waiting for API server to initialize... ({i}s)")
+            
+    print("Warning: API Server startup timed out. Proceeding anyway...")
+    return proc
+
 if __name__ == "__main__":
+    api_proc = start_api_server()
+    
     root = tk.Tk()
     app = GoReplayApp(root)
 

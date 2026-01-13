@@ -42,7 +42,7 @@ class AnalysisManager:
         self.stop_requested = threading.Event()
         self.image_writer = None
         self.api_url = "http://127.0.0.1:8000/analyze"
-        self.batch_size = 2 # 安定性のために並列数を2に下げる
+        self.batch_size = 4 # 並列数を戻して高速化
 
     def start_analysis(self, sgf_path):
         self.stop_analysis()
@@ -68,13 +68,19 @@ class AnalysisManager:
         for attempt in range(5):
             if self.stop_requested.is_set(): return m_num, None
             try:
+                # 高速モード(include_pv_shapes=False)で解析を要求
                 resp = requests.post(self.api_url, 
-                                     json={"history": history, "board_size": board_size, "visits": 500}, 
+                                     json={
+                                         "history": history, 
+                                         "board_size": board_size, 
+                                         "visits": 100,
+                                         "include_pv_shapes": False
+                                     }, 
                                      timeout=60)
                 if resp.status_code == 200:
                     return m_num, resp.json()
             except: pass
-            time.sleep(1.0 * (attempt + 1))
+            time.sleep(2.0 * (attempt + 1)) # リトライ間隔を延長
         return m_num, None
 
     def _run_batch_analysis(self, path):
