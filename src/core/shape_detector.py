@@ -7,6 +7,11 @@ from core.shapes.kosumi import KosumiDetector
 from core.shapes.takefu import TakefuDetector
 from core.shapes.ikken_tobi import IkkenTobiDetector
 from core.shapes.keima import KeimaDetector
+from core.shapes.tsuke import TsukeDetector
+from core.shapes.hane import HaneDetector
+from core.shapes.kirichigai import KirichigaiDetector
+from core.shapes.nobi import NobiDetector
+from core.shapes.butsukari import ButsukariDetector
 
 class ShapeDetector:
     def __init__(self, board_size=19):
@@ -20,7 +25,12 @@ class ShapeDetector:
             KosumiDetector(board_size),
             TakefuDetector(board_size),
             IkkenTobiDetector(board_size),
-            KeimaDetector(board_size)
+            KeimaDetector(board_size),
+            TsukeDetector(board_size),
+            HaneDetector(board_size),
+            KirichigaiDetector(board_size),
+            NobiDetector(board_size),
+            ButsukariDetector(board_size)
         ]
 
     def detect_all(self, curr_board, prev_board=None, last_move_color=None):
