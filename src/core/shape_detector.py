@@ -12,6 +12,7 @@ from core.shapes.hane import HaneDetector
 from core.shapes.kirichigai import KirichigaiDetector
 from core.shapes.nobi import NobiDetector
 from core.shapes.butsukari import ButsukariDetector
+from core.point import Point
 
 class DetectionContext:
     """検知に必要な盤面コンテキストを一元管理するクラス"""
@@ -22,13 +23,13 @@ class DetectionContext:
         self.last_move, self.last_color = self._find_last_move()
 
     def _find_last_move(self):
-        """現在の盤面と直前の盤面を比較して最新の着手座標を特定する"""
+        """現在の盤面と直前の盤面を比較して最新の着手座標(Point)を特定する"""
         if self.prev_board is None:
             return None, None
         for r in range(self.board_size):
             for c in range(self.board_size):
                 if self.curr_board.get(r, c) and not self.prev_board.get(r, c):
-                    return (r, c), self.curr_board.get(r, c)
+                    return Point(r, c), self.curr_board.get(r, c)
         return None, None
 
 class ShapeDetector:

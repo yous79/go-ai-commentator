@@ -10,7 +10,13 @@ class BaseShape(ABC):
         """検知を実行し、(category, message_list) を返す"""
         pass
 
-    def _get_stone(self, board, r, c):
+    def _get_stone(self, board, r, c=None):
+        if c is None:
+            if hasattr(r, 'row'): # Point object
+                r, c = r.row, r.col
+            elif isinstance(r, (tuple, list)):
+                r, c = r[0], r[1]
+        
         if 0 <= r < self.board_size and 0 <= c < self.board_size:
             res = board.get(r, c)
             return res if res is not None else '.'
@@ -26,26 +32,25 @@ class BaseShape(ABC):
 
     def _is_connected(self, board, p1, p2, color):
         """BFS（幅優先探索）を使用して、p1 と p2 が同じ色の石で連結されているか判定する"""
+        from core.point import Point
+        p1 = Point(p1[0], p1[1]) if isinstance(p1, tuple) else p1
+        p2 = Point(p2[0], p2[1]) if isinstance(p2, tuple) else p2
+        
         if p1 == p2: return True
-        r1, c1 = p1; r2, c2 = p2
-        if self._get_stone(board, r1, c1) != color or self._get_stone(board, r2, c2) != color:
+        if self._get_stone(board, p1) != color or self._get_stone(board, p2) != color:
             return False
 
         queue = [p1]
         visited = {p1}
         
         while queue:
-            curr_r, curr_c = queue.pop(0)
-            if (curr_r, curr_c) == p2:
+            curr = queue.pop(0)
+            if curr == p2:
                 return True
             
-            # 上下左右および斜め（8近傍）をチェック
-            for dr in [-1, 0, 1]:
-                for dc in [-1, 0, 1]:
-                    if dr == 0 and dc == 0: continue
-                    nr, nc = curr_r + dr, curr_c + dc
-                    if (nr, nc) not in visited and self._get_stone(board, nr, nc) == color:
-                        visited.add((nr, nc))
-                        queue.append((nr, nc))
+            for neighbor in curr.all_neighbors(self.board_size):
+                if neighbor not in visited and self._get_stone(board, neighbor) == color:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
         
         return False

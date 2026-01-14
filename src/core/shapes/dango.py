@@ -1,4 +1,5 @@
 from core.shapes.base_shape import BaseShape
+from core.point import Point
 
 class DangoDetector(BaseShape):
     key = "dango"
@@ -7,10 +8,10 @@ class DangoDetector(BaseShape):
         messages = []
         for r in range(context.board_size - 1):
             for c in range(context.board_size - 1):
-                cells = [(r, c), (r+1, c), (r, c+1), (r+1, c+1)]
+                p = Point(r, c)
+                cells = [p, p + (1, 0), p + (0, 1), p + (1, 1)]
                 for color in ['b', 'w']:
-                    stones = [p for p in cells if self._get_stone(context.curr_board, p[0], p[1]) == color]
-                    if len(stones) == 4:
-                        coords = sorted([self._to_coord(p[0], p[1]) for p in stones])
-                        messages.append(f"  - 座標 {coords} に「団子石」を検知。凝り形で効率が非常に悪いです。")
+                    if all(self._get_stone(context.curr_board, cp) == color for cp in cells):
+                        coords = sorted([cp.to_gtp() for cp in cells])
+                        messages.append(f"  - 座標 {coords} に「団子石」を検知。効率が非常に悪いです。")
         return "bad" if messages else None, list(set(messages))

@@ -1,4 +1,5 @@
 from core.shapes.base_shape import BaseShape
+from core.point import Point
 
 class AkiSankakuDetector(BaseShape):
     key = "aki_sankaku"
@@ -7,11 +8,12 @@ class AkiSankakuDetector(BaseShape):
         messages = []
         for r in range(context.board_size - 1):
             for c in range(context.board_size - 1):
-                cells = [(r, c), (r+1, c), (r, c+1), (r+1, c+1)]
+                p = Point(r, c)
+                cells = [p, p + (1, 0), p + (0, 1), p + (1, 1)]
                 for color in ['b', 'w']:
-                    stones = [p for p in cells if self._get_stone(context.curr_board, p[0], p[1]) == color]
-                    empties = [p for p in cells if self._get_stone(context.curr_board, p[0], p[1]) == '.']
+                    stones = [cp for cp in cells if self._get_stone(context.curr_board, cp) == color]
+                    empties = [cp for cp in cells if self._get_stone(context.curr_board, cp) == '.']
                     if len(stones) == 3 and len(empties) == 1:
-                        coords = sorted([self._to_coord(p[0], p[1]) for p in stones])
-                        messages.append(f"  - 座標 {coords} に「アキ三角」を検知。効率の悪い重複した形です。")
+                        coords = sorted([cp.to_gtp() for cp in stones])
+                        messages.append(f"  - 座標 {coords} に「アキ三角」を検知。効率の悪い形です。")
         return "bad" if messages else None, list(set(messages))
