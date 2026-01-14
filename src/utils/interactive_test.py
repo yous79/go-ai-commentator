@@ -9,11 +9,18 @@ if SRC_DIR not in sys.path:
 from core.shape_detector import ShapeDetector
 from core.coordinate_transformer import CoordinateTransformer
 
+import copy
+
 class InteractiveBoard:
     def __init__(self, size=9):
         self.size = size
         self.board = [['.' for _ in range(size)] for _ in range(size)]
     
+    def copy(self):
+        new_ib = InteractiveBoard(self.size)
+        new_ib.board = copy.deepcopy(self.board)
+        return new_ib
+
     def set_stone(self, coord_str, char):
         indices = CoordinateTransformer.gtp_to_indices_static(coord_str)
         if indices:
@@ -43,7 +50,10 @@ def main():
     ib = InteractiveBoard(size)
     detector = ShapeDetector(board_size=size)
     
-    print("--- Integrated Shape Logic Interactive Tester ---")
+    prev_ib = None
+    last_color = None
+    
+    print("--- Integrated Shape Logic Interactive Tester (with History) ---")
     print("Commands:")
     print("  B <Coord> : Set Black (e.g. B E5)")
     print("  W <Coord> : Set White (e.g. W F5)")
@@ -52,8 +62,8 @@ def main():
 
     while True:
         ib.display()
-        # 全ての形状検知を実行
-        facts = detector.detect_all(ib)
+        # 全ての形状検知を実行（1手前と最後の手番色を渡す）
+        facts = detector.detect_all(ib, prev_board=prev_ib, last_move_color=last_color)
         if facts:
             print("\n" + facts)
         else:
@@ -69,8 +79,19 @@ def main():
             char = cmd if cmd in ['B', 'W', '.'] else None
             coord = line[1].upper()
             if char:
+                # 操作前に現在の盤面を保存
+                prev_ib = ib.copy()
                 if not ib.set_stone(coord, char):
                     print(f"Invalid Coordinate: {coord}")
+                else:
+                    # 最後の手番色を記録（'.' の場合は反対の色が抜いたとみなす）
+                    if char in ['B', 'W']:
+                        last_color = char.lower()
+                    else:
+                        # 石を消した（抜いた）場合、その地点にいた石の反対の色を手番とする
+                        old_stone = prev_ib.get(*CoordinateTransformer.gtp_to_indices_static(coord))
+                        if old_stone in ['b', 'w']:
+                            last_color = 'w' if old_stone == 'b' else 'b'
         except EOFError:
             break
         except Exception as e:
