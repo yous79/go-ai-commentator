@@ -28,14 +28,24 @@ class GeminiCommentator:
 
             # 2. データの整理
             best = ana_data.get('top_candidates', [{}])[0]
-            self.last_pv = best.get('future_sequence', "").split(" -> ")
+            pv_list = best.get('pv', [])
+            self.last_pv = pv_list
+            
+            # 手番の色を考慮した番号付きリスト作成
+            player_color = "黒" if (move_idx % 2 == 0) else "白"
+            opp_color = "白" if player_color == "黒" else "黒"
+            colored_seq = []
+            for i, m in enumerate(pv_list):
+                c = player_color if i % 2 == 0 else opp_color
+                colored_seq.append(f"{i+1}: {c}{m}")
+            numbered_seq = ", ".join(colored_seq) if colored_seq else "なし"
             
             fact_summary = (
                 f"【最新の確定解析データ（引用必須）】\n"
                 f"- 黒の勝率: {ana_data.get('winrate_black', '不明')}\n"
                 f"- 目数差: {ana_data.get('score_lead_black', '不明')}目（正の値は黒リード）\n"
                 f"- AIの推奨手: {best.get('move', 'なし')}\n"
-                f"- 推奨進行: {best.get('future_sequence', 'なし')}\n"
+                f"- 推奨進行（色・番号付き）: {numbered_seq}\n"
                 f"- 盤面の形状事実: {facts}\n"
                 f"- 推奨手の将来予測: {best.get('future_shape_analysis', '特になし')}\n"
             )

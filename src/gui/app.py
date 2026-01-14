@@ -221,7 +221,6 @@ class GoReplayApp:
     def _update_commentary_ui(self, text):
         self.info_view.set_commentary(text)
         self.info_view.btn_comment.config(state="normal", text="Ask AI Agent")
-        self.info_view.btn_agent_pv.config(state="normal" if self.gemini.last_pv else "disabled")
 
     def generate_full_report(self):
         if not self.report_generator: return
