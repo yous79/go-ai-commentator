@@ -13,6 +13,24 @@ from core.shapes.kirichigai import KirichigaiDetector
 from core.shapes.nobi import NobiDetector
 from core.shapes.butsukari import ButsukariDetector
 
+class DetectionContext:
+    """検知に必要な盤面コンテキストを一元管理するクラス"""
+    def __init__(self, curr_board, prev_board, board_size):
+        self.curr_board = curr_board
+        self.prev_board = prev_board
+        self.board_size = board_size
+        self.last_move, self.last_color = self._find_last_move()
+
+    def _find_last_move(self):
+        """現在の盤面と直前の盤面を比較して最新の着手座標を特定する"""
+        if self.prev_board is None:
+            return None, None
+        for r in range(self.board_size):
+            for c in range(self.board_size):
+                if self.curr_board.get(r, c) and not self.prev_board.get(r, c):
+                    return (r, c), self.curr_board.get(r, c)
+        return None, None
+
 class ShapeDetector:
     def __init__(self, board_size=19):
         self.board_size = board_size
@@ -34,11 +52,11 @@ class ShapeDetector:
         ]
 
     def detect_all(self, curr_board, prev_board=None, last_move_color=None):
+        context = DetectionContext(curr_board, prev_board, self.board_size)
         bad_shapes = []
         normal_facts = []
         for strategy in self.strategies:
-            strategy.board_size = self.board_size
-            category, results = strategy.detect(curr_board, prev_board, last_move_color)
+            category, results = strategy.detect(context)
             if category == "bad":
                 bad_shapes.extend(results)
             elif category == "normal":
@@ -46,6 +64,7 @@ class ShapeDetector:
             elif category == "mixed":
                 bad_shapes.extend(results[0])
                 normal_facts.extend(results[1])
+        
         report = []
         if bad_shapes:
             report.append("【盤面形状解析：警告（悪形・失着）】")
@@ -57,10 +76,10 @@ class ShapeDetector:
         return "\n".join(report) if report else ""
 
     def detect_ids(self, curr_board, prev_board=None, last_move_color=None):
+        context = DetectionContext(curr_board, prev_board, self.board_size)
         detected_ids = set()
         for strategy in self.strategies:
-            strategy.board_size = self.board_size
-            _, results = strategy.detect(curr_board, prev_board, last_move_color)
+            _, results = strategy.detect(context)
             if results:
                 has_actual_results = False
                 if isinstance(results, tuple):

@@ -6,7 +6,7 @@ class BaseShape(ABC):
         self.board_size = board_size
 
     @abstractmethod
-    def detect(self, curr_board, prev_board=None, last_move_color=None):
+    def detect(self, context):
         """検知を実行し、(category, message_list) を返す"""
         pass
 
