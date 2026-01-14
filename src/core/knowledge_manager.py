@@ -1,42 +1,24 @@
 import os
-import glob
+from core.knowledge_repository import KnowledgeRepository
 
 class KnowledgeManager:
     """知識ベース（用語辞書）の管理、インデックス化、検索を行うクラス"""
 
     def __init__(self, root_dir):
-        self.root_dir = root_dir
+        self.repository = KnowledgeRepository(root_dir)
         self.index = {} # {category: {term: content}}
         self._build_index()
 
     def _build_index(self):
-        """ディレクトリ構造から知識インデックスを構築する"""
-        if not os.path.exists(self.root_dir):
-            return
-
-        for category_dir in sorted(os.listdir(self.root_dir)):
-            cat_path = os.path.join(self.root_dir, category_dir)
-            if not os.path.isdir(cat_path): continue
-            
-            # カテゴリ名の整形 (01_bad_shapes -> Bad Shapes)
-            cat_key = category_dir
-            self.index[cat_key] = {}
-
-            for term_dir in sorted(os.listdir(cat_path)):
-                term_path = os.path.join(cat_path, term_dir)
-                if not os.path.isdir(term_path): continue
-                
-                # 用語コンテンツの集約
-                content = []
-                for f_name in glob.glob(os.path.join(term_path, "*.txt")):
-                    try:
-                        with open(f_name, "r", encoding="utf-8") as f:
-                            text = f.read().strip()
-                            if text: content.append(text)
-                    except: pass
-                
-                if content:
-                    self.index[cat_key][term_dir] = "\n".join(content)
+        """Repositoryを使用して知識インデックスを構築する"""
+        categories = self.repository.get_categories()
+        for cat in categories:
+            self.index[cat] = {}
+            items = self.repository.get_items(cat)
+            for item in items:
+                content = self.repository.get_item_content(cat, item.id)
+                if content and "No commentary text found" not in content:
+                    self.index[cat][item.id] = content
 
     def get_all_knowledge_text(self):
         """プロンプト用に全知識をテキスト化して返す（従来互換）"""

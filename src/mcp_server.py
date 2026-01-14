@@ -10,8 +10,10 @@ import mcp.types as types
 
 # Use the centralized API client
 from services.api_client import api_client
+from core.knowledge_repository import KnowledgeRepository
 
 KNOWLEDGE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "knowledge"))
+knowledge_repo = KnowledgeRepository(KNOWLEDGE_ROOT)
 
 server = Server("katago-analyzer")
 
@@ -23,31 +25,33 @@ async def handle_list_resources() -> list[types.Resource]:
             name="Current Game State",
             description="Real-time metadata, history, and current move information for the active game session.",
             mimeType="application/json"
+        ),
+        types.Resource(
+            uri="mcp://game/current/relevant-knowledge",
+            name="Relevant Knowledge for Current Board",
+            description="Dynamically aggregated definitions and commentary for shapes and techniques detected in the current board position.",
+            mimeType="text/plain"
         )
     ]
-    # (既存のリソース走査ロジック)
+    
+    # Use Repository to list resources
     # 01_bad_shapes
-    shapes_dir = os.path.join(KNOWLEDGE_ROOT, "01_bad_shapes")
-    if os.path.exists(shapes_dir):
-        for shape in os.listdir(shapes_dir):
-            if os.path.isdir(os.path.join(shapes_dir, shape)):
-                resources.append(types.Resource(
-                    uri=f"mcp://knowledge/shapes/{shape}",
-                    name=f"Shape Definition: {shape}",
-                    description=f"Definition and examples for Go shape: {shape}",
-                    mimeType="text/plain"
-                ))
+    for item in knowledge_repo.get_items("01_bad_shapes"):
+        resources.append(types.Resource(
+            uri=f"mcp://knowledge/shapes/{item.id}",
+            name=f"Shape Definition: {item.id}",
+            description=f"Definition and examples for Go shape: {item.title}",
+            mimeType="text/plain"
+        ))
+    
     # 02_techniques
-    techs_dir = os.path.join(KNOWLEDGE_ROOT, "02_techniques")
-    if os.path.exists(techs_dir):
-        for tech in os.listdir(techs_dir):
-            if os.path.isdir(os.path.join(techs_dir, tech)):
-                resources.append(types.Resource(
-                    uri=f"mcp://knowledge/techniques/{tech}",
-                    name=f"Technique Definition: {tech}",
-                    description=f"Explanation for Go technique: {tech}",
-                    mimeType="text/plain"
-                ))
+    for item in knowledge_repo.get_items("02_techniques"):
+        resources.append(types.Resource(
+            uri=f"mcp://knowledge/techniques/{item.id}",
+            name=f"Technique Definition: {item.id}",
+            description=f"Explanation for Go technique: {item.title}",
+            mimeType="text/plain"
+        ))
     return resources
 
 @server.read_resource()
@@ -64,7 +68,7 @@ async def handle_read_resource(uri: str) -> str:
             f"- Metadata: {json.dumps(state.get('metadata', {}), ensure_ascii=False)}",
             "\n--- Recent Move History (Up to last 5) ---"
         ]
-        # (履歴要約ロジック)
+        
         hist = state.get('history', [])
         curr_idx = state.get('current_move_index', 0)
         start = max(0, curr_idx - 5)
@@ -72,32 +76,45 @@ async def handle_read_resource(uri: str) -> str:
             summary.append(f"Move {i}: {hist[i]}")
         return "\n".join(summary)
 
-    # (既存の知識ベース読み込みロジック)
+    if uri == "mcp://game/current/relevant-knowledge":
+        state = api_client.get_game_state()
+        if not state:
+            return "Error: Could not fetch game state to identify relevant knowledge."
+        
+        history = state.get('history', [])
+        curr_idx = state.get('current_move_index', 0)
+        # 現在のインデックスまでの履歴を使用
+        current_history = history[:curr_idx + 1]
+        
+        # 1. 現在の盤面から特徴を検知（IDリストを取得）
+        detected_ids = api_client.detect_shape_ids(current_history)
+        
+        if not detected_ids:
+            return "現在の局面に該当する特定の悪形や手筋は検知されていません。"
+        
+        # 2. リポジトリから該当する知識だけを収集
+        relevant_text = ["### 現在の局面に関連する知識ベース"]
+        for item_id in detected_ids:
+            # カテゴリを横断して検索（現状は shapes と techniques）
+            # KnowledgeRepository を拡張して自動検索させても良いが、ここでは明示的に。
+            content = knowledge_repo.get_item_content("01_bad_shapes", item_id)
+            if "Resource not found" in content:
+                content = knowledge_repo.get_item_content("02_techniques", item_id)
+            
+            if "Resource not found" not in content:
+                relevant_text.append(f"#### 【{item_id.replace('_', ' ').title()}】\n{content}")
+            
+        return "\n\n".join(relevant_text)
 
+    # Use Repository to read resources
     if uri.startswith("mcp://knowledge/shapes/"):
         item_id = uri.replace("mcp://knowledge/shapes/", "")
-        base_path = os.path.join(KNOWLEDGE_ROOT, "01_bad_shapes", item_id)
+        return knowledge_repo.get_item_content("01_bad_shapes", item_id)
     elif uri.startswith("mcp://knowledge/techniques/"):
         item_id = uri.replace("mcp://knowledge/techniques/", "")
-        base_path = os.path.join(KNOWLEDGE_ROOT, "02_techniques", item_id)
-    else:
-        raise ValueError(f"Unknown resource URI: {uri}")
-
-    if not os.path.isdir(base_path):
-        return f"Resource not found: {base_path}"
-
-    content = []
-    files = sorted(os.listdir(base_path))
-    if "definition.txt" in files:
-        files.remove("definition.txt")
-        files.insert(0, "definition.txt")
-        
-    for f in files:
-        if f.endswith(".txt"):
-            with open(os.path.join(base_path, f), "r", encoding="utf-8") as file:
-                content.append(f"=== {f} ===\n{file.read()}")
+        return knowledge_repo.get_item_content("02_techniques", item_id)
     
-    return "\n\n".join(content) if content else "No commentary text found."
+    raise ValueError(f"Unknown resource URI: {uri}")
 
 @server.list_tools()
 async def handle_list_tools() -> list[types.Tool]:

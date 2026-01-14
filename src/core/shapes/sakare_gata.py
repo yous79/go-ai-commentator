@@ -1,6 +1,8 @@
 from core.shapes.base_shape import BaseShape
 
 class SakareGataDetector(BaseShape):
+    key = "sakare_gata"
+
     def detect(self, curr_board, prev_board=None, last_move_color=None):
         messages = []
         checked_pairs = set()

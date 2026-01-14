@@ -1,6 +1,8 @@
 from core.shapes.base_shape import BaseShape
 
 class PonnukiDetector(BaseShape):
+    key = "ponnuki"
+
     def detect(self, curr_board, prev_board=None, last_move_color=None):
         bad_messages = []
         if not prev_board:

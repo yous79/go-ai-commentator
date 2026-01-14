@@ -1,6 +1,8 @@
 from core.shapes.base_shape import BaseShape
 
 class NimokuAtamaDetector(BaseShape):
+    key = "nimoku_no_atama"
+
     def detect(self, curr_board, prev_board=None, last_move_color=None):
         raw_hits = [] # [(victim_coords, attacker_coord), ...]
         

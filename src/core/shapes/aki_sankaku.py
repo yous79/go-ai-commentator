@@ -1,6 +1,8 @@
 from core.shapes.base_shape import BaseShape
 
 class AkiSankakuDetector(BaseShape):
+    key = "aki_sankaku"
+
     def detect(self, curr_board, prev_board=None, last_move_color=None):
         messages = []
         # 2x2の領域をスキャン

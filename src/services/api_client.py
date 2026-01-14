@@ -83,6 +83,17 @@ class GoAPIClient:
             logger.error(f"Shape Detection Request Failed: {e}", layer="API_CLIENT")
         return "検知エラーが発生しました。"
 
+    def detect_shape_ids(self, history):
+        """形状ID検知リクエスト"""
+        try:
+            logger.debug("Requesting shape ID detection", layer="API_CLIENT")
+            resp = self.session.post(f"{self.base_url}/detect/ids", json={"history": history}, timeout=10)
+            if resp.status_code == 200:
+                return resp.json().get("ids", [])
+        except Exception as e:
+            logger.error(f"Shape ID Detection Request Failed: {e}", layer="API_CLIENT")
+        return []
+
     def get_game_state(self):
         """現在の対局状態（同期されているもの）を取得"""
         try:

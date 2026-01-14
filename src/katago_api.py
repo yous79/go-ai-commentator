@@ -135,5 +135,16 @@ async def detect(req: AnalysisRequest):
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"error": str(e), "traceback": traceback.format_exc()})
 
+@app.post("/detect/ids")
+async def detect_ids(req: AnalysisRequest):
+    try:
+        clean_history = sanitize_history(req.history)
+        curr_b, prev_b, last_c = simulator.reconstruct(clean_history)
+        ids = detector.detect_ids(curr_b, prev_b, last_c)
+        return {"ids": ids}
+    except Exception as e:
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"error": str(e), "traceback": traceback.format_exc()})
+
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")
