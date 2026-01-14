@@ -2,7 +2,6 @@ import os
 import json
 import requests
 from google.genai import types
-from prompts.templates import get_report_individual_prompt, get_report_summary_prompt
 from config import GEMINI_MODEL_NAME
 from utils.pdf_generator import PDFGenerator
 
@@ -61,7 +60,9 @@ class ReportGenerator:
                 
                 # Geminiによる個別解説
                 custom_kn = f"{kn}\n\n【この局面の形状事実】:\n{det_facts}"
-                prompt = get_report_individual_prompt(m_idx, "黒", wr_drop, sc_drop, best.get('move', 'なし'), pv_str, custom_kn)
+                prompt = self.commentator._load_prompt("report_individual", m_idx=m_idx, player_color="黒", 
+                                                       wr_drop=f"-{wr_drop:.1%}", sc_drop=f"-{sc_drop:.1f}目", 
+                                                       ai_move=best.get('move', 'なし'), pv_str=pv_str, knowledge=custom_kn)
                 
                 resp_gemini = self.commentator.client.models.generate_content(
                     model=GEMINI_MODEL_NAME, 
@@ -83,7 +84,7 @@ class ReportGenerator:
                 r_md += f"### 手数 {m_idx} (黒番のミス)\n(解析データ欠落)\n\n---\n\n"
 
         # 3. 総評
-        sum_p = get_report_summary_prompt(kn, all_m)
+        sum_p = self.commentator._load_prompt("report_summary", knowledge=kn, mistakes_data=str(all_m))
         sum_resp = self.commentator.client.models.generate_content(model=GEMINI_MODEL_NAME, contents=sum_p)
         total_summary = sum_resp.text if sum_resp.text else "対局お疲れ様でした。"
         r_md += f"## 黒番への総評\n\n{total_summary}\n"

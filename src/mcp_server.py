@@ -1,4 +1,4 @@
-import asyncio
+﻿import asyncio
 import os
 import sys
 import json
@@ -13,6 +13,7 @@ from services.api_client import api_client
 from core.knowledge_repository import KnowledgeRepository
 
 KNOWLEDGE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "knowledge"))
+PROMPT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "prompts", "templates"))
 knowledge_repo = KnowledgeRepository(KNOWLEDGE_ROOT)
 
 server = Server("katago-analyzer")
@@ -34,8 +35,6 @@ async def handle_list_resources() -> list[types.Resource]:
         )
     ]
     
-    # Use Repository to list resources
-    # 01_bad_shapes
     for item in knowledge_repo.get_items("01_bad_shapes"):
         resources.append(types.Resource(
             uri=f"mcp://knowledge/shapes/{item.id}",
@@ -44,7 +43,6 @@ async def handle_list_resources() -> list[types.Resource]:
             mimeType="text/plain"
         ))
     
-    # 02_techniques
     for item in knowledge_repo.get_items("02_techniques"):
         resources.append(types.Resource(
             uri=f"mcp://knowledge/techniques/{item.id}",
@@ -58,9 +56,7 @@ async def handle_list_resources() -> list[types.Resource]:
 async def handle_read_resource(uri: str) -> str:
     if uri == "mcp://game/current/sgf":
         state = api_client.get_game_state()
-        if not state:
-            return "Error: Could not fetch game state from API server."
-        
+        if not state: return "Error: Could not fetch game state from API server."
         summary = [
             "### Current Game Session Summary",
             f"- Current Move Index: {state.get('current_move_index', 0)}",
@@ -68,7 +64,6 @@ async def handle_read_resource(uri: str) -> str:
             f"- Metadata: {json.dumps(state.get('metadata', {}), ensure_ascii=False)}",
             "\n--- Recent Move History (Up to last 5) ---"
         ]
-        
         hist = state.get('history', [])
         curr_idx = state.get('current_move_index', 0)
         start = max(0, curr_idx - 5)
@@ -78,43 +73,78 @@ async def handle_read_resource(uri: str) -> str:
 
     if uri == "mcp://game/current/relevant-knowledge":
         state = api_client.get_game_state()
-        if not state:
-            return "Error: Could not fetch game state to identify relevant knowledge."
-        
+        if not state: return "Error: Could not fetch game state."
         history = state.get('history', [])
         curr_idx = state.get('current_move_index', 0)
-        # 現在のインデックスまでの履歴を使用
         current_history = history[:curr_idx + 1]
-        
-        # 1. 現在の盤面から特徴を検知（IDリストを取得）
         detected_ids = api_client.detect_shape_ids(current_history)
-        
-        if not detected_ids:
-            return "現在の局面に該当する特定の悪形や手筋は検知されていません。"
-        
-        # 2. リポジトリから該当する知識だけを収集
+        if not detected_ids: return "現在の局面に該当する特定の悪形や手筋は検知されていません。"
         relevant_text = ["### 現在の局面に関連する知識ベース"]
         for item_id in detected_ids:
-            # カテゴリを横断して検索（現状は shapes と techniques）
-            # KnowledgeRepository を拡張して自動検索させても良いが、ここでは明示的に。
             content = knowledge_repo.get_item_content("01_bad_shapes", item_id)
             if "Resource not found" in content:
                 content = knowledge_repo.get_item_content("02_techniques", item_id)
-            
             if "Resource not found" not in content:
                 relevant_text.append(f"#### 【{item_id.replace('_', ' ').title()}】\n{content}")
-            
         return "\n\n".join(relevant_text)
 
-    # Use Repository to read resources
     if uri.startswith("mcp://knowledge/shapes/"):
         item_id = uri.replace("mcp://knowledge/shapes/", "")
         return knowledge_repo.get_item_content("01_bad_shapes", item_id)
     elif uri.startswith("mcp://knowledge/techniques/"):
         item_id = uri.replace("mcp://knowledge/techniques/", "")
         return knowledge_repo.get_item_content("02_techniques", item_id)
-    
     raise ValueError(f"Unknown resource URI: {uri}")
+
+@server.list_prompts()
+async def handle_list_prompts() -> list[types.Prompt]:
+    return [
+        types.Prompt(
+            name="go-instructor-system",
+            description="囲碁インストラクターとしてのシステム定義",
+            arguments=[
+                types.PromptArgument(name="board_size", description="盤面サイズ (例: 19)", required=True),
+                types.PromptArgument(name="player", description="手番の色 (黒/白)", required=True),
+                types.PromptArgument(name="knowledge", description="提供する知識テキスト", required=True)
+            ]
+        ),
+        types.Prompt(
+            name="analysis-request",
+            description="現在の局面の解析・解説リクエスト",
+            arguments=[
+                types.PromptArgument(name="move_idx", description="現在の手数", required=True),
+                types.PromptArgument(name="history", description="直近の着手履歴", required=True)
+            ]
+        )
+    ]
+
+@server.get_prompt()
+async def handle_get_prompt(name: str, arguments: dict | None) -> types.GetPromptResult:
+    if not arguments: arguments = {}
+    filename = name.replace("-", "_") + ".md"
+    filepath = os.path.join(PROMPT_ROOT, filename)
+    
+    if not os.path.exists(filepath):
+        raise ValueError(f"Prompt template not found: {name}")
+    
+    with open(filepath, "r", encoding="utf-8") as f:
+        template = f.read()
+    
+    # テンプレート内の {key} を arguments の値で置換
+    try:
+        content = template.format(**arguments)
+    except KeyError as e:
+        content = f"Error: Missing required argument {e} for prompt {name}"
+
+    return types.GetPromptResult(
+        description=f"Prompt: {name}",
+        messages=[
+            types.PromptMessage(
+                role="user",
+                content=types.TextContent(type="text", text=content)
+            )
+        ]
+    )
 
 @server.list_tools()
 async def handle_list_tools() -> list[types.Tool]:
@@ -144,13 +174,9 @@ async def handle_list_tools() -> list[types.Tool]:
     ]
 
 @server.call_tool()
-async def handle_call_tool(
-    name: str, arguments: dict | None
-) -> list[types.TextContent | types.ImageContent | types.EmbeddedResource]:
+async def handle_call_tool(name: str, arguments: dict | None) -> list[types.TextContent]:
     if not arguments: raise ValueError("Args required")
     history = arguments.get("history", [])
-    
-    # 履歴データのサニタイズ（1次元リストを2次元ペアに変換）
     if history and isinstance(history[0], str):
         new_h = []
         for i in range(0, len(history), 2):
@@ -159,14 +185,11 @@ async def handle_call_tool(
 
     if name == "katago_analyze":
         res = api_client.analyze_move(history)
-        if res:
-            return [types.TextContent(type="text", text=json.dumps(res, indent=2, ensure_ascii=False))]
+        if res: return [types.TextContent(type="text", text=json.dumps(res, indent=2, ensure_ascii=False))]
         return [types.TextContent(type="text", text="API Error: Analysis failed.")]
-
     elif name == "detect_shapes":
         facts = api_client.detect_shapes(history)
         return [types.TextContent(type="text", text=facts)]
-    
     raise ValueError(f"Unknown tool: {name}")
 
 async def main():

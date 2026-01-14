@@ -5,7 +5,6 @@ import json
 import traceback
 from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME
 from core.knowledge_manager import KnowledgeManager
-from prompts.templates import get_unified_system_instruction
 from services.api_client import api_client
 
 class GeminiCommentator:
@@ -13,6 +12,15 @@ class GeminiCommentator:
         self.client = genai.Client(api_key=api_key)
         self.last_pv = None 
         self.knowledge_manager = KnowledgeManager(KNOWLEDGE_DIR)
+        self.prompt_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "prompts", "templates"))
+
+    def _load_prompt(self, name, **kwargs):
+        """外部のテンプレートファイルを読み込んで引数を適用する"""
+        filepath = os.path.join(self.prompt_dir, f"{name}.md")
+        if not os.path.exists(filepath):
+            return f"Error: Prompt template {name} not found."
+        with open(filepath, "r", encoding="utf-8") as f:
+            return f.read().format(**kwargs)
 
     def generate_commentary(self, move_idx, history, board_size=19):
         """【事実先行型】先に解析を完了させ、確定データをGeminiに渡して解説を生成させる"""
@@ -51,17 +59,15 @@ class GeminiCommentator:
             )
             print(f"DEBUG DATA READY: Winrate(B): {ana_data.get('winrate_black')}")
 
-            # 3. プロンプトの構築
+            # 3. プロンプトの構築（外部テンプレート使用）
             kn = self.knowledge_manager.get_all_knowledge_text()
             player = "黒" if (move_idx % 2 == 0) else "白"
-            sys_inst = get_unified_system_instruction(board_size, player, kn)
             
-            user_prompt = (
-                f"{fact_summary}\n"
-                f"あなたは上記の確定データのみを根拠に語るプロの囲碁インストラクターです。\n"
-                f"上記データに含まれない架空の数値（勝率など）を生成することは厳禁です。\n"
-                f"現在の手数（{move_idx}手目、{player}番）を踏まえ、この局面のポイントを詳しく解説してください。"
-            )
+            sys_inst = self._load_prompt("go_instructor_system", board_size=board_size, player=player, knowledge=kn)
+            
+            user_prompt = self._load_prompt("analysis_request", move_idx=move_idx, history=history)
+            # fact_summary を追加
+            user_prompt = f"{fact_summary}\n{user_prompt}"
 
             # 4. 生成リクエスト (自律ツールなしのシングルショット、あるいは必要に応じた対話)
             safety = [types.SafetySetting(category=c, threshold='BLOCK_NONE') for c in [
