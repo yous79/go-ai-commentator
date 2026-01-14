@@ -3,6 +3,7 @@ import threading
 import concurrent.futures
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+from utils.logger import logger
 
 class GoAPIClient:
     """APIサーバー（katago_api）との通信を専門に扱うクラス（シングルトン推奨）"""
@@ -61,21 +62,25 @@ class GoAPIClient:
             "include_pv_shapes": include_pv
         }
         try:
+            logger.debug(f"Requesting analysis (Visits: {visits}, PV: {include_pv})", layer="API_CLIENT")
             resp = self.session.post(f"{self.base_url}/analyze", json=payload, timeout=60)
             if resp.status_code == 200:
                 return resp.json()
+            else:
+                logger.error(f"API Error: {resp.status_code}", layer="API_CLIENT")
         except Exception as e:
-            print(f"API Client Error (analyze_move): {e}")
+            logger.error(f"HTTP Connection Failed: {e}", layer="API_CLIENT")
         return None
 
     def detect_shapes(self, history):
         """形状検知リクエスト"""
         try:
+            logger.debug("Requesting shape detection", layer="API_CLIENT")
             resp = self.session.post(f"{self.base_url}/detect", json={"history": history}, timeout=10)
             if resp.status_code == 200:
                 return resp.json().get("facts", "特筆すべき形状は検出されませんでした。")
         except Exception as e:
-            print(f"API Client Error (detect_shapes): {e}")
+            logger.error(f"Shape Detection Request Failed: {e}", layer="API_CLIENT")
         return "検知エラーが発生しました。"
 
     def get_game_state(self):
