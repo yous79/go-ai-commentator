@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw, ImageFont
+﻿from PIL import Image, ImageDraw, ImageFont
 import os
 from core.coordinate_transformer import CoordinateTransformer
 
@@ -33,15 +33,10 @@ class GoBoardRenderer:
             draw.text((x - w / 2, y - h / 2), text, font=font, fill=fill)
 
     def render(self, board, last_move=None, analysis_text="", history=None, show_numbers=False, marks=None, review_stones=None):
-        """
-        純粋な盤面レンダリング (Ownershipオーバーレイを削除)
-        """
-        # 解析テキストがある場合のみ高さを追加する
         height = self.image_size + (100 if analysis_text else 0)
         img = Image.new("RGB", (self.image_size, height), self.color_bg)
         draw = ImageDraw.Draw(img)
         
-        # 1. Grid
         m = self.transformer.margin
         sz = self.board_size
         gs = self.transformer.grid_size
@@ -50,8 +45,6 @@ class GoBoardRenderer:
             x, y = m + i * gs, m + i * gs
             draw.line([(x, m), (x, m + (sz-1)*gs)], fill=self.color_line, width=2)
             draw.line([(m, y), (m + (sz-1)*gs, y)], fill=self.color_line, width=2)
-            
-            # Labels
             self._draw_centered_text(draw, x, m - 30, cols[i], self.font, "black")
             self._draw_centered_text(draw, x, m + (sz-1)*gs + 30, cols[i], self.font, "black")
             self._draw_centered_text(draw, m - 30, y, str(sz - i), self.font, "black")
@@ -61,11 +54,9 @@ class GoBoardRenderer:
             px, py = self.transformer.indices_to_pixel(r, c)
             draw.ellipse([px-4, py-4, px+4, py+4], fill=self.color_line)
 
-        # 2. Stones & Numbers
         stone_to_num = {}
         if history and show_numbers:
             for i, mv in enumerate(history):
-                from core.coordinate_transformer import CoordinateTransformer
                 idx = CoordinateTransformer.gtp_to_indices_static(mv[1])
                 if idx: stone_to_num[idx] = i + 1
 
@@ -85,7 +76,6 @@ class GoBoardRenderer:
                         except: fn = self.font_number
                         self._draw_centered_text(draw, px, py, num_s, fn, num_c)
 
-        # 3. Review Stones
         if review_stones:
             for (r, c), color, num in review_stones:
                 px, py = self.transformer.indices_to_pixel(r, c)
@@ -98,7 +88,6 @@ class GoBoardRenderer:
                 except: fn = self.font_number
                 self._draw_centered_text(draw, px, py, num_s, fn, num_c)
 
-        # 4. Marks
         if marks:
             for prop, shape in [("SQ", "square"), ("TR", "triangle"), ("MA", "cross")]:
                 points = marks.get(prop, [])
@@ -120,7 +109,6 @@ class GoBoardRenderer:
                         draw.line([px-size, py-size, px+size, py+size], fill=mark_color, width=w)
                         draw.line([px+size, py-size, px-size, py+size], fill=mark_color, width=w)
 
-        # Bottom Analysis Bar
         if analysis_text:
             draw.rectangle([(0, self.image_size), (self.image_size, self.image_size + 100)], fill=(30, 30, 30))
             self._draw_centered_text(draw, self.image_size // 2, self.image_size + 50, analysis_text, self.font, "white")
@@ -136,14 +124,19 @@ class GoBoardRenderer:
         img = self.render(board, last_move=None, analysis_text=title)
         draw = ImageDraw.Draw(img)
         curr_color = starting_color
+        gs = self.transformer.grid_size
+        rad = gs // 2 - 2
         for i, m_str in enumerate(pv_list[:10]):
-            from core.coordinate_transformer import CoordinateTransformer
             idx_pair = CoordinateTransformer.gtp_to_indices_static(m_str)
             if idx_pair:
                 px, py = self.transformer.indices_to_pixel(idx_pair[0], idx_pair[1])
                 fill = self.color_black if curr_color == "B" else self.color_white
                 txt_c = "white" if curr_color == "B" else "black"
-                draw.ellipse([px-15, py-15, px+15, py+15], fill=fill, outline="black")
-                self._draw_centered_text(draw, px, py, str(i+1), self.font_small, txt_c)
+                draw.ellipse([px-rad, py-rad, px+rad, py+rad], fill=fill, outline="black")
+                num_s = str(i+1)
+                f_sz = int(rad * 1.2) if len(num_s) <= 2 else int(rad * 0.9)
+                try: fn = ImageFont.truetype("arial.ttf", f_sz)
+                except: fn = self.font_number
+                self._draw_centered_text(draw, px, py, num_s, fn, txt_c)
                 curr_color = "W" if curr_color == "B" else "B"
         return img

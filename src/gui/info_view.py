@@ -41,11 +41,7 @@ class InfoView(tk.Frame):
                                      command=self.callbacks['comment'], bg="#2196F3", fg="white", height=2)
         self.btn_comment.pack(fill=tk.X, pady=2)
         
-        self.btn_agent_pv = tk.Button(btn_frame, text="Agent解析図を表示", 
-                                      command=self.callbacks['agent_pv'], state="disabled")
-        self.btn_agent_pv.pack(fill=tk.X, pady=2)
-        
-        self.btn_show_pv = tk.Button(btn_frame, text="最善の変化図を表示", 
+        self.btn_show_pv = tk.Button(btn_frame, text="変化図を表示", 
                                      command=self.callbacks['show_pv'])
         self.btn_show_pv.pack(fill=tk.X, pady=2)
 

@@ -84,7 +84,7 @@ class GoReplayApp:
         self.board_view.bind_click(self.click_on_board)
         
         callbacks = {'comment': self.generate_commentary, 'report': self.generate_full_report,
-                     'agent_pv': self.show_agent_pv, 'show_pv': self.show_pv, 'goto': self.goto_mistake,
+                     'show_pv': self.show_pv, 'goto': self.goto_mistake,
                      'pass': self.pass_move, 'update_display': self.update_display,
                      'goto_move': self.show_image}
         self.info_view = InfoView(self.paned, callbacks)
@@ -241,11 +241,18 @@ class GoReplayApp:
     def show_pv(self):
         curr = self.controller.current_move
         if curr < len(self.game.moves):
-            cands = self.game.moves[curr].get('candidates', [])
-            if cands and 'pv' in cands[0]: self._show_pv_window("Variation", cands[0]['pv'])
-
-    def show_agent_pv(self):
-        if self.gemini.last_pv: self._show_pv_window("Agent Insight", self.gemini.last_pv)
+            d = self.game.moves[curr]
+            if d:
+                cands = d.get('candidates', [])
+                if not cands: # 互換性のため top_candidates もチェック
+                    cands = d.get('top_candidates', [])
+                
+                if cands and 'pv' in cands[0]:
+                    self._show_pv_window("Variation", cands[0]['pv'])
+                elif cands and 'future_sequence' in cands[0]:
+                    # フォールバック: 文字列からリストを再構成
+                    pv_list = [m.strip() for m in cands[0]['future_sequence'].split("->")]
+                    self._show_pv_window("Variation", pv_list)
 
     def _show_pv_window(self, title, pv_list):
         top = tk.Toplevel(self.root); top.title(title)

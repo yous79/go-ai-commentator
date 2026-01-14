@@ -144,6 +144,7 @@ class KataGoDriver:
                 "move": cand['move'],
                 "winrate": 1.0 - c_win if is_white_turn else c_win,
                 "score": -c_score if is_white_turn else c_score,
+                "pv": pv[:10],
                 "future_sequence": " -> ".join(pv[:6])
             })
         return res

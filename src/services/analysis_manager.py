@@ -67,7 +67,8 @@ class AnalysisManager:
         if self.stop_requested.is_set(): return m_num, None
         
         # クライアント経由で解析（リトライは内蔵）
-        res = api_client.analyze_move(history, board_size, visits=100, include_pv=False)
+        # 変化図を表示するため include_pv=True に変更
+        res = api_client.analyze_move(history, board_size, visits=100, include_pv=True)
         return m_num, res
 
     def _run_batch_analysis(self, path):
