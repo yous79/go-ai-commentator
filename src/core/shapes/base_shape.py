@@ -12,11 +12,17 @@ class BaseShape(ABC):
 
     def _get_stone(self, board, r, c):
         if 0 <= r < self.board_size and 0 <= c < self.board_size:
-            return board.get(r, c)
+            res = board.get(r, c)
+            return res if res is not None else '.'
         return "edge"
 
     def _to_coord(self, r, c):
         return CoordinateTransformer.indices_to_gtp_static(r, c)
+
+    def _get_opponent(self, color):
+        if color == 'b': return 'w'
+        if color == 'w': return 'b'
+        return '.'
 
     def _is_connected(self, board, p1, p2, color):
         """BFS（幅優先探索）を使用して、p1 と p2 が同じ色の石で連結されているか判定する"""
