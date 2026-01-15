@@ -7,21 +7,22 @@
     "auto_reflect": true,
     "patterns": [
         {
-            "description": "一間トビの分断（2石の壁によるサカレ）",
+            "description": "一間トビの完全分断（3石の壁）",
             "elements": [
                 {"offset": [0, 0], "state": "last"},
+                {"offset": [0, 1], "state": "self"},
                 {"offset": [0, -1], "state": "self"},
-                {"offset": [-1, -1], "state": "opponent"},
-                {"offset": [1, -1], "state": "opponent"}
+                {"offset": [1, 0], "state": "opponent"},
+                {"offset": [-1, 0], "state": "opponent"}
             ]
         },
         {
-            "description": "ケイマの分断（2石の壁によるサカレ）",
+            "description": "ケイマの完全分断（2石の壁）",
             "elements": [
                 {"offset": [0, 0], "state": "last"},
-                {"offset": [-1, 0], "state": "self"},
-                {"offset": [-1, -1], "state": "opponent"},
-                {"offset": [0, 1], "state": "opponent"}
+                {"offset": [1, 0], "state": "self"},
+                {"offset": [0, -1], "state": "opponent"},
+                {"offset": [1, 1], "state": "opponent"}
             ]
         }
     ]
