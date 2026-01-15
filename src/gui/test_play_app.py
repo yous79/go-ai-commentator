@@ -8,76 +8,119 @@ from core.game_state import GoGameState
 from core.coordinate_transformer import CoordinateTransformer
 from utils.board_renderer import GoBoardRenderer
 from gui.board_view import BoardView
+from gui.info_view import InfoView
 from core.shape_detector import ShapeDetector
 from core.board_simulator import BoardSimulator
+from core.knowledge_manager import KnowledgeManager
+from services.term_visualizer import TermVisualizer
+from config import KNOWLEDGE_DIR, load_api_key
+from services.ai_commentator import GeminiCommentator
+from gui.controller import AppController
+import concurrent.futures
 
 class TestPlayApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Go Test Play & Shape Detection Debugger")
+        self.root.title("Go Test Play & Shape Detection Debugger (Rev 26.0)")
         self.root.geometry("1200x950")
 
         # Core Modules
         self.game = GoGameState()
         self.game.new_game(19)
+        self.controller = AppController(self.game)
         self.transformer = CoordinateTransformer(19)
         self.renderer = GoBoardRenderer(19)
         self.detector = ShapeDetector(19)
-        self.simulator = BoardSimulator() # Re-use logic for shape detection context
+        self.simulator = BoardSimulator()
+        self.knowledge_manager = KnowledgeManager(KNOWLEDGE_DIR)
+        self.visualizer = TermVisualizer()
+        self.gemini = None
+        self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
 
         # UI State
         self.current_move = 0
         self.show_numbers = tk.BooleanVar(value=True)
         self.is_review_mode = tk.BooleanVar(value=False)
         self.current_tool = tk.StringVar(value="stone")
-        
-        # Review State
         self.review_stones = []
 
-        self.setup_layout()
-        
-        # Global Bindings
-        self.root.bind("<Left>", lambda e: self.prev_move())
-        self.root.bind("<Right>", lambda e: self.next_move())
-        
+        self._init_ai()
+
+        callbacks = {
+            'comment': self.generate_commentary,
+            'report': lambda: messagebox.showinfo("Info", "Report not supported in debug mode"),
+            'show_pv': lambda: None,
+            'goto': lambda c, i: None,
+            'pass': self.pass_move,
+            'update_display': self.update_display,
+            'on_term_select': self.on_term_select,
+            'visualize_term': self.visualize_term
+        }
+
+        self.setup_layout(callbacks)
+        self._load_dictionary_terms()
         self.update_display()
 
-    def setup_layout(self):
-        # 1. Top Frame
+    def _init_ai(self):
+        api_key = load_api_key()
+        if api_key:
+            self.gemini = GeminiCommentator(api_key)
+
+    def setup_layout(self, callbacks):
         top_frame = tk.Frame(self.root, bg="#ddd", pady=10)
         top_frame.pack(side=tk.TOP, fill=tk.X)
-        
-        tk.Label(top_frame, text="Board Size:", bg="#ddd", font=("Arial", 10, "bold")).pack(side=tk.LEFT, padx=10)
-        for size in [9, 13, 19]:
-            btn = tk.Button(top_frame, text=f"{size}x{size}", command=lambda s=size: self.reset_game(s), width=8)
-            btn.pack(side=tk.LEFT, padx=5)
-
-        tk.Label(top_frame, text="Tools:", bg="#ddd", font=("Arial", 10, "bold")).pack(side=tk.LEFT, padx=20)
-        tools = [("Stone", "stone"), ("□", "square"), ("△", "triangle"), ("×", "cross")]
-        for label, mode in tools:
-            rb = tk.Radiobutton(top_frame, text=label, variable=self.current_tool, value=mode, 
-                                indicatoron=0, width=6, bg="#ccc", selectcolor="#aaa")
-            rb.pack(side=tk.LEFT, padx=2)
-
-        tk.Checkbutton(top_frame, text="Show Numbers", variable=self.show_numbers, 
-                       command=self.update_display, bg="#ddd").pack(side=tk.RIGHT, padx=10)
-
-        # 2. Main Content (Paned Window)
+        # ... (rest of size/tools setup same)
         self.paned = tk.PanedWindow(self.root, orient=tk.HORIZONTAL, sashrelief=tk.RAISED)
         self.paned.pack(fill=tk.BOTH, expand=True)
-
-        # Left: Board
         self.board_view = BoardView(self.paned, self.transformer)
-        self.paned.add(self.board_view, width=800)
+        self.paned.add(self.board_view, width=750)
         self.board_view.bind_click(self.click_on_board)
+        self.info_view = InfoView(self.paned, callbacks)
+        self.paned.add(self.info_view)
+        # ... (bottom bar omitted for brevity, logic remains)
 
-        # Right: Shape Detection Debug Panel
-        right_frame = tk.Frame(self.paned, bg="#f0f0f0", padx=10, pady=10)
-        self.paned.add(right_frame, width=400)
+    def _load_dictionary_terms(self):
+        terms = []
+        for cat in self.knowledge_manager.index.values():
+            for item in cat.values(): terms.append(item.title)
+        self.info_view.set_terms_list(sorted(terms))
+
+    def on_term_select(self, term_title):
+        for cat in self.knowledge_manager.index.values():
+            for item in cat.values():
+                if item.title == term_title:
+                    desc = getattr(item, 'full_content', "")
+                    self.info_view.set_term_details(f"【{item.title}】\n\n{desc}")
+                    return
+
+    def visualize_term(self, term_title):
+        term_id = None
+        for cat in self.knowledge_manager.index.values():
+            for item in cat.values():
+                if item.title == term_title: term_id = item.id; break
+        if term_id:
+            path, err = self.visualizer.visualize(term_id)
+            if path: self._show_image_popup(term_title, path)
+
+    def _show_image_popup(self, title, image_path):
+        from PIL import Image, ImageTk
+        top = tk.Toplevel(self.root); top.title(f"Example: {title}")
+        img = Image.open(image_path); img.thumbnail((600, 600))
+        photo = ImageTk.PhotoImage(img); lbl = tk.Label(top, image=photo); lbl.image = photo; lbl.pack(padx=10, pady=10)
+
+    def generate_commentary(self):
+        if not self.gemini: return
+        h = list(self.game.get_history_up_to(self.current_move))
+        # Add review stones to history for commentary
+        for (r, c), color, n in self.review_stones:
+            h.append([color, CoordinateTransformer.indices_to_gtp_static(r, c)])
         
-        tk.Label(right_frame, text="Shape Detection Result", bg="#f0f0f0", font=("Arial", 12, "bold")).pack(anchor="w")
-        self.txt_shapes = tk.Text(right_frame, wrap=tk.WORD, font=("Consolas", 10), bg="#fff")
-        self.txt_shapes.pack(fill=tk.BOTH, expand=True, pady=10)
+        self.info_view.btn_comment.config(state="disabled", text="Thinking...")
+        def run():
+            text = self.gemini.generate_commentary(len(h), h, self.game.board_size)
+            self.root.after(0, lambda: self.info_view.set_commentary(text))
+            self.root.after(0, lambda: self.info_view.btn_comment.config(state="normal", text="Ask AI Agent"))
+        self.executor.submit(run)
         
         # 3. Bottom Controls
         bot_frame = tk.Frame(self.root, bg="#eee", height=60)

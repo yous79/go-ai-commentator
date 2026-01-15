@@ -15,6 +15,9 @@ from utils.board_renderer import GoBoardRenderer
 from services.ai_commentator import GeminiCommentator
 from services.analysis_manager import AnalysisManager
 from services.report_generator import ReportGenerator
+from services.term_visualizer import TermVisualizer
+from core.knowledge_manager import KnowledgeManager
+from config import KNOWLEDGE_DIR
 
 from gui.board_view import BoardView
 from gui.info_view import InfoView
@@ -23,7 +26,7 @@ from gui.controller import AppController
 class GoReplayApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Go AI Commentator (Rev 19.0 MVC)")
+        self.root.title("Go AI Commentator (Rev 26.0 MVC)")
         self.root.geometry("1200x950")
 
         # Core Engine & State
@@ -31,6 +34,8 @@ class GoReplayApp:
         self.controller = AppController(self.game)
         self.transformer = CoordinateTransformer()
         self.renderer = GoBoardRenderer()
+        self.visualizer = TermVisualizer()
+        self.knowledge_manager = KnowledgeManager(KNOWLEDGE_DIR)
         self.gemini = None
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=3)
         
@@ -45,7 +50,21 @@ class GoReplayApp:
         self.moves_m_b = [None] * 3
         self.moves_m_w = [None] * 3
 
-        self.setup_layout()
+        # Callbacks including Dictionary logic
+        callbacks = {
+            'comment': self.generate_commentary, 
+            'report': self.generate_full_report,
+            'show_pv': self.show_pv, 
+            'goto': self.goto_mistake,
+            'pass': self.pass_move, 
+            'update_display': self.update_display,
+            'goto_move': self.show_image,
+            'on_term_select': self.on_term_select,
+            'visualize_term': self.visualize_term
+        }
+
+        self.setup_layout(callbacks)
+        self._load_dictionary_terms()
         self._start_queue_monitor()
         
         self.root.bind("<Left>", lambda e: self.prev_move())
@@ -60,7 +79,7 @@ class GoReplayApp:
                 self.gemini = GeminiCommentator(api_key)
                 print("AI Services Initialized.")
 
-    def setup_layout(self):
+    def setup_layout(self, callbacks):
         self.root.rowconfigure(1, weight=1)
         self.root.columnconfigure(0, weight=1)
         menubar = tk.Menu(self.root)
@@ -83,13 +102,67 @@ class GoReplayApp:
         self.paned.add(self.board_view, width=600)
         self.board_view.bind_click(self.click_on_board)
         
-        callbacks = {'comment': self.generate_commentary, 'report': self.generate_full_report,
-                     'show_pv': self.show_pv, 'goto': self.goto_mistake,
-                     'pass': self.pass_move, 'update_display': self.update_display,
-                     'goto_move': self.show_image}
         self.info_view = InfoView(self.paned, callbacks)
         self.paned.add(self.info_view)
         self._setup_bottom_bar()
+
+    def _load_dictionary_terms(self):
+        """知識ベースから用語一覧をロードしてUIにセットする"""
+        terms = []
+        for cat in self.knowledge_manager.index.values():
+            for item in cat.values():
+                terms.append(item.title)
+        self.info_view.set_terms_list(sorted(terms))
+
+    def on_term_select(self, term_title):
+        """用語が選択された際の詳細表示ロジック"""
+        for cat in self.knowledge_manager.index.values():
+            for item in cat.values():
+                if item.title == term_title:
+                    desc = getattr(item, 'full_content', "詳細な解説はありません。")
+                    # メタデータの基本情報を付与
+                    meta = item.metadata
+                    header = f"【{item.title}】\n"
+                    if "importance" in meta: header += f"重要度: {'★' * meta['importance']}\n"
+                    if "description" in meta: header += f"概要: {meta['description']}\n"
+                    
+                    full_text = f"{header}\n--- 解説 ---\n{desc}"
+                    self.info_view.set_term_details(full_text)
+                    return
+
+    def visualize_term(self, term_title):
+        """選択された用語の具体例画像を生成・表示する"""
+        term_id = None
+        for cat in self.knowledge_manager.index.values():
+            for item in cat.values():
+                if item.title == term_title:
+                    term_id = item.id
+                    break
+        
+        if term_id:
+            path, err = self.visualizer.visualize(term_id)
+            if path:
+                self._show_image_popup(term_title, path)
+            else:
+                messagebox.showerror("Error", f"画像の生成に失敗しました: {err}")
+
+    def _show_image_popup(self, title, image_path):
+        """画像を別ウィンドウで表示する"""
+        from PIL import Image, ImageTk
+        top = tk.Toplevel(self.root)
+        top.title(f"Example: {title}")
+        
+        img = Image.open(image_path)
+        # ウィンドウサイズに合わせて調整
+        img.thumbnail((600, 600))
+        photo = ImageTk.PhotoImage(img)
+        
+        lbl = tk.Label(top, image=photo)
+        lbl.image = photo
+        lbl.pack(padx=10, pady=10)
+        
+        tk.Button(top, text="Close", command=top.destroy).pack(pady=5)
+
 
     def _setup_bottom_bar(self):
         bot = tk.Frame(self.root, bg="#e0e0e0", height=60)

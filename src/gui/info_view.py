@@ -4,116 +4,144 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class InfoView(tk.Frame):
-    def __init__(self, parent, callbacks):
-        super().__init__(parent, bg="#f0f0f0", padx=10, pady=10)
+    def __init__(self, master, callbacks):
+        super().__init__(master, bg="#f0f0f0")
         self.callbacks = callbacks
-        self.setup_ui()
+        
+        self.notebook = ttk.Notebook(self)
+        self.notebook.pack(fill=tk.BOTH, expand=True)
+        
+        # --- Analysis Tab ---
+        self.analysis_frame = tk.Frame(self.notebook, bg="#f0f0f0")
+        self.notebook.add(self.analysis_frame, text=" Analysis ")
+        self._setup_analysis_tab()
+        
+        # --- Go Dictionary Tab ---
+        self.dict_frame = tk.Frame(self.notebook, bg="#f0f0f0")
+        self.notebook.add(self.dict_frame, text=" Go Dictionary ")
+        self._setup_dictionary_tab()
 
-    def setup_ui(self):
-        # 1. グラフエリア (matplotlib)
-        self.fig, self.ax = plt.subplots(figsize=(4, 2.5), dpi=80)
+    def _setup_analysis_tab(self):
+        # Stats Area
+        f = self.analysis_frame
+        self.lbl_winrate = tk.Label(f, text="Winrate (B): --%", font=("Arial", 14), bg="#f0f0f0")
+        self.lbl_winrate.pack(pady=5)
+        self.lbl_score = tk.Label(f, text="Score Lead: --", font=("Arial", 12), bg="#f0f0f0")
+        self.lbl_score.pack(pady=5)
+        
+        # Graph Area
+        self.fig, self.ax = plt.subplots(figsize=(4, 2), dpi=100)
         self.fig.patch.set_facecolor('#f0f0f0')
-        self.ax.set_facecolor('#ffffff')
-        self.ax.set_ylim(0, 100)
-        self.ax.set_title("Winrate 推移 (%)", fontname="MS Gothic", fontsize=10)
-        self.ax.tick_params(axis='both', which='major', labelsize=8)
+        self.canvas_graph = FigureCanvasTkAgg(self.fig, master=f)
+        self.canvas_graph.get_tk_widget().pack(fill=tk.X, padx=10)
         
-        self.graph_canvas = FigureCanvasTkAgg(self.fig, master=self)
-        self.graph_canvas.get_tk_widget().pack(fill=tk.X, pady=(0, 10))
+        # Action Buttons
+        btn_frame = tk.Frame(f, bg="#f0f0f0")
+        btn_frame.pack(pady=10)
+        self.btn_comment = tk.Button(btn_frame, text="Ask AI Agent", command=self.callbacks['comment'], width=20)
+        self.btn_comment.pack(side=tk.LEFT, padx=5)
+        self.btn_report = tk.Button(btn_frame, text="対局レポートを生成", command=self.callbacks['report'])
+        self.btn_report.pack(side=tk.LEFT, padx=5)
         
-        # グラフクリックイベント
-        self.fig.canvas.mpl_connect('button_press_event', self._on_graph_click)
-
-        # 2. 基本情報
-        info_frame = tk.LabelFrame(self, text="局面解析", bg="#f0f0f0", padx=10, pady=5)
-        info_frame.pack(fill=tk.X)
-        
-        self.lbl_winrate = tk.Label(info_frame, text="黒勝率: --%", font=("Arial", 14, "bold"), bg="#f0f0f0")
-        self.lbl_winrate.pack(anchor="w")
-        self.lbl_score = tk.Label(info_frame, text="目数差: --", font=("Arial", 12), bg="#f0f0f0")
-        self.lbl_score.pack(anchor="w")
-
-        # 3. 操作ボタン
-        btn_frame = tk.Frame(self, bg="#f0f0f0", pady=10)
-        btn_frame.pack(fill=tk.X)
-        
-        self.btn_comment = tk.Button(btn_frame, text="Ask KataGo Agent", 
-                                     command=self.callbacks['comment'], bg="#2196F3", fg="white", height=2)
-        self.btn_comment.pack(fill=tk.X, pady=2)
-        
-        self.btn_show_pv = tk.Button(btn_frame, text="変化図を表示", 
-                                     command=self.callbacks['show_pv'])
-        self.btn_show_pv.pack(fill=tk.X, pady=2)
-
-        # 4. 失着リスト
-        mistake_frame = tk.LabelFrame(self, text="悪手・失着 (勝率下落順)", bg="#f0f0f0", padx=10, pady=5)
-        mistake_frame.pack(fill=tk.X, pady=10)
-        
-        self.mistake_btns = {"b": [], "w": []}
-        for color, label in [("b", "黒のミス"), ("w", "白のミス")]:
-            tk.Label(mistake_frame, text=label, bg="#f0f0f0", font=("Arial", 9, "bold")).pack(anchor="w")
-            for i in range(3):
-                btn = tk.Button(mistake_frame, text="-", command=lambda c=color, idx=i: self.callbacks['goto'](c, idx),
-                                state="disabled", anchor="w", font=("Consolas", 9))
-                btn.pack(fill=tk.X, pady=1)
-                self.mistake_btns[color].append(btn)
-
-        # 5. 解説エリア
-        comment_frame = tk.LabelFrame(self, text="AI解説", bg="#f0f0f0", padx=10, pady=5)
-        comment_frame.pack(fill=tk.BOTH, expand=True)
-        
-        self.txt_commentary = tk.Text(comment_frame, wrap=tk.WORD, font=("MS Gothic", 10), height=10)
-        self.txt_commentary.pack(fill=tk.BOTH, expand=True)
-
-        # 6. モード切替
-        mode_frame = tk.Frame(self, bg="#f0f0f0")
-        mode_frame.pack(fill=tk.X, pady=5)
-        self.review_mode = tk.BooleanVar(value=False) # デフォルトOFF
-        tk.Checkbutton(mode_frame, text="候補手の表示", variable=self.review_mode, 
+        # Modes
+        mode_frame = tk.Frame(f, bg="#f0f0f0")
+        mode_frame.pack(pady=5)
+        self.review_mode = tk.BooleanVar(value=True)
+        tk.Checkbutton(mode_frame, text="Show AI Candidates", variable=self.review_mode, 
                        command=self.callbacks['update_display'], bg="#f0f0f0").pack(side=tk.LEFT)
-        self.edit_mode = tk.BooleanVar(value=False)
-        tk.Checkbutton(mode_frame, text="検討（編集）モード", variable=self.edit_mode, bg="#f0f0f0").pack(side=tk.LEFT, padx=10)
-        tk.Button(mode_frame, text="Pass", command=self.callbacks['pass']).pack(side=tk.RIGHT)
+        self.edit_mode = tk.BooleanVar(value=True)
+        tk.Checkbutton(mode_frame, text="Review Mode (Play Stone)", variable=self.edit_mode, bg="#f0f0f0").pack(side=tk.LEFT)
+        tk.Button(mode_frame, text="PASS", command=self.callbacks['pass']).pack(side=tk.LEFT, padx=10)
 
-        self.btn_report = tk.Button(self, text="対局レポートを生成", command=self.callbacks['report'],
-                                    bg="#4CAF50", fg="white", pady=5)
-        self.btn_report.pack(fill=tk.X, side=tk.BOTTOM)
+        # Commentary Area
+        self.txt_commentary = tk.Text(f, height=15, width=40, font=("Meiryo", 10))
+        self.txt_commentary.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-    def update_stats(self, winrate_text, score_text, info):
-        self.lbl_winrate.config(text=f"黒勝率: {winrate_text}")
-        self.lbl_score.config(text=f"目数差: {score_text}")
+        # Mistakes Area
+        self._setup_mistakes_ui(f)
 
-    def update_mistake_button(self, color, idx, text, state):
-        self.mistake_btns[color][idx].config(text=text, state=state)
+    def _setup_dictionary_tab(self):
+        f = self.dict_frame
+        paned = tk.PanedWindow(f, orient=tk.VERTICAL, bg="#f0f0f0")
+        paned.pack(fill=tk.BOTH, expand=True)
+        
+        # Top: Term List
+        list_frame = tk.Frame(paned, bg="#f0f0f0")
+        tk.Label(list_frame, text="登録されている用語一覧:", bg="#f0f0f0", font=("Arial", 10, "bold")).pack(anchor=tk.W, padx=5, pady=2)
+        self.list_terms = tk.Listbox(list_frame, height=8)
+        self.list_terms.pack(fill=tk.BOTH, expand=True, padx=5)
+        self.list_terms.bind("<<ListboxSelect>>", self._on_term_selected)
+        paned.add(list_frame, height=150)
+        
+        # Bottom: Description & Action
+        desc_frame = tk.Frame(paned, bg="#f0f0f0")
+        self.txt_term_desc = tk.Text(desc_frame, height=10, width=40, font=("Meiryo", 10), state="disabled", bg="#eee")
+        self.txt_term_desc.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+        
+        self.btn_visualize = tk.Button(desc_frame, text="具体例（画像）を表示", state="disabled", 
+                                       command=self._on_visualize_click)
+        self.btn_visualize.pack(pady=5)
+        paned.add(desc_frame)
+
+    def _setup_mistakes_ui(self, master):
+        self.mistake_buttons = {"b": [], "w": []}
+        m_frame = tk.Frame(master, bg="#f0f0f0")
+        m_frame.pack(fill=tk.X, padx=10, pady=5)
+        for i, color in enumerate(["b", "w"]):
+            lbl = "Black Mistakes" if color == "b" else "White Mistakes"
+            tk.Label(m_frame, text=lbl, bg="#f0f0f0", font=("Arial", 9, "bold")).grid(row=0, column=i, sticky="w")
+            for j in range(3):
+                btn = tk.Button(m_frame, text="-", state="disabled", width=18, font=("Arial", 8),
+                                command=lambda c=color, idx=j: self.callbacks['goto'](c, idx))
+                btn.grid(row=j+1, column=i, padx=2, pady=1)
+                self.mistake_buttons[color].append(btn)
+
+    def update_stats(self, wr, score, commentary):
+        self.lbl_winrate.config(text=f"Winrate (B): {wr}")
+        self.lbl_score.config(text=f"Score Lead: {score}")
 
     def set_commentary(self, text):
+        self.txt_commentary.config(state="normal")
         self.txt_commentary.delete("1.0", tk.END)
         self.txt_commentary.insert(tk.END, text)
+        self.txt_commentary.config(state="disabled")
 
-    def update_graph(self, winrates, current_move):
-        """勝率推移グラフを更新"""
+    def update_graph(self, wr_history, current_idx):
         self.ax.clear()
-        self.ax.set_ylim(0, 100)
-        self.ax.set_facecolor('#ffffff')
-        self.ax.grid(True, linestyle='--', alpha=0.6)
-        
-        x = list(range(len(winrates)))
-        y = [w * 100 for w in winrates]
-        
-        # メイン曲線
-        self.ax.plot(x, y, color='#2196F3', linewidth=2)
-        # 50%線
-        self.ax.axhline(50, color='red', linewidth=0.8, linestyle='--')
-        # 現在位置の強調
-        if 0 <= current_move < len(y):
-            self.ax.plot(current_move, y[current_move], 'ro', markersize=6)
-        
-        self.ax.set_title("Winrate 推移 (%)", fontname="MS Gothic", fontsize=10)
+        self.ax.plot(wr_history, color='#2c3e50', linewidth=2)
+        self.ax.axvline(x=current_idx, color='red', linestyle='--', alpha=0.5)
+        self.ax.set_ylim(0, 1)
+        self.ax.set_title("Winrate Trend (Black)", fontsize=10)
+        self.ax.grid(True, linestyle=':', alpha=0.6)
         self.fig.tight_layout()
-        self.graph_canvas.draw()
+        self.canvas_graph.draw()
 
-    def _on_graph_click(self, event):
-        """グラフクリックで該当手番へジャンプ"""
-        if event.xdata is not None:
-            move_idx = int(round(event.xdata))
-            self.callbacks['goto_move'](move_idx)
+    def update_mistake_button(self, color, idx, text, state):
+        btn = self.mistake_buttons[color][idx]
+        btn.config(text=text, state=state)
+
+    # --- Dictionary Tab Logic ---
+    def set_terms_list(self, term_names):
+        self.list_terms.delete(0, tk.END)
+        for name in term_names:
+            self.list_terms.insert(tk.END, name)
+
+    def _on_term_selected(self, event):
+        selection = self.list_terms.curselection()
+        if selection:
+            idx = selection[0]
+            term_name = self.list_terms.get(idx)
+            self.callbacks['on_term_select'](term_name)
+
+    def set_term_details(self, description, can_visualize=True):
+        self.txt_term_desc.config(state="normal")
+        self.txt_term_desc.delete("1.0", tk.END)
+        self.txt_term_desc.insert(tk.END, description)
+        self.txt_term_desc.config(state="disabled")
+        self.btn_visualize.config(state="normal" if can_visualize else "disabled")
+
+    def _on_visualize_click(self):
+        selection = self.list_terms.curselection()
+        if selection:
+            term_name = self.list_terms.get(selection[0])
+            self.callbacks['visualize_term'](term_name)
