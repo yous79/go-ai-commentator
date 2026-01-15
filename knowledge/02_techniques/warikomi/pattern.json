@@ -1,0 +1,30 @@
+{
+    "key": "warikomi",
+    "name": "ワリコミ",
+    "category": "normal",
+    "message": "一間トビの中間に【ワリコミ】が発生しています（{}）。",
+    "auto_rotate": true,
+    "auto_reflect": true,
+    "patterns": [
+        {
+            "description": "1石のみのワリコミ（両脇が空）",
+            "elements": [
+                {"offset": [0, 0], "state": "last"},
+                {"offset": [1, 0], "state": "opponent"},
+                {"offset": [-1, 0], "state": "opponent"},
+                {"offset": [0, 1], "state": "empty"},
+                {"offset": [0, -1], "state": "empty"}
+            ]
+        },
+        {
+            "description": "2石の侵入（一方が空、サカレ形の一歩手前）",
+            "elements": [
+                {"offset": [0, 0], "state": "last"},
+                {"offset": [0, -1], "state": "self"},
+                {"offset": [1, 0], "state": "opponent"},
+                {"offset": [-1, 0], "state": "opponent"},
+                {"offset": [0, 1], "state": "empty"}
+            ]
+        }
+    ]
+}
