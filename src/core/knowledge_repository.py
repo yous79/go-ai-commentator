@@ -1,6 +1,7 @@
 import os
-from dataclasses import dataclass
-from typing import List
+from dataclasses import dataclass, field
+from typing import List, Dict, Any
+import json
 
 @dataclass
 class KnowledgeItem:
@@ -8,6 +9,7 @@ class KnowledgeItem:
     category: str
     title: str
     base_path: str
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
 class KnowledgeRepository:
     """知識ベースのファイルシステムへの直接アクセスを管理する低レイヤーのリポジトリ"""
@@ -34,7 +36,24 @@ class KnowledgeRepository:
             if os.path.isdir(item_path):
                 # IDはフォルダ名、タイトルはフォルダ名を加工したもの
                 title = d.replace("_", " ").title()
-                items.append(KnowledgeItem(id=d, category=category, title=title, base_path=item_path))
+                
+                # metadata.json があれば読み込む
+                metadata = {}
+                meta_path = os.path.join(item_path, "metadata.json")
+                if os.path.exists(meta_path):
+                    try:
+                        with open(meta_path, "r", encoding="utf-8") as f:
+                            metadata = json.load(f)
+                    except Exception:
+                        pass
+                
+                items.append(KnowledgeItem(
+                    id=d, 
+                    category=category, 
+                    title=metadata.get("title", title), 
+                    base_path=item_path,
+                    metadata=metadata
+                ))
         return items
 
     def get_item_content(self, category: str, item_id: str) -> str:

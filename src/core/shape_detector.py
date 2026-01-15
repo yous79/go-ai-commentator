@@ -32,25 +32,65 @@ class DetectionContext:
                     return Point(r, c), self.curr_board.get(r, c)
         return None, None
 
+from core.shapes.generic_detector import GenericPatternDetector
+import os
+import json
+from config import KNOWLEDGE_DIR
+
+# Existing hardcoded detectors
+from core.shapes.aki_sankaku import AkiSankakuDetector
+from core.shapes.sakare_gata import SakareGataDetector
+# ... (rest of imports)
+
 class ShapeDetector:
     def __init__(self, board_size=19):
         self.board_size = board_size
-        self.strategies = [
-            AkiSankakuDetector(board_size),
-            SakareGataDetector(board_size),
-            NimokuAtamaDetector(board_size),
-            PonnukiDetector(board_size),
-            DangoDetector(board_size),
-            KosumiDetector(board_size),
-            TakefuDetector(board_size),
-            IkkenTobiDetector(board_size),
-            KeimaDetector(board_size),
-            TsukeDetector(board_size),
-            HaneDetector(board_size),
-            KirichigaiDetector(board_size),
-            NobiDetector(board_size),
-            ButsukariDetector(board_size)
+        self.strategies = []
+        self._load_generic_patterns()
+        self._init_legacy_strategies()
+
+    def _load_generic_patterns(self):
+        """KNOWLEDGE_DIR から pattern.json を検索して GenericPatternDetector を初期化する"""
+        if not os.path.exists(KNOWLEDGE_DIR):
+            return
+
+        for root, dirs, files in os.walk(KNOWLEDGE_DIR):
+            if "pattern.json" in files:
+                path = os.path.join(root, "pattern.json")
+                try:
+                    with open(path, "r", encoding="utf-8") as f:
+                        pattern_def = json.load(f)
+                        detector = GenericPatternDetector(pattern_def, self.board_size)
+                        self.strategies.append(detector)
+                        # print(f"Loaded generic pattern: {detector.name}")
+                except Exception as e:
+                    print(f"Failed to load pattern {path}: {e}")
+
+    def _init_legacy_strategies(self):
+        """まだJSON化されていないレガシーな検知戦略を読み込む"""
+        loaded_keys = {getattr(s, "key", "") for s in self.strategies}
+        
+        # JSONですでに読み込まれているものはスキップする
+        legacy_list = [
+            (AkiSankakuDetector, "aki_sankaku"),
+            (SakareGataDetector, "sakare_gata"),
+            (NimokuAtamaDetector, "nimoku_atama"),
+            (PonnukiDetector, "ponnuki"),
+            (DangoDetector, "dango"),
+            (KosumiDetector, "kosumi"),
+            (TakefuDetector, "takefu"),
+            (IkkenTobiDetector, "ikken_tobi"),
+            (KeimaDetector, "keima"),
+            (TsukeDetector, "tsuke"),
+            (HaneDetector, "hane"),
+            (KirichigaiDetector, "kirichigai"),
+            (NobiDetector, "nobi"),
+            (ButsukariDetector, "butsukari")
         ]
+
+        for cls, key in legacy_list:
+            if key not in loaded_keys:
+                self.strategies.append(cls(self.board_size))
 
     def detect_all(self, curr_board, prev_board=None, last_move_color=None):
         context = DetectionContext(curr_board, prev_board, self.board_size)

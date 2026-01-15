@@ -1,0 +1,18 @@
+{
+    "key": "aki_sankaku",
+    "name": "アキ三角",
+    "category": "bad",
+    "message": "効率の悪い【アキ三角】の形です（{}）。",
+    "auto_rotate": true,
+    "auto_reflect": true,
+    "patterns": [
+        {
+            "elements": [
+                {"offset": [0, 0], "state": "last"},
+                {"offset": [1, 0], "state": "self"},
+                {"offset": [0, 1], "state": "self"},
+                {"offset": [1, 1], "state": "empty"}
+            ]
+        }
+    ]
+}

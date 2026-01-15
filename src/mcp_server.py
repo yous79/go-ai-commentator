@@ -79,17 +79,41 @@ async def handle_read_resource(uri: str) -> str:
         current_history = history[:curr_idx + 1]
         detected_ids = api_client.detect_shape_ids(current_history)
         if not detected_ids: return "現在の局面に該当する特定の悪形や手筋は検知されていません。"
+        
         relevant_text = ["### 現在の局面に関連する知識ベース"]
+        
+        # 知識アイテムの取得とメタデータに基づく補足
         for item_id in detected_ids:
-            content = knowledge_repo.get_item_content("01_bad_shapes", item_id)
-            if "Resource not found" in content:
-                content = knowledge_repo.get_item_content("02_techniques", item_id)
-            if "Resource not found" not in content:
-                relevant_text.append(f"#### 【{item_id.replace('_', ' ').title()}】\n{content}")
+            item = None
+            for cat in ["01_bad_shapes", "02_techniques"]:
+                items = knowledge_repo.get_items(cat)
+                item = next((i for i in items if i.id == item_id), None)
+                if item: break
+            
+            if item:
+                content = knowledge_repo.get_item_content(item.category, item.id)
+                meta = item.metadata
+                header = f"#### 【{item.title}】"
+                if "importance" in meta:
+                    header += f" (重要度: {meta['importance']})"
+                
+                meta_info = ""
+                if "description" in meta:
+                    meta_info = f"\n> {meta['description']}\n"
+                
+                relevant_text.append(f"{header}{meta_info}\n{content}")
+        
         return "\n\n".join(relevant_text)
 
     if uri.startswith("mcp://knowledge/shapes/"):
         item_id = uri.replace("mcp://knowledge/shapes/", "")
+        # 単体リソース読み込み時もメタデータを付与
+        items = knowledge_repo.get_items("01_bad_shapes")
+        item = next((i for i in items if i.id == item_id), None)
+        if item:
+            content = knowledge_repo.get_item_content("01_bad_shapes", item_id)
+            meta = json.dumps(item.metadata, indent=2, ensure_ascii=False)
+            return f"--- Metadata ---\n{meta}\n\n--- Content ---\n{content}"
         return knowledge_repo.get_item_content("01_bad_shapes", item_id)
     elif uri.startswith("mcp://knowledge/techniques/"):
         item_id = uri.replace("mcp://knowledge/techniques/", "")
