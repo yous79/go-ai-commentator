@@ -1,1298 +1,206 @@
-Exception in thread Thread-1 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-INFO:     Started server process [10252]
+INFO:     Started server process [18368]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58192 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58193 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58195 - "POST /game/state HTTP/1.1" 200 OK
-Exception in thread Thread-2 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-DEBUG: Starting analysis for 2 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58199 - "POST /game/state HTTP/1.1" 200 OK
-Exception in thread Thread-3 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58199 - "POST /game/state HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58199 - "POST /game/state HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58199 - "POST /game/state HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58199 - "POST /game/state HTTP/1.1" 200 OK
-Exception in thread Thread-4 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58199 - "POST /game/state HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58199 - "POST /game/state HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58196 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-5 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-6 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-7 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+INFO:     127.0.0.1:52633 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52635 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 1 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58195 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-8 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-9 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-10 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 32.3%
+INFO:     127.0.0.1:52650 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 2 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 32.1%
+INFO:     127.0.0.1:52651 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 3 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58197 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-11 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-12 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-13 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 27.1%
+INFO:     127.0.0.1:52652 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 4 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58198 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-14 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-15 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-16 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-DEBUG: Starting analysis for 13 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58199 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-17 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-18 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-19 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 52.1%
+INFO:     127.0.0.1:52653 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 5 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58196 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-20 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-21 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-22 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 54.4%
+INFO:     127.0.0.1:52650 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 6 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58195 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-23 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-24 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-25 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 56.7%
+INFO:     127.0.0.1:52651 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 7 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58197 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-26 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-27 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-28 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 56.5%
+INFO:     127.0.0.1:52652 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 8 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58198 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-29 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-30 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-31 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 54.3%
+INFO:     127.0.0.1:52653 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 9 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58196 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-32 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-33 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-34 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-DEBUG: Starting analysis for 13 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58201 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-35 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-36 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-37 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 50.8%
+INFO:     127.0.0.1:52650 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 10 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58195 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-38 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-39 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-40 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 52.1%
+INFO:     127.0.0.1:52651 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 11 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58197 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-41 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-42 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-43 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 35.7%
+INFO:     127.0.0.1:52652 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 12 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58198 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-44 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-45 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-46 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 38.7%
+INFO:     127.0.0.1:52653 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 13 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58196 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-47 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-48 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-49 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 9.2%
+INFO:     127.0.0.1:52650 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 14 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58195 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-50 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-51 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-52 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 5.7%
+INFO:     127.0.0.1:52651 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 15 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58197 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-53 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-54 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-55 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 5.1%
+INFO:     127.0.0.1:52652 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 16 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58198 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-56 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-57 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-58 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 9.9%
+INFO:     127.0.0.1:52653 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 17 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58196 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-59 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-60 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-61 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 1.0%
+INFO:     127.0.0.1:52650 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 18 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58195 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-62 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-63 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-64 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 6.7%
+INFO:     127.0.0.1:52651 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 19 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58197 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-65 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-66 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-67 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 7.2%
+INFO:     127.0.0.1:52652 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 20 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58198 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-68 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-69 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-70 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 7.7%
+INFO:     127.0.0.1:52650 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 21 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58196 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-71 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-72 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-73 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 1.1%
+INFO:     127.0.0.1:52653 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 22 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58195 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-74 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-75 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-76 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 0.2%
+INFO:     127.0.0.1:52651 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 23 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58197 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-77 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-78 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-79 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 0.2%
+INFO:     127.0.0.1:52652 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 24 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58198 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-80 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-81 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-82 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 0.4%
+INFO:     127.0.0.1:52653 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 25 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58196 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-83 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-84 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-85 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 0.1%
+INFO:     127.0.0.1:52650 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 26 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58195 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-86 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-87 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-88 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 0.1%
+INFO:     127.0.0.1:52651 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52658 - "POST /game/state HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 27 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58197 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-89 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-90 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-91 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 0.1%
+INFO:     127.0.0.1:52652 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 28 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58198 - "POST /analyze HTTP/1.1" 503 Service Unavailable
-Exception in thread Thread-92 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-93 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
-Exception in thread Thread-94 (_consume_stderr):
-Traceback (most recent call last):
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1043, in _bootstrap_inner
-    self.run()
-    ~~~~~~~~^^
-  File "C:\Users\youst\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 994, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\youst\go-ai-commentator\src\drivers\katago_driver.py", line 49, in _consume_stderr
-    with open("katago_debug.log", "w", encoding="utf-8") as f:
-         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-PermissionError: [Errno 13] Permission denied: 'katago_debug.log'
+DEBUG: Analysis complete. Winrate(B): 0.1%
+INFO:     127.0.0.1:52650 - "POST /analyze HTTP/1.1" 200 OK
 DEBUG: Starting analysis for 29 moves (PV shapes: True)
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-DEBUG: KataGo Engine started.
-INFO:     127.0.0.1:58196 - "POST /analyze HTTP/1.1" 503 Service Unavailable
+DEBUG: Analysis complete. Winrate(B): 0.1%
+INFO:     127.0.0.1:52653 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /game/state HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 15 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 5.1%
+INFO:     127.0.0.1:52660 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "POST /detect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /game/state HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 6 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 53.5%
+INFO:     127.0.0.1:62848 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "POST /detect HTTP/1.1" 200 OK

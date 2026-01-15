@@ -11,10 +11,12 @@ import mcp.types as types
 # Use the centralized API client
 from services.api_client import api_client
 from core.knowledge_repository import KnowledgeRepository
+from services.term_visualizer import TermVisualizer
 
 KNOWLEDGE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "knowledge"))
 PROMPT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "prompts", "templates"))
 knowledge_repo = KnowledgeRepository(KNOWLEDGE_ROOT)
+term_visualizer = TermVisualizer()
 
 server = Server("katago-analyzer")
 
@@ -34,6 +36,14 @@ async def handle_list_resources() -> list[types.Resource]:
             mimeType="text/plain"
         )
     ]
+    
+    # 用語画像の可視化リソースを追加
+    resources.append(types.Resource(
+        uri="mcp://knowledge/visualize/{term_id}",
+        name="Term Visualization Image",
+        description="Generates a board image showing a concrete example of a specific Go term/shape.",
+        mimeType="image/png"
+    ))
     
     for item in knowledge_repo.get_items("01_bad_shapes"):
         resources.append(types.Resource(
@@ -104,6 +114,13 @@ async def handle_read_resource(uri: str) -> str:
                 relevant_text.append(f"{header}{meta_info}\n{content}")
         
         return "\n\n".join(relevant_text)
+
+    if uri.startswith("mcp://knowledge/visualize/"):
+        term_id = uri.replace("mcp://knowledge/visualize/", "")
+        path, err = term_visualizer.visualize(term_id)
+        if path:
+            return f"Image generated: {path}. Please note this is a local file path."
+        return f"Error visualizing term: {err}"
 
     if uri.startswith("mcp://knowledge/shapes/"):
         item_id = uri.replace("mcp://knowledge/shapes/", "")
@@ -194,6 +211,17 @@ async def handle_list_tools() -> list[types.Tool]:
                 },
                 "required": ["history"]
             }
+        ),
+        types.Tool(
+            name="visualize_term",
+            description="指定された囲碁用語（例: aki_sankaku）の具体例を盤面画像として生成します。",
+            inputSchema={
+                "type": "OBJECT",
+                "properties": {
+                    "term_id": {"type": "string", "description": "用語ID（例: aki_sankaku, nimoku_atama）"}
+                },
+                "required": ["term_id"]
+            }
         )
     ]
 
@@ -214,6 +242,12 @@ async def handle_call_tool(name: str, arguments: dict | None) -> list[types.Text
     elif name == "detect_shapes":
         facts = api_client.detect_shapes(history)
         return [types.TextContent(type="text", text=facts)]
+    elif name == "visualize_term":
+        term_id = arguments.get("term_id")
+        path, err = term_visualizer.visualize(term_id)
+        if path:
+            return [types.TextContent(type="text", text=f"用語『{term_id}』の例を生成しました: {path}")]
+        return [types.TextContent(type="text", text=f"エラー: {err}")]
     raise ValueError(f"Unknown tool: {name}")
 
 async def main():
