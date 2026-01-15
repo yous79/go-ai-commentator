@@ -132,9 +132,10 @@ class GoAPIClient:
             "history": history,
             "board_size": board_size,
             "visits": visits,
-            "include_pv_shapes": include_pv
+            "include_pv_shapes": include_pv,
+            "include_ownership": True # 安定度分析のためにOwnershipを追加
         }
-        logger.debug(f"Requesting analysis (Visits: {visits}, PV: {include_pv})", layer="API_CLIENT")
+        logger.debug(f"Requesting analysis (Visits: {visits}, Ownership: True)", layer="API_CLIENT")
         resp, err = self._safe_request("POST", "analyze", json=payload, timeout=60)
         
         if resp:

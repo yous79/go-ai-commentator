@@ -5,6 +5,8 @@ import json
 import traceback
 from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME
 from core.knowledge_manager import KnowledgeManager
+from core.stability_analyzer import StabilityAnalyzer
+from core.board_simulator import BoardSimulator
 from services.api_client import api_client
 
 class GeminiCommentator:
@@ -12,6 +14,8 @@ class GeminiCommentator:
         self.client = genai.Client(api_key=api_key)
         self.last_pv = None 
         self.knowledge_manager = KnowledgeManager(KNOWLEDGE_DIR)
+        self.stability_analyzer = StabilityAnalyzer()
+        self.simulator = BoardSimulator()
         self.prompt_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "prompts", "templates"))
 
     def _load_prompt(self, name, **kwargs):
@@ -34,8 +38,32 @@ class GeminiCommentator:
             
             facts = api_client.detect_shapes(history)
 
+            # 安定度分析の実行
+            stability_facts = ""
+            ownership = ana_data.get('ownership')
+            if ownership:
+                curr_b, _, _ = self.simulator.reconstruct(history, board_size)
+                stability_results = self.stability_analyzer.analyze(curr_b, ownership)
+                
+                weak_stones = [r for r in stability_results if r['status'] in ['weak', 'critical']]
+                strong_stones = [r for r in stability_results if r['status'] == 'strong']
+                
+                stability_facts = "【石の強弱（安定度）分析】\n"
+                if weak_stones:
+                    stability_facts += "- ⚠️ 弱い石 (攻められている可能性):\n"
+                    for ws in weak_stones:
+                        stability_facts += f"  - {ws['stones']} ({ws['color']}): 安定度 {ws['stability']:.2f} ({ws['status']})\n"
+                if strong_stones:
+                    stability_facts += "- ✅ 強い石 (安定している):\n"
+                    for ss in strong_stones:
+                        # 最初の数個だけ表示
+                        stones_str = str(ss['stones'][:3]) + ("..." if len(ss['stones']) > 3 else "")
+                        stability_facts += f"  - {stones_str} ({ss['color']}): 確定地に近い\n"
+            
             # 2. データの整理
             best = ana_data.get('top_candidates', [{}])[0]
+            if not best: # 互換性のため
+                best = ana_data.get('candidates', [{}])[0]
             pv_list = best.get('pv', [])
             self.last_pv = pv_list
             
@@ -55,6 +83,7 @@ class GeminiCommentator:
                 f"- AIの推奨手: {best.get('move', 'なし')}\n"
                 f"- 推奨進行（色・番号付き）: {numbered_seq}\n"
                 f"- 盤面の形状事実: {facts}\n"
+                f"{stability_facts}\n"
                 f"- 推奨手の将来予測: {best.get('future_shape_analysis', '特になし')}\n"
             )
             print(f"DEBUG DATA READY: Winrate(B): {ana_data.get('winrate_black')}")
