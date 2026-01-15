@@ -39,8 +39,8 @@ from config import KNOWLEDGE_DIR
 
 # Existing hardcoded detectors
 from core.shapes.aki_sankaku import AkiSankakuDetector
-from core.shapes.sakare_gata import SakareGataDetector
-# ... (rest of imports)
+# SakareGataDetector is now loaded via JSON pattern.
+from core.shapes.nimoku_atama import NimokuAtamaDetector
 
 class ShapeDetector:
     def __init__(self, board_size=19):
@@ -73,7 +73,6 @@ class ShapeDetector:
         # JSONですでに読み込まれているものはスキップする
         legacy_list = [
             (AkiSankakuDetector, "aki_sankaku"),
-            (SakareGataDetector, "sakare_gata"),
             (NimokuAtamaDetector, "nimoku_atama"),
             (PonnukiDetector, "ponnuki"),
             (DangoDetector, "dango"),

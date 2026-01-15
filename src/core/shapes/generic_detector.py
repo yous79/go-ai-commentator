@@ -92,6 +92,8 @@ class GenericPatternDetector(BaseShape):
 
     def _match_at(self, context, pattern, origin):
         """特定の原点位置でパターンが一致するか判定する"""
+        from utils.logger import logger
+        
         for el in pattern["elements"]:
             abs_pos = origin + tuple(el["offset"])
             state_needed = el["state"]
@@ -103,14 +105,20 @@ class GenericPatternDetector(BaseShape):
             
             actual = self._get_stone(context.curr_board, abs_pos)
             
+            match = False
             if state_needed == "self" or state_needed == "last":
-                if actual != context.last_color: return False
+                match = (actual == context.last_color)
             elif state_needed == "opponent":
                 opp = self._get_opponent(context.last_color)
-                if actual != opp: return False
+                match = (actual == opp)
             elif state_needed == "empty":
-                if actual != '.': return False
+                match = (actual == '.')
             elif state_needed == "any":
-                if actual == 'edge': return False
+                match = (actual != 'edge')
+            
+            if not match:
+                # 非常に詳細なログ（必要に応じてコメントアウト）
+                # logger.debug(f"  Match fail at {abs_pos.to_gtp()}: need {state_needed}, got {actual}", layer="SHAPE_ENGINE")
+                return False
             
         return True

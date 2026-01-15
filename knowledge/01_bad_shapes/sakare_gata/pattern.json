@@ -1,0 +1,28 @@
+{
+    "key": "sakare_gata",
+    "name": "サカレ形",
+    "category": "bad",
+    "message": "連絡を完全に引き裂かれた【サカレ形】です（{}）。",
+    "auto_rotate": true,
+    "auto_reflect": true,
+    "patterns": [
+        {
+            "description": "一間トビの分断（2石の壁によるサカレ）",
+            "elements": [
+                {"offset": [0, 0], "state": "last"},
+                {"offset": [0, -1], "state": "self"},
+                {"offset": [-1, -1], "state": "opponent"},
+                {"offset": [1, -1], "state": "opponent"}
+            ]
+        },
+        {
+            "description": "ケイマの分断（2石の壁によるサカレ）",
+            "elements": [
+                {"offset": [0, 0], "state": "last"},
+                {"offset": [-1, 0], "state": "self"},
+                {"offset": [-1, -1], "state": "opponent"},
+                {"offset": [0, 1], "state": "opponent"}
+            ]
+        }
+    ]
+}
