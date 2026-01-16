@@ -7,6 +7,7 @@ from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME, load_api_key
 from core.knowledge_manager import KnowledgeManager
 from core.stability_analyzer import StabilityAnalyzer
 from core.board_simulator import BoardSimulator, SimulationContext
+from core.shape_detector import ShapeDetector
 from core.inference_fact import InferenceFact, FactCategory, FactCollector
 from services.api_client import api_client
 
@@ -17,6 +18,7 @@ class GeminiCommentator:
         self.knowledge_manager = KnowledgeManager(KNOWLEDGE_DIR)
         self.stability_analyzer = StabilityAnalyzer()
         self.simulator = BoardSimulator()
+        self.detector = ShapeDetector() # detectorを初期化
         self.prompt_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "prompts", "templates"))
 
     def _load_prompt(self, name, **kwargs):
@@ -44,7 +46,8 @@ class GeminiCommentator:
             curr_ctx = self.simulator.reconstruct_to_context(history, board_size)
 
             # 2. 形状検知（事実収集）
-            shape_facts = self.simulator.detector.detect_facts(curr_ctx.board, curr_ctx.prev_board)
+            # self.detectorを使用するように修正
+            shape_facts = self.detector.detect_facts(curr_ctx.board, curr_ctx.prev_board)
             for f in shape_facts: collector.facts.append(f)
 
             # 3. 緊急度解析（事実収集）
@@ -59,7 +62,8 @@ class GeminiCommentator:
                 if thr_pv:
                     thr_seq = ["pass"] + thr_pv
                     future_ctx = self.simulator.simulate_sequence(curr_ctx, thr_seq, starting_color=urgency_data['next_player'])
-                    future_shape_facts = self.simulator.detector.detect_facts(future_ctx.board, future_ctx.prev_board)
+                    # self.detectorを使用するように修正
+                    future_shape_facts = self.detector.detect_facts(future_ctx.board, future_ctx.prev_board)
                     for f in future_shape_facts:
                         if f.severity >= 4:
                             f.description = f"放置すると {f.description} という悪形が発生する恐れがあります。"
@@ -98,9 +102,8 @@ class GeminiCommentator:
             )
             print(f"DEBUG DATA READY: Winrate(B): {ana_data.get('winrate_black')}")
 
-            # 7. プロンプトの構築（外部テンプレート使用）
+            # 7. プロンプトの構築
             kn = self.knowledge_manager.get_all_knowledge_text()
-            player = "黒" if (move_idx % 2 == 0) else "白"
             
             persona_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Gemini_Persona.md"))
             persona_text = ""
@@ -110,7 +113,7 @@ class GeminiCommentator:
                         persona_text = f.read()
                 except: pass
 
-            sys_inst = self._load_prompt("go_instructor_system", board_size=board_size, player=player, knowledge=kn)
+            sys_inst = self._load_prompt("go_instructor_system", board_size=board_size, player=player_color, knowledge=kn)
             if persona_text:
                 sys_inst = f"{sys_inst}\n\n=== 執筆・解説ガイドライン ===\n{persona_text}"
             

@@ -82,10 +82,20 @@ class ShapeDetector:
 
     def detect_facts(self, curr_board, prev_board=None) -> list[InferenceFact]:
         """形状検知結果を InferenceFact のリストとして返す"""
-        context = DetectionContext(curr_board, prev_board, self.board_size)
+        # 盤面から実際のサイズを取得（19x19固定を回避）
+        actual_size = curr_board.side
+        context = DetectionContext(curr_board, prev_board, actual_size)
         facts = []
         for strategy in self.strategies:
+            # 戦略側のサイズも一時的に同期
+            orig_size = getattr(strategy, "board_size", 19)
+            strategy.board_size = actual_size
+            
             category, results = strategy.detect(context)
+            
+            # 元に戻す（副作用防止）
+            strategy.board_size = orig_size
+            
             severity = 4 if category in ["bad", "mixed"] else 2
             
             actual_results = []

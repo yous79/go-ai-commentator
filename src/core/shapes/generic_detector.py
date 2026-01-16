@@ -65,28 +65,22 @@ class GenericPatternDetector(BaseShape):
             return self.category, []
 
         results = []
-        # 原則として最新の着手点(context.last_move)を中心に照合を行う
-        # pattern内の各elementが「最新の着手(state: 'last')」になり得る全ての可能性を試行
-        
         matched_points = set()
 
         for variant in self.patterns:
-            # 最新の石がどのelementに該当するかを全通り試す
             for i, target_el in enumerate(variant["elements"]):
                 if target_el.get("state") not in ["self", "last"]: 
                     continue
                 
-                # target_el が last_move に来ると仮定した時の、パターン原点の絶対座標を逆算
                 origin = context.last_move - tuple(target_el["offset"])
                 
                 if self._match_at(context, variant, origin):
-                    # ヒットした座標文字列を取得
                     coord = context.last_move.to_gtp()
                     if coord not in matched_points:
                         msg = self.message_template.format(coord)
                         results.append(msg)
                         matched_points.add(coord)
-                    break # このバリアントで1つ見つかれば十分
+                    break 
 
         return self.category, results
 
@@ -98,11 +92,14 @@ class GenericPatternDetector(BaseShape):
             abs_pos = origin + tuple(el["offset"])
             state_needed = el["state"]
             
-            # 盤外チェック
-            if not abs_pos.is_valid(self.board_size):
+            # 盤外チェック (context.board_size を使用)
+            if not abs_pos.is_valid(context.board_size):
                 if state_needed == "edge": continue
                 else: return False
             
+            # 石の取得時もサイズを考慮する必要があるため、BaseShapeのメソッドを呼ぶ前にサイズを同期
+            # (detect_facts側で既に同期されているが、念のため)
+            self.board_size = context.board_size
             actual = self._get_stone(context.curr_board, abs_pos)
             
             match = False
