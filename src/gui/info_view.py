@@ -106,6 +106,13 @@ class InfoView(tk.Frame):
         self.txt_commentary.insert(tk.END, text)
         self.txt_commentary.config(state="disabled")
 
+    def set_facts(self, facts_text):
+        """デバッグ用：形状検知の結果を表示"""
+        self.txt_commentary.config(state="normal")
+        self.txt_commentary.delete("1.0", tk.END)
+        self.txt_commentary.insert(tk.END, facts_text if facts_text else "特筆すべき形状は検出されませんでした。")
+        self.txt_commentary.config(state="disabled")
+
     def update_graph(self, wr_history, current_idx):
         self.ax.clear()
         self.ax.plot(wr_history, color='#2c3e50', linewidth=2)
