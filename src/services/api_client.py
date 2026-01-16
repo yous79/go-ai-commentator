@@ -145,30 +145,32 @@ class GoAPIClient:
         return None
 
     def analyze_urgency(self, history, board_size=19, visits=100):
-        """着手の緊急度（温度）を算出する"""
+        """着手の緊急度（温度）を算出し、放置時の被害手順(PV)も取得する"""
         # 1. 現在の局面の最善スコアを取得
         current_res = self.analyze_move(history, board_size, visits, include_pv=False)
         if not current_res: return None
 
-        # 2. パスをした局面（相手の手番に交代）のスコアを取得
-        # historyにパス("pass")を追加して解析
+        # 2. パスをした局面（相手の手番に交代）のスコアとPVを取得
         color = "W" if history and history[-1][0] == "B" else "B"
         pass_history = history + [[color, "pass"]]
-        pass_res = self.analyze_move(pass_history, board_size, visits, include_pv=False)
+        pass_res = self.analyze_move(pass_history, board_size, visits, include_pv=True)
         if not pass_res: return None
 
-        # 3. スコア差を算出
-        # 黒から見て: (最善手のスコア) - (パスした時のスコア) の絶対値が「温度」
         score_normal = current_res.get("score_lead_black", 0)
         score_pass = pass_res.get("score_lead_black", 0)
-        
         urgency = abs(score_normal - score_pass)
         
+        # 相手の連打手順（PVの最初の2手程度）を取得
+        best_cand = (pass_res.get("top_candidates") or pass_res.get("candidates") or [{}])[0]
+        opponent_pv = best_cand.get("pv", [])[:2] # 相手の2連打分
+
         return {
             "urgency": urgency,
             "score_normal": score_normal,
             "score_pass": score_pass,
-            "is_critical": urgency > 10.0 # 10目以上の差があればクリティカルと判定
+            "is_critical": urgency > 10.0,
+            "opponent_pv": opponent_pv, # 被害手順
+            "next_player": color # 相手の色
         }
 
     def detect_shapes(self, history):

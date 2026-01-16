@@ -222,6 +222,18 @@ async def handle_list_tools() -> list[types.Tool]:
                 },
                 "required": ["term_id"]
             }
+        ),
+        types.Tool(
+            name="visualize_urgency",
+            description="現在の局面で『もしパスをしたらどうなるか』の被害予測図（参考図）を生成します。",
+            inputSchema={
+                "type": "OBJECT",
+                "properties": {
+                    "history": {"type": "ARRAY", "items": {"type": "ARRAY", "items": {"type": "string"}}},
+                    "board_size": {"type": "integer", "default": 19}
+                },
+                "required": ["history"]
+            }
         )
     ]
 
@@ -248,6 +260,23 @@ async def handle_call_tool(name: str, arguments: dict | None) -> list[types.Text
         if path:
             return [types.TextContent(type="text", text=f"用語『{term_id}』の例を生成しました: {path}")]
         return [types.TextContent(type="text", text=f"エラー: {err}")]
+    elif name == "visualize_urgency":
+        h = arguments.get("history", [])
+        bs = arguments.get("board_size", 19)
+        
+        # 1. 緊急度解析
+        urgency_data = api_client.analyze_urgency(h, bs)
+        if not urgency_data or not urgency_data.get("opponent_pv"):
+            return [types.TextContent(type="text", text="解析エラー、または被害手順が見つかりませんでした。")]
+        
+        # 2. 参考図の生成
+        pv = urgency_data["opponent_pv"]
+        title = f"Damage Prediction (Urgency: {urgency_data['urgency']:.1f} pts)"
+        path, err = term_visualizer.visualize_sequence(h, pv, title=title, board_size=bs)
+        
+        if path:
+            return [types.TextContent(type="text", text=f"放置した場合の被害予測図を生成しました: {path}\n手順: 相手に {pv} と連打される恐れがあります。")]
+        return [types.TextContent(type="text", text=f"画像生成エラー: {err}")]
     raise ValueError(f"Unknown tool: {name}")
 
 async def main():

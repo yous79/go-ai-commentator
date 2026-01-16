@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from core.game_state import GoGameState
 from utils.board_renderer import GoBoardRenderer
 from core.shape_detector import ShapeDetector
@@ -11,8 +12,8 @@ class TermVisualizer:
     """用語から具体的な局面画像を生成するサービス"""
 
     def __init__(self):
-        self.renderer = GoBoardRenderer(board_size=9, image_size=600)
-        self.detector = ShapeDetector(board_size=9)
+        self.renderer = GoBoardRenderer(board_size=19, image_size=600)
+        self.detector = ShapeDetector(board_size=19)
         self.api_key = load_api_key()
         self.client = genai.Client(api_key=self.api_key) if self.api_key else None
 
@@ -37,6 +38,37 @@ class TermVisualizer:
         # 3. SGFから画像を生成
         return self._render_from_sgf(term_id, sgf_content)
 
+    def visualize_sequence(self, history, sequence, title="Reference Diagram", board_size=19):
+        """現在の履歴に特定の着手シーケンスを追加して画像を生成する"""
+        temp_game = GoGameState()
+        temp_game.new_game(board_size)
+        
+        # 1. 現在の履歴を復元
+        for i, (color, move) in enumerate(history):
+            indices = temp_game._gtp_to_indices(move) if (move and move != "pass") else (None, None)
+            temp_game.add_move(i, color, *indices)
+        
+        # 2. 追加のシーケンス（連打）を適用
+        start_idx = temp_game.total_moves
+        
+        for i, mv in enumerate(sequence):
+            # sequenceが ["D5", "E5"] のような形式を想定
+            color = "W" if (start_idx + i) % 2 != 0 else "B" # 現在の手数から推測
+            idx = start_idx + i
+            indices = temp_game._gtp_to_indices(mv) if (mv and mv != "pass") else (None, None)
+            temp_game.add_move(idx, color, *indices)
+
+        # 3. レンダリング
+        board = temp_game.get_board_at(temp_game.total_moves)
+        img = self.renderer.render(board, analysis_text=title, 
+                                   history=temp_game.get_history_up_to(temp_game.total_moves), 
+                                   show_numbers=True)
+        
+        filename = f"ref_{int(time.time())}.png"
+        output_path = os.path.join(OUTPUT_BASE_DIR, filename)
+        img.save(output_path)
+        return output_path, None
+
     def _generate_sgf_via_ai(self, term_id):
         """Geminiに用語を説明する最小限のSGFを生成させる"""
         prompt = (
@@ -48,11 +80,10 @@ class TermVisualizer:
         )
         try:
             response = self.client.models.generate_content(
-                model=GEMINI_MODEL_NAME, # Gemini 3 Flash Preview を使用
+                model=GEMINI_MODEL_NAME,
                 contents=[prompt]
             )
             text = response.text.strip()
-            # SGFの括弧を抽出
             if "(" in text and ")" in text:
                 return text[text.find("("):text.rfind(")")+1]
         except Exception as e:
@@ -63,24 +94,20 @@ class TermVisualizer:
         """SGFをレンダリングし、論理チェックを行う"""
         temp_game = GoGameState()
         try:
-            # 一時ファイルとして保存してロード
             temp_path = os.path.join(OUTPUT_BASE_DIR, f"temp_{term_id}.sgf")
             with open(temp_path, "w", encoding="utf-8") as f:
-                f.read() if False else f.write(sgf_content)
+                f.write(sgf_content)
             
             temp_game.load_sgf(temp_path)
             last_move_idx = temp_game.total_moves
             board = temp_game.get_board_at(last_move_idx)
             prev_board = temp_game.get_board_at(last_move_idx - 1) if last_move_idx > 0 else None
             
-            # 論理検証
             ids = self.detector.detect_ids(board, prev_board)
             if term_id not in ids and term_id != "unknown":
                 print(f"Warning: Generated image for {term_id} might not contain the shape. Detected: {ids}")
 
-            # レンダリング
             img = self.renderer.render(board, history=temp_game.get_history_up_to(last_move_idx), show_numbers=True)
-            
             output_path = os.path.join(OUTPUT_BASE_DIR, f"term_{term_id}.png")
             img.save(output_path)
             return output_path, None

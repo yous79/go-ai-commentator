@@ -1,0 +1,108 @@
+INFO:     Started server process [27076]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+DEBUG: KataGo Engine started.
+INFO:     127.0.0.1:64164 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64167 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64170 - "POST /game/state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64170 - "POST /game/state HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 1 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 31.0%
+INFO:     127.0.0.1:64170 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 2 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 34.2%
+INFO:     127.0.0.1:64171 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 3 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 33.2%
+INFO:     127.0.0.1:64172 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 4 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 77.6%
+INFO:     127.0.0.1:64173 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 5 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 9.7%
+INFO:     127.0.0.1:64170 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 6 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 9.8%
+INFO:     127.0.0.1:64171 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 7 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.7%
+INFO:     127.0.0.1:64172 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64174 - "POST /game/state HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 8 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.7%
+INFO:     127.0.0.1:64170 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 9 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.3%
+INFO:     127.0.0.1:64173 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 10 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.3%
+INFO:     127.0.0.1:64171 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 11 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.2%
+INFO:     127.0.0.1:64172 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 12 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.2%
+INFO:     127.0.0.1:64173 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 13 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.2%
+INFO:     127.0.0.1:64170 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 4 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 77.3%
+INFO:     127.0.0.1:64175 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 14 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.1%
+INFO:     127.0.0.1:64171 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 15 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.3%
+INFO:     127.0.0.1:64172 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 16 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.2%
+INFO:     127.0.0.1:64170 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 17 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.3%
+INFO:     127.0.0.1:64173 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64175 - "POST /detect HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 18 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.3%
+INFO:     127.0.0.1:64171 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 19 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.3%
+INFO:     127.0.0.1:64172 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 20 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.3%
+INFO:     127.0.0.1:64173 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 21 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.3%
+INFO:     127.0.0.1:64170 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 4 moves (PV shapes: False)
+DEBUG: Analysis complete. Winrate(B): 77.4%
+INFO:     127.0.0.1:64171 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 22 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.4%
+INFO:     127.0.0.1:64175 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 23 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.1%
+INFO:     127.0.0.1:64172 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 24 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.2%
+INFO:     127.0.0.1:64173 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 25 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.7%
+INFO:     127.0.0.1:64170 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 5 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.1%
+INFO:     127.0.0.1:64175 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 26 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 2.9%
+INFO:     127.0.0.1:64171 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 4 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 75.7%
+INFO:     127.0.0.1:63955 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63955 - "POST /detect HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 4 moves (PV shapes: False)
+DEBUG: Analysis complete. Winrate(B): 76.5%
+INFO:     127.0.0.1:63955 - "POST /analyze HTTP/1.1" 200 OK
+DEBUG: Starting analysis for 5 moves (PV shapes: True)
+DEBUG: Analysis complete. Winrate(B): 0.1%
+INFO:     127.0.0.1:63955 - "POST /analyze HTTP/1.1" 200 OK
