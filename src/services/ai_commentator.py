@@ -6,7 +6,7 @@ import traceback
 from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME, load_api_key
 from core.knowledge_manager import KnowledgeManager
 from core.stability_analyzer import StabilityAnalyzer
-from core.board_simulator import BoardSimulator
+from core.board_simulator import BoardSimulator, SimulationContext
 from services.api_client import api_client
 
 class GeminiCommentator:
@@ -33,19 +33,19 @@ class GeminiCommentator:
             from utils.logger import logger
             logger.info(f"AI Commentary Generation Start (Move {move_idx})", layer="AI_COMMENTATOR")
             
-            # 1. 解析データの先行取得
+            # 1. 解析データの取得
             ana_data = api_client.analyze_move(history, board_size, include_pv=True)
             if not ana_data:
                 logger.error("AI Commentary: KataGo analysis data fetch failed.", layer="AI_COMMENTATOR")
                 return "【エラー】KataGoによる解析データの取得に失敗しました。"
             
-            logger.debug("Shape detection start...", layer="AI_COMMENTATOR")
+            # 2. 現在のコンテキストの構築
+            curr_ctx = self.simulator.reconstruct_to_context(history, board_size)
             facts = api_client.detect_shapes(history)
 
-            # 2. 緊急度（温度）の解析
+            # 3. 緊急度（温度）と未来予測の解析
             urgency_data = api_client.analyze_urgency(history, board_size)
             urgency_fact = ""
-            
             if urgency_data:
                 urgency_fact = (
                     f"【未来予測：成功と失敗の対比】\n"
@@ -53,30 +53,28 @@ class GeminiCommentator:
                     f"- 推奨進行（成功図）: {urgency_data['best_pv']}\n"
                 )
                 
-                # 放置時の警告
+                # 被害シミュレーション
                 thr_pv = urgency_data['opponent_pv']
                 if thr_pv:
                     urgency_fact += f"- 放置した場合の被害（失敗図）: 相手に {thr_pv} と連打されます。\n"
-                    # 失敗図での悪形検知
-                    opp_color = urgency_data['next_player']
-                    future_h = history + [[opp_color, "pass"]]
-                    for i, mv in enumerate(thr_pv):
-                        c = opp_color if i % 2 == 0 else ("B" if opp_color == "W" else "W")
-                        future_h.append([c, mv])
+                    
+                    # SimulationContextを使用して未来の悪形を検知
+                    thr_seq = ["pass"] + thr_pv
+                    future_ctx = self.simulator.simulate_sequence(curr_ctx, thr_seq, starting_color=urgency_data['next_player'])
                     
                     try:
-                        future_facts = api_client.detect_shapes(future_h)
+                        logger.debug(f"Future shape detection for Threat scenario...", layer="AI_COMMENTATOR")
+                        future_facts = api_client.detect_shapes(future_ctx.history)
                         if future_facts and "特筆すべき形状" not in future_facts:
                             urgency_fact += f"- 警告: 放置すると以下の悪形が発生します。\n  {future_facts}\n"
-                    except: pass
+                    except Exception as e:
+                        logger.warning(f"Future shape detection failed: {e}", layer="AI_COMMENTATOR")
 
-            # 3. 安定度分析の実行
-            logger.debug("Stability analysis start...", layer="AI_COMMENTATOR")
+            # 4. 安定度分析の実行
             stability_facts = ""
             ownership = ana_data.get('ownership')
             if ownership:
-                curr_b, _, _ = self.simulator.reconstruct(history, board_size)
-                stability_results = self.stability_analyzer.analyze(curr_b, ownership)
+                stability_results = self.stability_analyzer.analyze(curr_ctx.board, ownership)
                 logger.debug(f"Stability results: group_count={len(stability_results)}", layer="AI_COMMENTATOR")
                 
                 weak_stones = [r for r in stability_results if r['status'] in ['weak', 'critical']]
@@ -93,7 +91,7 @@ class GeminiCommentator:
                         stones_str = str(ss['stones'][:3]) + ("..." if len(ss['stones']) > 3 else "")
                         stability_facts += f"  - {stones_str} ({ss['color']}): 確定地に近い\n"
             
-            # 4. データの整理
+            # 5. データの整理
             logger.debug("Finalizing data for Gemini prompt...", layer="AI_COMMENTATOR")
             candidates = ana_data.get('top_candidates', []) or ana_data.get('candidates', [])
             best = candidates[0] if candidates else {}
@@ -123,11 +121,11 @@ class GeminiCommentator:
             )
             print(f"DEBUG DATA READY: Winrate(B): {ana_data.get('winrate_black')}")
 
-            # 5. プロンプトの構築
+            # 6. プロンプトの構築
             kn = self.knowledge_manager.get_all_knowledge_text()
             player = "黒" if (move_idx % 2 == 0) else "白"
             
-            # ペルソナ（Gemini_Persona.md）の読み込み（簡易的）
+            # ペルソナ（Gemini_Persona.md）の読み込み
             persona_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Gemini_Persona.md"))
             persona_text = ""
             if os.path.exists(persona_path):
@@ -141,7 +139,7 @@ class GeminiCommentator:
             user_prompt = self._load_prompt("analysis_request", move_idx=move_idx, history=history)
             user_prompt = f"{fact_summary}\n{user_prompt}"
 
-            # 6. 生成リクエスト
+            # 7. 生成リクエスト
             safety = [types.SafetySetting(category=c, threshold='BLOCK_NONE') for c in [
                 'HARM_CATEGORY_HATE_SPEECH', 'HARM_CATEGORY_HARASSMENT', 
                 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'HARM_CATEGORY_DANGEROUS_CONTENT',
