@@ -1,0 +1,19 @@
+{
+    "key": "dango",
+    "name": "団子石",
+    "category": "bad",
+    "message": "効率の悪い【団子石】の形になっています（{}）。",
+    "auto_rotate": true,
+    "auto_reflect": true,
+    "patterns": [
+        {
+            "description": "2x2の石の塊",
+            "elements": [
+                {"offset": [0, 0], "state": "last"},
+                {"offset": [0, 1], "state": "self"},
+                {"offset": [1, 0], "state": "self"},
+                {"offset": [1, 1], "state": "self"}
+            ]
+        }
+    ]
+}

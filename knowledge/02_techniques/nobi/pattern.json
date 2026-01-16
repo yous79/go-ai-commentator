@@ -1,0 +1,16 @@
+{
+    "key": "nobi",
+    "name": "ノビ",
+    "category": "normal",
+    "message": "力強く【ノビ】た一手です（{}）。",
+    "auto_rotate": true,
+    "auto_reflect": true,
+    "patterns": [
+        {
+            "elements": [
+                {"offset": [0, 0], "state": "last"},
+                {"offset": [1, 0], "state": "self"}
+            ]
+        }
+    ]
+}

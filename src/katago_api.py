@@ -11,7 +11,7 @@ import asyncio
 # Core imports
 from drivers.katago_driver import KataGoDriver
 from core.shape_detector import ShapeDetector
-from core.board_simulator import BoardSimulator
+from core.board_simulator import BoardSimulator, SimulationContext
 from config import KATAGO_EXE, KATAGO_CONFIG, KATAGO_MODEL
 
 app = FastAPI(title="KataGo Intelligence Service")
@@ -28,7 +28,8 @@ class AnalysisRequest(BaseModel):
     history: list
     board_size: int = 19
     visits: int = 100
-    include_pv_shapes: bool = True # デフォルトは詳細解析あり
+    include_pv_shapes: bool = True
+    include_ownership: bool = True
 
 class GameState(BaseModel):
     history: list = []
@@ -77,7 +78,6 @@ async def analyze(req: AnalysisRequest):
             if "error" in res:
                 return JSONResponse(status_code=503, content=res)
             
-            # 確実に実データを変数に保持
             final_wr = res.get('winrate', 0.5)
             final_score = res.get('score', 0.0)
             final_own = res.get('ownership', [])
@@ -85,17 +85,28 @@ async def analyze(req: AnalysisRequest):
             # Future Shape Analysis (PV解析)
             top_candidates = res.get('top_candidates', [])
             if req.include_pv_shapes:
-                curr_b, _, _ = simulator.reconstruct(clean_history)
-                player_color = "B" if len(clean_history) % 2 == 0 else "W"
+                # 基点となるコンテキストを復元
+                curr_ctx = simulator.reconstruct_to_context(clean_history, req.board_size)
                 
                 for cand in top_candidates:
                     pv_str = cand.get('future_sequence', "")
+                    # "D16 -> E17" のような形式をパース
                     pv_list = [m.strip() for m in pv_str.split(" -> ")] if pv_str else []
                     all_future_facts = []
-                    for m_str, sim_b, prev_b, c_color in simulator.simulate_pv(curr_b, pv_list, player_color):
-                        if not prev_b: continue
-                        facts = detector.detect_all(sim_b, prev_b, c_color)
-                        if facts: all_future_facts.append(f"  [{m_str}の局面]:\n{facts}")
+                    
+                    # 1手ずつシミュレートして形状検知
+                    for i in range(1, len(pv_list) + 1):
+                        sub_pv = pv_list[:i]
+                        # SimulationContextを使用して未来の盤面を構築
+                        future_ctx = simulator.simulate_sequence(curr_ctx, sub_pv)
+                        
+                        # 形状検知を実行
+                        facts = detector.detect_facts(future_ctx.board, future_ctx.prev_board)
+                        if facts:
+                            fact_text = "\n".join([f"    - {f.description}" for f in facts])
+                            last_move = pv_list[i-1]
+                            all_future_facts.append(f"  [{last_move}の局面]:\n{fact_text}")
+                    
                     cand["future_shape_analysis"] = "\n".join(all_future_facts) if all_future_facts else "特になし"
             else:
                 for cand in top_candidates:
@@ -128,9 +139,10 @@ async def get_game_state():
 async def detect(req: AnalysisRequest):
     try:
         clean_history = sanitize_history(req.history)
-        curr_b, prev_b, last_c = simulator.reconstruct(clean_history)
-        facts = detector.detect_all(curr_b, prev_b, last_c)
-        return {"facts": facts if facts else "特筆すべき形状は検出されませんでした。"}
+        ctx = simulator.reconstruct_to_context(clean_history, req.board_size)
+        facts = detector.detect_facts(ctx.board, ctx.prev_board)
+        text = "\n".join([f.description for f in facts])
+        return {"facts": text if text else "特筆すべき形状は検出されませんでした。"}
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"error": str(e), "traceback": traceback.format_exc()})
@@ -139,8 +151,10 @@ async def detect(req: AnalysisRequest):
 async def detect_ids(req: AnalysisRequest):
     try:
         clean_history = sanitize_history(req.history)
-        curr_b, prev_b, last_c = simulator.reconstruct(clean_history)
-        ids = detector.detect_ids(curr_b, prev_b, last_c)
+        ctx = simulator.reconstruct_to_context(clean_history, req.board_size)
+        facts = detector.detect_facts(ctx.board, ctx.prev_board)
+        # 属性からIDを抽出
+        ids = list(set([f.metadata.get("key", "unknown") for f in facts]))
         return {"ids": ids}
     except Exception as e:
         traceback.print_exc()

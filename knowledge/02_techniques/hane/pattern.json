@@ -1,0 +1,17 @@
+{
+    "key": "hane",
+    "name": "ハネ",
+    "category": "normal",
+    "message": "相手を抑え込む【ハネ】です（{}）。",
+    "auto_rotate": true,
+    "auto_reflect": true,
+    "patterns": [
+        {
+            "elements": [
+                {"offset": [0, 0], "state": "last"},
+                {"offset": [1, 1], "state": "opponent"},
+                {"offset": [0, 1], "state": "self"}
+            ]
+        }
+    ]
+}

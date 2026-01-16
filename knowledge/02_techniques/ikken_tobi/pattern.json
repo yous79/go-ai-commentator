@@ -1,0 +1,17 @@
+{
+    "key": "ikken_tobi",
+    "name": "一間トビ",
+    "category": "normal",
+    "message": "軽やかな【一間トビ】です（{}）。",
+    "auto_rotate": true,
+    "auto_reflect": true,
+    "patterns": [
+        {
+            "elements": [
+                {"offset": [0, 0], "state": "last"},
+                {"offset": [2, 0], "state": "self"},
+                {"offset": [1, 0], "state": "empty"}
+            ]
+        }
+    ]
+}

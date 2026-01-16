@@ -1,0 +1,18 @@
+{
+    "key": "keima",
+    "name": "ケイマ",
+    "category": "normal",
+    "message": "足の速い【ケイマ】の動きです（{}）。",
+    "auto_rotate": true,
+    "auto_reflect": true,
+    "patterns": [
+        {
+            "elements": [
+                {"offset": [0, 0], "state": "last"},
+                {"offset": [2, 1], "state": "self"},
+                {"offset": [1, 0], "state": "empty"},
+                {"offset": [1, 1], "state": "empty"}
+            ]
+        }
+    ]
+}

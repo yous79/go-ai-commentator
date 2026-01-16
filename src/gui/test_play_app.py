@@ -21,7 +21,7 @@ from gui.controller import AppController
 class TestPlayApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Go Test Play & Shape Detection Debugger (Rev 26.0)")
+        self.root.title("Go Test Play & Shape Detection Debugger (Rev 33.0)")
         self.root.geometry("1200x950")
 
         # Core Modules
@@ -31,7 +31,7 @@ class TestPlayApp:
         self.transformer = CoordinateTransformer(19)
         self.renderer = GoBoardRenderer(19)
         self.detector = ShapeDetector(19)
-        self.simulator = BoardSimulator()
+        self.simulator = BoardSimulator() # シミュレーターを保持
         self.knowledge_manager = KnowledgeManager(KNOWLEDGE_DIR)
         self.visualizer = TermVisualizer()
         self.gemini = None
@@ -147,33 +147,27 @@ class TestPlayApp:
                 text = self.gemini.generate_commentary(len(h), h, self.game.board_size)
                 
                 # 2. 緊急度チェックと参考図生成
-                from services.api_client import api_client
-                urgency_data = api_client.analyze_urgency(h, self.game.board_size)
+                urgency_data = self.controller.api_client.analyze_urgency(h, self.game.board_size)
                 
                 rec_path = None
                 thr_path = None
                 
                 if urgency_data:
-                    # 手番の決定
-                    last_color = h[-1][0] if h else "W"
-                    next_color = "W" if last_color == "B" else "B"
-
+                    curr_ctx = self.simulator.reconstruct_to_context(h, self.game.board_size)
                     # 推奨図
                     best_pv = urgency_data.get("best_pv", [])
                     if best_pv:
-                        rec_path, _ = self.visualizer.visualize_sequence(h, best_pv, title="Recommended Plan", 
-                                                                         board_size=self.game.board_size,
-                                                                         starting_color=next_color)
+                        rec_ctx = self.simulator.simulate_sequence(curr_ctx, best_pv)
+                        rec_path, _ = self.visualizer.visualize_context(rec_ctx, title="Recommended Plan")
                     
                     # 失敗図
                     if urgency_data.get("is_critical"):
                         opp_pv = urgency_data.get("opponent_pv", [])
                         if opp_pv:
                             thr_seq = ["pass"] + opp_pv
+                            thr_ctx = self.simulator.simulate_sequence(curr_ctx, thr_seq, starting_color=urgency_data['next_player'])
                             title = f"Future Threat (Loss: {urgency_data['urgency']:.1f})"
-                            thr_path, _ = self.visualizer.visualize_sequence(h, thr_seq, title=title, 
-                                                                             board_size=self.game.board_size,
-                                                                             starting_color=next_color)
+                            thr_path, _ = self.visualizer.visualize_context(thr_ctx, title=title)
 
                 self.root.after(0, lambda: self.info_view.set_commentary(text))
                 if rec_path:
@@ -271,8 +265,9 @@ class TestPlayApp:
                 combined_h.append([color, CoordinateTransformer.indices_to_gtp_static(r, c)])
         
         try:
-            curr_b, prev_b, last_c = self.simulator.reconstruct(combined_h)
-            facts = self.detector.detect_all(curr_b, prev_b, last_c)
-            self.info_view.set_facts(facts)
+            curr_ctx = self.simulator.reconstruct_to_context(combined_h)
+            facts = self.detector.detect_facts(curr_ctx.board, curr_ctx.prev_board)
+            text = "\n".join([f.description for f in facts])
+            self.info_view.set_facts(text)
         except Exception as e:
             self.info_view.set_facts(f"Detection Error: {e}")

@@ -20,13 +20,8 @@ class BoardSimulator:
     def __init__(self, board_size=19):
         self.board_size = board_size
 
-    def reconstruct(self, history, board_size=None):
-        """(Legacy互換) 履歴から現在の盤面、直前の盤面、最新の色を返す"""
-        ctx = self.reconstruct_to_context(history, board_size)
-        return ctx.board, ctx.prev_board, ctx.last_color
-
     def reconstruct_to_context(self, history, board_size=None) -> SimulationContext:
-        """履歴から SimulationContext を生成する"""
+        """履歴から SimulationContext を生成する（唯一の復元口）"""
         sz = board_size or self.board_size
         curr = boards.Board(sz)
         prev = boards.Board(sz)
@@ -77,25 +72,3 @@ class BoardSimulator:
             current_color = 'w' if current_color == 'b' else 'b'
             
         return self.reconstruct_to_context(new_history, base_ctx.board_size)
-
-    def simulate_pv(self, base_board, pv_list, start_color):
-        """(Legacy互換) PVの手順ごとの盤面状態をジェネレーターとして返す"""
-        if not base_board: return
-        sim_board = base_board.copy()
-        current_color = start_color.lower()
-
-        for move_str in pv_list:
-            if not move_str or move_str.lower() == "pass":
-                yield move_str, sim_board.copy(), None, current_color
-                current_color = 'w' if current_color == 'b' else 'b'
-                continue
-
-            prev_state = sim_board.copy()
-            idx = CoordinateTransformer.gtp_to_indices_static(move_str)
-            if idx:
-                try:
-                    sim_board.play(idx[0], idx[1], current_color)
-                    yield move_str, sim_board, prev_state, current_color
-                    current_color = 'w' if current_color == 'b' else 'b'
-                except: break
-            else: break

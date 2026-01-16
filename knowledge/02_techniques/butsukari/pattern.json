@@ -1,0 +1,17 @@
+{
+    "key": "butsukari",
+    "name": "ブツカリ",
+    "category": "normal",
+    "message": "正面から当たる【ブツカリ】です（{}）。",
+    "auto_rotate": true,
+    "auto_reflect": true,
+    "patterns": [
+        {
+            "elements": [
+                {"offset": [0, 0], "state": "last"},
+                {"offset": [1, 0], "state": "opponent"},
+                {"offset": [0, 1], "state": "self"}
+            ]
+        }
+    ]
+}

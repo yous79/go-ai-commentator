@@ -17,6 +17,7 @@ from services.analysis_manager import AnalysisManager
 from services.report_generator import ReportGenerator
 from services.term_visualizer import TermVisualizer
 from core.knowledge_manager import KnowledgeManager
+from core.board_simulator import BoardSimulator
 from config import KNOWLEDGE_DIR
 
 from gui.board_view import BoardView
@@ -26,7 +27,7 @@ from gui.controller import AppController
 class GoReplayApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Go AI Commentator (Rev 26.0 MVC)")
+        self.root.title("Go AI Commentator (Rev 33.0 MVC)")
         self.root.geometry("1200x950")
 
         # Core Engine & State
@@ -35,6 +36,7 @@ class GoReplayApp:
         self.transformer = CoordinateTransformer()
         self.renderer = GoBoardRenderer()
         self.visualizer = TermVisualizer()
+        self.simulator = BoardSimulator() # シミュレーターを保持
         self.knowledge_manager = KnowledgeManager(KNOWLEDGE_DIR)
         self.gemini = None
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=3)
@@ -46,7 +48,7 @@ class GoReplayApp:
         if self.gemini:
             self.report_generator = ReportGenerator(self.game, self.renderer, self.gemini)
 
-        # UI State (Moved shared logic to Controller, keeping UI-only state here)
+        # UI State
         self.moves_m_b = [None] * 3
         self.moves_m_w = [None] * 3
 
@@ -120,7 +122,6 @@ class GoReplayApp:
             for item in cat.values():
                 if item.title == term_title:
                     desc = getattr(item, 'full_content', "詳細な解説はありません。")
-                    # メタデータの基本情報を付与
                     meta = item.metadata
                     header = f"【{item.title}】\n"
                     if "importance" in meta: header += f"重要度: {'★' * meta['importance']}\n"
@@ -150,18 +151,20 @@ class GoReplayApp:
         """画像を別ウィンドウで表示する"""
         from PIL import Image, ImageTk
         top = tk.Toplevel(self.root)
-        top.title(f"Example: {title}")
+        top.title(f"Diagram: {title}")
         
-        img = Image.open(image_path)
-        # ウィンドウサイズに合わせて調整
-        img.thumbnail((600, 600))
-        photo = ImageTk.PhotoImage(img)
-        
-        lbl = tk.Label(top, image=photo)
-        lbl.image = photo
-        lbl.pack(padx=10, pady=10)
-        
-        tk.Button(top, text="Close", command=top.destroy).pack(pady=5)
+        try:
+            img = Image.open(image_path)
+            img.thumbnail((600, 600))
+            photo = ImageTk.PhotoImage(img)
+            
+            lbl = tk.Label(top, image=photo)
+            lbl.image = photo
+            lbl.pack(padx=10, pady=10)
+            
+            tk.Button(top, text="Close", command=top.destroy).pack(pady=5)
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to open diagram: {e}")
 
 
     def _setup_bottom_bar(self):
@@ -290,35 +293,30 @@ class GoReplayApp:
             # 1. 解説生成
             text = self.gemini.generate_commentary(curr, h, self.game.board_size)
             
-            # 2. 緊急度解析と参考図データの取得
+            # 2. 緊急度解析
             urgency_data = self.controller.api_client.analyze_urgency(h, self.game.board_size)
             
             rec_path = None
             thr_path = None
             
             if urgency_data:
-                # 手番の色の決定
-                last_color = h[-1][0] if h else "W"
-                next_color = "W" if last_color == "B" else "B"
+                # SimulationContextの構築
+                curr_ctx = self.simulator.reconstruct_to_context(h, self.game.board_size)
                 
                 # 成功図（最善進行）の生成
                 best_pv = urgency_data.get("best_pv", [])
                 if best_pv:
-                    rec_path, _ = self.visualizer.visualize_sequence(h, best_pv, title="AI Recommended Success Plan", 
-                                                                     board_size=self.game.board_size,
-                                                                     starting_color=next_color)
+                    rec_ctx = self.simulator.simulate_sequence(curr_ctx, best_pv)
+                    rec_path, _ = self.visualizer.visualize_context(rec_ctx, title="AI Recommended Success Plan")
                 
                 # 失敗図（放置被害）の生成 - 緊急時のみ
                 if urgency_data.get("is_critical"):
                     opp_pv = urgency_data.get("opponent_pv", [])
                     if opp_pv:
-                        # 自分がパス(next_color)し、相手(last_color)が連打するシナリオ
                         thr_seq = ["pass"] + opp_pv
+                        thr_ctx = self.simulator.simulate_sequence(curr_ctx, thr_seq, starting_color=urgency_data['next_player'])
                         title = f"Future Threat Diagram (Potential Loss: {urgency_data['urgency']:.1f})"
-                        # 自分がパスするので、開始色は next_color
-                        thr_path, _ = self.visualizer.visualize_sequence(h, thr_seq, title=title, 
-                                                                         board_size=self.game.board_size,
-                                                                         starting_color=next_color)
+                        thr_path, _ = self.visualizer.visualize_context(thr_ctx, title=title)
 
             # 3. UIへの反映（非同期）
             self.root.after(0, lambda: self._update_commentary_ui(text))
@@ -327,7 +325,7 @@ class GoReplayApp:
                 self.root.after(0, lambda: self._show_image_popup("AI Recommended Plan", rec_path))
             
             if thr_path:
-                # 少し遅らせて表示し、ウィンドウが重なりすぎないように配慮
+                # 少し遅らせて表示
                 self.root.after(200, lambda: self._show_image_popup("WARNING: Future Threat", thr_path))
                 
         except Exception as e:
@@ -360,16 +358,9 @@ class GoReplayApp:
         if curr < len(self.game.moves):
             d = self.game.moves[curr]
             if d:
-                cands = d.get('candidates', [])
-                if not cands: # 互換性のため top_candidates もチェック
-                    cands = d.get('top_candidates', [])
-                
+                cands = d.get('candidates', []) or d.get('top_candidates', [])
                 if cands and 'pv' in cands[0]:
                     self._show_pv_window("Variation", cands[0]['pv'])
-                elif cands and 'future_sequence' in cands[0]:
-                    # フォールバック: 文字列からリストを再構成
-                    pv_list = [m.strip() for m in cands[0]['future_sequence'].split("->")]
-                    self._show_pv_window("Variation", pv_list)
 
     def _show_pv_window(self, title, pv_list):
         top = tk.Toplevel(self.root); top.title(title)
@@ -397,7 +388,6 @@ class GoReplayApp:
         self.play_interactive_move(color, None, None)
 
     def play_interactive_move(self, color, row, col):
-        # 検討モードのロジック（将来的にControllerへ完全移譲推奨）
         self.info_view.btn_comment.config(state="disabled", text="Analyzing...")
         def run():
             try:

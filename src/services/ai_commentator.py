@@ -5,20 +5,14 @@ import json
 import traceback
 from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME, load_api_key
 from core.knowledge_manager import KnowledgeManager
-from core.stability_analyzer import StabilityAnalyzer
-from core.board_simulator import BoardSimulator, SimulationContext
-from core.shape_detector import ShapeDetector
-from core.inference_fact import InferenceFact, FactCategory, FactCollector
-from services.api_client import api_client
+from services.analysis_orchestrator import AnalysisOrchestrator
 
 class GeminiCommentator:
     def __init__(self, api_key):
         self.client = genai.Client(api_key=api_key)
         self.last_pv = None 
         self.knowledge_manager = KnowledgeManager(KNOWLEDGE_DIR)
-        self.stability_analyzer = StabilityAnalyzer()
-        self.simulator = BoardSimulator()
-        self.detector = ShapeDetector() # detectorを初期化
+        self.orchestrator = AnalysisOrchestrator() # 解析指揮官を導入
         self.prompt_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "prompts", "templates"))
 
     def _load_prompt(self, name, **kwargs):
@@ -31,58 +25,21 @@ class GeminiCommentator:
             return template.format(**kwargs)
 
     def generate_commentary(self, move_idx, history, board_size=19):
-        """【事実先行型】先に解析を完了させ、構造化された確定データをGeminiに渡して解説を生成させる"""
+        """【事実先行型】Orchestratorから得た構造化データに基づき、AIによる解説を生成する"""
         try:
             from utils.logger import logger
             logger.info(f"AI Commentary Generation Start (Move {move_idx})", layer="AI_COMMENTATOR")
-            collector = FactCollector()
             
-            # 1. 解析データの取得
-            ana_data = api_client.analyze_move(history, board_size, include_pv=True)
+            # 1. Orchestratorによる一括解析
+            collector = self.orchestrator.analyze_full(history, board_size)
+            ana_data = getattr(collector, 'raw_analysis', {})
             if not ana_data:
-                logger.error("AI Commentary: KataGo analysis data fetch failed.", layer="AI_COMMENTATOR")
-                return "【エラー】KataGoによる解析データの取得に失敗しました。"
-            
-            curr_ctx = self.simulator.reconstruct_to_context(history, board_size)
+                return "【エラー】解析データの取得に失敗しました。"
 
-            # 2. 形状検知（事実収集）
-            # self.detectorを使用するように修正
-            shape_facts = self.detector.detect_facts(curr_ctx.board, curr_ctx.prev_board)
-            for f in shape_facts: collector.facts.append(f)
-
-            # 3. 緊急度解析（事実収集）
-            urgency_data = api_client.analyze_urgency(history, board_size)
-            if urgency_data:
-                u_severity = 5 if urgency_data['is_critical'] else 2
-                u_desc = f"この局面の緊急度は {urgency_data['urgency']:.1f}目 です。{'一手の緩みも許されない急場です。' if urgency_data['is_critical'] else '比較的平穏な局面です。'}"
-                collector.add(FactCategory.URGENCY, u_desc, u_severity, urgency_data)
-                
-                # 未来の悪形警告
-                thr_pv = urgency_data['opponent_pv']
-                if thr_pv:
-                    thr_seq = ["pass"] + thr_pv
-                    future_ctx = self.simulator.simulate_sequence(curr_ctx, thr_seq, starting_color=urgency_data['next_player'])
-                    # self.detectorを使用するように修正
-                    future_shape_facts = self.detector.detect_facts(future_ctx.board, future_ctx.prev_board)
-                    for f in future_shape_facts:
-                        if f.severity >= 4:
-                            f.description = f"放置すると {f.description} という悪形が発生する恐れがあります。"
-                            collector.facts.append(f)
-
-            # 4. 安定度分析（事実収集）
-            ownership = ana_data.get('ownership')
-            if ownership:
-                stability_facts = self.stability_analyzer.analyze_to_facts(curr_ctx.board, ownership)
-                for f in stability_facts: collector.facts.append(f)
-
-            # 5. 勝率・目数差の事実（追加）
-            wr = ana_data.get('winrate_black', 0.5)
-            sl = ana_data.get('score_lead_black', 0.0)
-            collector.add(FactCategory.STRATEGY, f"現在の勝率(黒): {wr:.1%}, 目数差: {sl:.1f}目", severity=3)
-
-            # 6. プロンプトの構築
+            # 2. 事実のトリアージとサマリー作成
             prioritized_facts = collector.get_prioritized_text(limit=12)
             
+            # 3. データの整理 (推奨手など)
             candidates = ana_data.get('top_candidates', []) or ana_data.get('candidates', [])
             best = candidates[0] if candidates else {}
             
@@ -102,7 +59,7 @@ class GeminiCommentator:
             )
             print(f"DEBUG DATA READY: Winrate(B): {ana_data.get('winrate_black')}")
 
-            # 7. プロンプトの構築
+            # 4. プロンプトの構築
             kn = self.knowledge_manager.get_all_knowledge_text()
             
             persona_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Gemini_Persona.md"))
@@ -114,13 +71,23 @@ class GeminiCommentator:
                 except: pass
 
             sys_inst = self._load_prompt("go_instructor_system", board_size=board_size, player=player_color, knowledge=kn)
+            
+            # 強力な制約の追加
+            constraint = (
+                "\n\n=== IMPORTANT CONSTRAINT ===\n"
+                "You MUST NOT call any tools or functions. You already have all necessary analysis data.\n"
+                "Your task is ONLY to provide a text commentary based on the facts provided above.\n"
+                "Focus on reasoning and instruction, using the provided prioritized facts.\n"
+            )
             if persona_text:
-                sys_inst = f"{sys_inst}\n\n=== 執筆・解説ガイドライン ===\n{persona_text}"
+                sys_inst = f"{sys_inst}\n\n=== 執筆・解説ガイドライン ===\n{persona_text}{constraint}"
+            else:
+                sys_inst = f"{sys_inst}{constraint}"
             
             user_prompt = self._load_prompt("analysis_request", move_idx=move_idx, history=history)
             user_prompt = f"{fact_summary}\n{user_prompt}"
 
-            # 8. 生成リクエスト
+            # 5. 生成リクエスト
             safety = [types.SafetySetting(category=c, threshold='BLOCK_NONE') for c in [
                 'HARM_CATEGORY_HATE_SPEECH', 'HARM_CATEGORY_HARASSMENT', 
                 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'HARM_CATEGORY_DANGEROUS_CONTENT',
@@ -136,16 +103,19 @@ class GeminiCommentator:
                 )
             )
 
-            final_text = response.text if response.text else "【エラー】解説の生成に失敗しました。"
+            # 堅牢なテキスト抽出
+            final_text = ""
+            if response.candidates and response.candidates[0].content.parts:
+                final_text = "".join([p.text for p in response.candidates[0].content.parts if p.text])
+            
+            if not final_text:
+                return f"【解析事実】\n{fact_summary}\n\n(AIがテキスト解説を生成できませんでした。)"
 
-            # --- 品質ガード (捏造チェック) ---
-            real_move = str(best.get('move', ''))
-            has_wr = any(x in final_text for x in ["%", "％", "勝率"])
-            has_move = real_move.upper() in final_text.upper() if real_move else True
-
-            if not has_wr or not has_move:
-                print(f"DEBUG GUARD FAILED: WR:{has_wr} Move:{has_move}")
-                return f"【解析結果】\n{fact_summary}\n\n(AIが詳細な解説を生成できませんでしたが、上記データがKataGoによる事実です。)"
+            # --- 品質ガード (数値情報の欠落チェック) ---
+            has_wr = any(x in final_text for x in ["%", "％", "勝率", "リード"])
+            if not has_wr:
+                # 重要な数値が含まれていない場合は事実を添える
+                return f"【解析事実】\n{fact_summary}\n\n---\n{final_text}"
 
             return final_text
 

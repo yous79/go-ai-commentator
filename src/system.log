@@ -149,3 +149,100 @@
 [2026-01-16 16:40:21] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 7)
 [2026-01-16 16:41:07] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 7)
 [2026-01-16 16:41:35] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 7)
+[2026-01-16 16:54:19] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-16 16:54:20] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 16:54:20] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-16 16:54:21] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 16:54:21] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (2/3)
+[2026-01-16 16:54:21] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 16:54:21] [API_CLIENT] [ERROR] Circuit Breaker: OPENED due to 3 consecutive failures
+[2026-01-16 16:54:21] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:21] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:21] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:21] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:21] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:21] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:21] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:21] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:21] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:21] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:21] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:21] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:22] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 16:54:22] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 16:54:23] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 16:54:51] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-16 16:54:51] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:51] [AI_COMMENTATOR] [ERROR] AI Commentary: KataGo analysis data fetch failed.
+[2026-01-16 16:54:51] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:52] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-16 16:54:52] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:52] [AI_COMMENTATOR] [ERROR] AI Commentary: KataGo analysis data fetch failed.
+[2026-01-16 16:54:52] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:54:53] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-16 16:54:53] [API_CLIENT] [INFO] Circuit Breaker: Entering HALF_OPEN state (test recovery)
+[2026-01-16 16:54:53] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 16:54:53] [API_CLIENT] [ERROR] Circuit Breaker: OPENED due to 7 consecutive failures
+[2026-01-16 16:54:53] [AI_COMMENTATOR] [ERROR] AI Commentary: KataGo analysis data fetch failed.
+[2026-01-16 16:54:53] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:58:56] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-16 16:58:56] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 16:58:56] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-16 16:58:57] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 16:58:57] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (2/3)
+[2026-01-16 16:58:58] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 16:58:58] [API_CLIENT] [ERROR] Circuit Breaker: OPENED due to 3 consecutive failures
+[2026-01-16 16:58:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:58:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:58:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:58:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:58:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:58:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:58:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:58:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:58:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:58:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:58:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:58:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 16:58:59] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 16:58:59] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 16:58:59] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 17:04:58] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-16 17:04:58] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 17:04:58] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-16 17:04:59] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 17:04:59] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (2/3)
+[2026-01-16 17:05:00] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 17:05:00] [API_CLIENT] [ERROR] Circuit Breaker: OPENED due to 3 consecutive failures
+[2026-01-16 17:05:00] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 17:05:00] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 17:05:00] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 17:05:00] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 17:05:00] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 17:05:00] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 17:05:00] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 17:05:00] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 17:05:00] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 17:05:00] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 17:05:00] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 17:05:00] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-16 17:05:00] [API_CLIENT] [INFO] Circuit Breaker: Recovered to CLOSED from OPEN
+[2026-01-16 17:05:01] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 17:05:01] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-16 17:05:01] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 17:05:01] [API_CLIENT] [ERROR] API HTTP Error: 500 at analyze
+[2026-01-16 17:05:01] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (2/3)
+[2026-01-16 17:05:01] [API_CLIENT] [ERROR] Circuit Breaker: OPENED due to 3 consecutive failures
+[2026-01-16 17:14:42] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-16 17:14:56] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-16 17:14:56] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-16 17:14:58] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-16 18:46:43] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-16 18:47:08] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-16 20:31:24] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-16 20:31:52] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 7)
+[2026-01-16 21:12:18] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-16 21:12:29] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-16 21:12:29] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-16 21:14:38] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-16 21:14:38] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
