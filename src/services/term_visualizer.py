@@ -40,34 +40,50 @@ class TermVisualizer:
 
     def visualize_sequence(self, history, sequence, title="Reference Diagram", board_size=19):
         """現在の履歴に特定の着手シーケンスを追加して画像を生成する"""
+        from core.coordinate_transformer import CoordinateTransformer
+        from utils.logger import logger
+        
+        if not board_size: board_size = 19
         temp_game = GoGameState()
         temp_game.new_game(board_size)
         
         # 1. 現在の履歴を復元
-        for i, (color, move) in enumerate(history):
-            indices = temp_game._gtp_to_indices(move) if (move and move != "pass") else (None, None)
-            temp_game.add_move(i, color, *indices)
+        if history:
+            for i, item in enumerate(history):
+                if not isinstance(item, (list, tuple)) or len(item) < 2: continue
+                color, move = item
+                indices = CoordinateTransformer.gtp_to_indices_static(move)
+                temp_game.add_move(i, color, *indices if indices else (None, None))
         
         # 2. 追加のシーケンス（連打）を適用
-        start_idx = temp_game.total_moves
+        last_color = history[-1][0] if (history and len(history) > 0 and len(history[-1]) > 0) else "W"
         
-        for i, mv in enumerate(sequence):
-            # sequenceが ["D5", "E5"] のような形式を想定
-            color = "W" if (start_idx + i) % 2 != 0 else "B" # 現在の手数から推測
-            idx = start_idx + i
-            indices = temp_game._gtp_to_indices(mv) if (mv and mv != "pass") else (None, None)
-            temp_game.add_move(idx, color, *indices)
+        if sequence:
+            for i, mv in enumerate(sequence):
+                color = "W" if last_color == "B" else "B"
+                last_color = color
+                current_idx = temp_game.total_moves
+                indices = CoordinateTransformer.gtp_to_indices_static(mv)
+                temp_game.add_move(current_idx, color, *indices if indices else (None, None))
 
         # 3. レンダリング
-        board = temp_game.get_board_at(temp_game.total_moves)
-        img = self.renderer.render(board, analysis_text=title, 
-                                   history=temp_game.get_history_up_to(temp_game.total_moves), 
-                                   show_numbers=True)
+        # 描画エンジンのサイズを動的に同期（IndexError防止）
+        self.renderer.board_size = board_size
+        self.renderer.transformer = CoordinateTransformer(board_size, self.renderer.image_size)
         
-        filename = f"ref_{int(time.time())}.png"
-        output_path = os.path.join(OUTPUT_BASE_DIR, filename)
-        img.save(output_path)
-        return output_path, None
+        try:
+            board = temp_game.get_board_at(temp_game.total_moves)
+            img = self.renderer.render(board, analysis_text=title, 
+                                       history=temp_game.get_history_up_to(temp_game.total_moves), 
+                                       show_numbers=True)
+            
+            filename = f"ref_{int(time.time())}.png"
+            output_path = os.path.join(OUTPUT_BASE_DIR, filename)
+            img.save(output_path)
+            return output_path, None
+        except Exception as e:
+            logger.error(f"Error in visualize_sequence rendering: {e}", layer="VISUALIZER")
+            return None, str(e)
 
     def _generate_sgf_via_ai(self, term_id):
         """Geminiに用語を説明する最小限のSGFを生成させる"""

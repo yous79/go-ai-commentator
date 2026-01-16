@@ -126,51 +126,69 @@ class GoAPIClient:
 
         self.executor.submit(_send)
 
-    def analyze_move(self, history, board_size=19, visits=100, include_pv=True):
+    def analyze_move(self, history, board_size=19, visits=150, include_pv=True):
         """特定の手の解析リクエスト"""
         payload = {
             "history": history,
             "board_size": board_size,
             "visits": visits,
             "include_pv_shapes": include_pv,
-            "include_ownership": True # 安定度分析のためにOwnershipを追加
+            "include_ownership": True
         }
-        logger.debug(f"Requesting analysis (Visits: {visits}, Ownership: True)", layer="API_CLIENT")
+        logger.debug(f"Requesting analysis: history_len={len(history)}, visits={visits}", layer="API_CLIENT")
         resp, err = self._safe_request("POST", "analyze", json=payload, timeout=60)
         
         if resp:
-            return resp.json()
+            data = resp.json()
+            cands = data.get('candidates', []) or data.get('top_candidates', [])
+            has_own = 'ownership' in data and data['ownership'] is not None
+            logger.debug(f"Analysis response received: candidates_count={len(cands)}, has_ownership={has_own}", layer="API_CLIENT")
+            if not has_own:
+                logger.warning("Ownership data is missing from API response. Stability analysis will be skipped.", layer="API_CLIENT")
+            return data
         elif err == "CIRCUIT_OPEN":
             logger.warning("Analysis skipped: Circuit Breaker is OPEN.", layer="API_CLIENT")
         return None
 
     def analyze_urgency(self, history, board_size=19, visits=100):
         """着手の緊急度（温度）を算出し、放置時の被害手順(PV)も取得する"""
+        logger.debug(f"Urgency Check Start: history_len={len(history)}", layer="API_CLIENT")
+        
         # 1. 現在の局面の最善スコアを取得
         current_res = self.analyze_move(history, board_size, visits, include_pv=False)
-        if not current_res: return None
+        if not current_res: 
+            logger.warning("Urgency Check: current_res is None", layer="API_CLIENT")
+            return None
 
-        # 2. パスをした局面（相手の手番に交代）のスコアとPVを取得
+        # 2. パスをした局面のスコアとPVを取得
         color = "W" if history and history[-1][0] == "B" else "B"
         pass_history = history + [[color, "pass"]]
+        logger.debug(f"Urgency Check: Requesting pass-局面 analysis (player={color})", layer="API_CLIENT")
         pass_res = self.analyze_move(pass_history, board_size, visits, include_pv=True)
-        if not pass_res: return None
+        if not pass_res: 
+            logger.warning("Urgency Check: pass_res is None", layer="API_CLIENT")
+            return None
 
         score_normal = current_res.get("score_lead_black", 0)
         score_pass = pass_res.get("score_lead_black", 0)
         urgency = abs(score_normal - score_pass)
         
-        # 相手の連打手順（PVの最初の2手程度）を取得
-        best_cand = (pass_res.get("top_candidates") or pass_res.get("candidates") or [{}])[0]
-        opponent_pv = best_cand.get("pv", [])[:2] # 相手の2連打分
+        # 相手の連打手順を取得
+        candidates = pass_res.get("top_candidates", []) or pass_res.get("candidates", [])
+        opponent_pv = []
+        if candidates:
+            opponent_pv = candidates[0].get("pv", [])[:2]
+            logger.debug(f"Urgency Check: Opponent PV found: {opponent_pv}", layer="API_CLIENT")
+        else:
+            logger.warning("Urgency Check: No candidates found in pass_res", layer="API_CLIENT")
 
         return {
             "urgency": urgency,
             "score_normal": score_normal,
             "score_pass": score_pass,
             "is_critical": urgency > 10.0,
-            "opponent_pv": opponent_pv, # 被害手順
-            "next_player": color # 相手の色
+            "opponent_pv": opponent_pv,
+            "next_player": color
         }
 
     def detect_shapes(self, history):

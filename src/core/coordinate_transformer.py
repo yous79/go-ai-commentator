@@ -11,12 +11,20 @@ class CoordinateTransformer:
     @staticmethod
     def gtp_to_indices_static(vertex):
         """GTP形式 (Q16など) を (row, col) インデックスに変換 (static)"""
-        if not vertex or vertex.lower() == "pass":
+        if not vertex or not isinstance(vertex, str) or len(vertex) < 2:
             return None
+        
+        v_low = vertex.lower()
+        if v_low == "pass":
+            return None
+            
         col_str = vertex[0].upper()
         col = CoordinateTransformer.COLS.find(col_str)
         try:
-            row = int(vertex[1:]) - 1
+            row_str = vertex[1:]
+            if not row_str.isdigit():
+                return None
+            row = int(row_str) - 1
             if col == -1: return None
             return row, col
         except:

@@ -105,7 +105,7 @@ async def analyze(req: AnalysisRequest):
             return {
                 "winrate_black": final_wr,
                 "score_lead_black": final_score,
-                "ownership_black": final_own,
+                "ownership": final_own,
                 "top_candidates": top_candidates
             }
 

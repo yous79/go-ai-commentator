@@ -54,3 +54,69 @@
 [2026-01-16 14:39:05] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
 [2026-01-16 14:39:14] [API_CLIENT] [ERROR] API Connection Failed at game/state: ('Connection aborted.', ConnectionResetError(10054, '既存の接続はリモート ホストに強制的に切断されました。', None, 10054, None))
 [2026-01-16 14:39:14] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-16 14:48:08] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-16 14:48:12] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-16 14:48:12] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-16 14:54:15] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-16 14:54:26] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-16 14:54:26] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-16 15:01:17] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-16 15:01:20] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-16 15:01:20] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-16 15:01:23] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-16 15:01:23] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-16 15:04:38] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-16 15:09:48] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-16 15:10:06] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-16 15:10:06] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-16 15:12:09] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-16 15:17:00] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-16 15:17:05] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-16 15:17:05] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-16 15:21:26] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-16 15:21:56] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-16 15:27:01] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-16 15:27:02] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:03] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:03] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:04] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:04] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:05] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:06] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:07] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:07] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:07] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:08] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:09] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:09] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:10] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:11] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-16 15:27:11] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:13] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:13] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:14] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:14] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:15] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:16] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:16] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:17] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:18] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:19] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:19] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:20] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:20] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:21] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:27] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:27] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:43] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-16 15:27:43] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:43] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:43] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:51] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:27:51] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:28:09] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-16 15:28:09] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:28:09] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:28:09] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:28:21] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.
+[2026-01-16 15:28:21] [API_CLIENT] [WARNING] Ownership data is missing from API response. Stability analysis will be skipped.

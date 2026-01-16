@@ -30,52 +30,54 @@ class GeminiCommentator:
     def generate_commentary(self, move_idx, history, board_size=19):
         """【事実先行型】先に解析を完了させ、確定データをGeminiに渡して解説を生成させる"""
         try:
-            print(f"--- AI COMMENTARY START (Move {move_idx}) ---")
+            from utils.logger import logger
+            logger.info(f"AI Commentary Generation Start (Move {move_idx})", layer="AI_COMMENTATOR")
             
-            # 1. 解析データの先行取得 (API Client Singleton)
-            ana_data = api_client.analyze_move(history, board_size, visits=100, include_pv=True)
+            # 1. 解析データの先行取得
+            ana_data = api_client.analyze_move(history, board_size, include_pv=True)
             if not ana_data:
-                return "【エラー】KataGoによる解析データの取得に失敗しました。サーバーの状態を確認してください。"
+                logger.error("AI Commentary: KataGo analysis data fetch failed.", layer="AI_COMMENTATOR")
+                return "【エラー】KataGoによる解析データの取得に失敗しました。"
             
+            logger.debug("Shape detection start...", layer="AI_COMMENTATOR")
             facts = api_client.detect_shapes(history)
 
             # 2. 緊急度（温度）の解析
-            urgency_data = api_client.analyze_urgency(history, board_size, visits=100)
+            logger.debug("Urgency analysis start...", layer="AI_COMMENTATOR")
+            urgency_data = api_client.analyze_urgency(history, board_size)
             urgency_fact = ""
-            future_bad_shapes = []
-            
             if urgency_data:
                 urgency_fact = (
                     f"【盤面の緊急度（温度）解析】\n"
                     f"- 緊急度: {urgency_data['urgency']:.1f}目\n"
                     f"- 判定: {'🚨 一手の緩みも許されない急場です' if urgency_data['is_critical'] else '平穏な局面、またはヨセの段階です'}\n"
                 )
-                
-                # 放置した場合の未来の悪形検知
+                # 未来の悪形検知
                 opp_color = urgency_data['next_player']
                 pv = urgency_data['opponent_pv']
                 if pv:
                     future_h = history + [[opp_color, "pass"]]
-                    # 相手の連打をシミュレート
                     for i, mv in enumerate(pv):
                         c = opp_color if i % 2 == 0 else ("B" if opp_color == "W" else "W")
                         future_h.append([c, mv])
                     
                     try:
-                        curr_f, prev_f, last_f = self.simulator.reconstruct(future_h, board_size)
-                        future_facts = api_client.detect_shapes(future_h) # API経由で検知
-                        if "特筆すべき形状" not in future_facts:
+                        logger.debug(f"Future shape detection for PV: {pv}", layer="AI_COMMENTATOR")
+                        future_facts = api_client.detect_shapes(future_h)
+                        if future_facts and "特筆すべき形状" not in future_facts:
                             urgency_fact += f"- 放置時の被害予測: 相手に {pv} と連打される恐れがあります。\n"
-                            if future_facts:
-                                urgency_fact += f"- 未来の形状警告: 放置すると以下の形が発生します。\n  {future_facts}\n"
-                    except: pass
+                            urgency_fact += f"- 未来の形状警告: 放置すると以下の形が発生します。\n  {future_facts}\n"
+                    except Exception as e:
+                        logger.warning(f"Future shape detection failed: {e}", layer="AI_COMMENTATOR")
 
             # 3. 安定度分析の実行
+            logger.debug("Stability analysis start...", layer="AI_COMMENTATOR")
             stability_facts = ""
             ownership = ana_data.get('ownership')
             if ownership:
                 curr_b, _, _ = self.simulator.reconstruct(history, board_size)
                 stability_results = self.stability_analyzer.analyze(curr_b, ownership)
+                logger.debug(f"Stability results: group_count={len(stability_results)}", layer="AI_COMMENTATOR")
                 
                 weak_stones = [r for r in stability_results if r['status'] in ['weak', 'critical']]
                 strong_stones = [r for r in stability_results if r['status'] == 'strong']
@@ -92,6 +94,7 @@ class GeminiCommentator:
                         stability_facts += f"  - {stones_str} ({ss['color']}): 確定地に近い\n"
             
             # 4. データの整理
+            logger.debug("Finalizing data for Gemini prompt...", layer="AI_COMMENTATOR")
             candidates = ana_data.get('top_candidates', []) or ana_data.get('candidates', [])
             best = candidates[0] if candidates else {}
             

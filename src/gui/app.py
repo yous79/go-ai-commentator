@@ -286,10 +286,28 @@ class GoReplayApp:
         try:
             curr = self.controller.current_move
             h = self.game.get_history_up_to(curr)
+            
+            # 解説生成と同時に緊急度解析を行う
             text = self.gemini.generate_commentary(curr, h, self.game.board_size)
+            
+            # 緊急度が高い場合、自動的に参考図を生成して表示する
+            urgency_data = self.controller.api_client.analyze_urgency(h, self.game.board_size)
+            ref_path = None
+            if urgency_data and urgency_data.get("is_critical"):
+                pv = urgency_data.get("opponent_pv", [])
+                if pv:
+                    title = f"Damage Prediction (Loss: {urgency_data['urgency']:.1f} pts)"
+                    ref_path, _ = self.visualizer.visualize_sequence(h, pv, title=title, board_size=self.game.board_size)
+
             self.root.after(0, lambda: self._update_commentary_ui(text))
+            if ref_path:
+                self.root.after(0, lambda: self._show_image_popup("Future Threat Diagram", ref_path))
+                
         except Exception as e:
-            self.root.after(0, lambda: self._update_commentary_ui(f"Error: {e}"))
+            import traceback
+            traceback.print_exc() # フルスタックトレースをコンソールに出力
+            err_msg = str(e)
+            self.root.after(0, lambda: self._update_commentary_ui(f"Error: {err_msg}"))
 
     def _update_commentary_ui(self, text):
         self.info_view.set_commentary(text)

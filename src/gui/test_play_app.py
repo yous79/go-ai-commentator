@@ -142,9 +142,30 @@ class TestPlayApp:
         
         self.info_view.btn_comment.config(state="disabled", text="Thinking...")
         def run():
-            text = self.gemini.generate_commentary(len(h), h, self.game.board_size)
-            self.root.after(0, lambda: self.info_view.set_commentary(text))
-            self.root.after(0, lambda: self.info_view.btn_comment.config(state="normal", text="Ask AI Agent"))
+            try:
+                # 1. AI解説生成
+                text = self.gemini.generate_commentary(len(h), h, self.game.board_size)
+                
+                # 2. 緊急度チェックと自動参考図生成
+                from services.api_client import api_client
+                urgency_data = api_client.analyze_urgency(h, self.game.board_size)
+                ref_path = None
+                if urgency_data and urgency_data.get("is_critical"):
+                    pv = urgency_data.get("opponent_pv", [])
+                    if pv:
+                        title = f"Damage Prediction (Loss: {urgency_data['urgency']:.1f} pts)"
+                        ref_path, _ = self.visualizer.visualize_sequence(h, pv, title=title, board_size=self.game.board_size)
+
+                self.root.after(0, lambda: self.info_view.set_commentary(text))
+                if ref_path:
+                    self.root.after(0, lambda: self._show_image_popup("Future Threat", ref_path))
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                err_msg = str(e)
+                self.root.after(0, lambda: self.info_view.set_commentary(f"Error: {err_msg}"))
+            finally:
+                self.root.after(0, lambda: self.info_view.btn_comment.config(state="normal", text="Ask AI Agent"))
         self.executor.submit(run)
 
     def reset_game(self, size):
