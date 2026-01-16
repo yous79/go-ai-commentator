@@ -1,4 +1,5 @@
 from core.point import Point
+from core.inference_fact import InferenceFact, FactCategory
 
 class StabilityAnalyzer:
     """Ownershipデータを元に、盤上の石の『安定度（生存確率）』を分析する"""
@@ -6,7 +7,35 @@ class StabilityAnalyzer:
     def __init__(self, board_size=19):
         self.board_size = board_size
 
+    def analyze_to_facts(self, board, ownership_map) -> list[InferenceFact]:
+        """解析結果を InferenceFact のリストとして返す"""
+        results = self.analyze(board, ownership_map)
+        facts = []
+        
+        for r in results:
+            severity = 3
+            status_msg = ""
+            if r['status'] == 'critical':
+                severity = 5
+                status_msg = "が極めて危険（生存確率 20%未満）です。即座の救援が必要です。"
+            elif r['status'] == 'weak':
+                severity = 4
+                status_msg = "が弱く、攻撃の対象になっています。"
+            elif r['status'] == 'strong':
+                severity = 1
+                status_msg = "は完全に安定しており、心配ありません。"
+            
+            if status_msg:
+                # 座標リストを簡略化（最初の3つ）
+                stones_str = ",".join(r['stones'][:3]) + ("..." if len(r['stones']) > 3 else "")
+                desc = f"{r['color']}のグループ [{stones_str}] {status_msg}"
+                facts.append(InferenceFact(FactCategory.STABILITY, desc, severity, r))
+                
+        return facts
+
     def analyze(self, board, ownership_map):
+# ... (rest of the analyze method remains the same)
+
         """
         board: GameBoardオブジェクト
         ownership_map: 361(or size*size)個の数値リスト (-1.0 to 1.0)

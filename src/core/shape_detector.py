@@ -1,4 +1,4 @@
-﻿from core.shapes.aki_sankaku import AkiSankakuDetector
+from core.shapes.aki_sankaku import AkiSankakuDetector
 from core.shapes.sakare_gata import SakareGataDetector
 from core.shapes.nimoku_atama import NimokuAtamaDetector
 from core.shapes.ponnuki import PonnukiDetector
@@ -13,6 +13,11 @@ from core.shapes.kirichigai import KirichigaiDetector
 from core.shapes.nobi import NobiDetector
 from core.shapes.butsukari import ButsukariDetector
 from core.point import Point
+from core.inference_fact import InferenceFact, FactCategory
+from core.shapes.generic_detector import GenericPatternDetector
+import os
+import json
+from config import KNOWLEDGE_DIR
 
 class DetectionContext:
     """検知に必要な盤面コンテキストを一元管理するクラス"""
@@ -32,16 +37,6 @@ class DetectionContext:
                     return Point(r, c), self.curr_board.get(r, c)
         return None, None
 
-from core.shapes.generic_detector import GenericPatternDetector
-import os
-import json
-from config import KNOWLEDGE_DIR
-
-# Existing hardcoded detectors
-from core.shapes.aki_sankaku import AkiSankakuDetector
-# SakareGataDetector is now loaded via JSON pattern.
-from core.shapes.nimoku_atama import NimokuAtamaDetector
-
 class ShapeDetector:
     def __init__(self, board_size=19):
         self.board_size = board_size
@@ -51,9 +46,7 @@ class ShapeDetector:
 
     def _load_generic_patterns(self):
         """KNOWLEDGE_DIR から pattern.json を検索して GenericPatternDetector を初期化する"""
-        if not os.path.exists(KNOWLEDGE_DIR):
-            return
-
+        if not os.path.exists(KNOWLEDGE_DIR): return
         for root, dirs, files in os.walk(KNOWLEDGE_DIR):
             if "pattern.json" in files:
                 path = os.path.join(root, "pattern.json")
@@ -62,15 +55,12 @@ class ShapeDetector:
                         pattern_def = json.load(f)
                         detector = GenericPatternDetector(pattern_def, self.board_size)
                         self.strategies.append(detector)
-                        # print(f"Loaded generic pattern: {detector.name}")
                 except Exception as e:
                     print(f"Failed to load pattern {path}: {e}")
 
     def _init_legacy_strategies(self):
         """まだJSON化されていないレガシーな検知戦略を読み込む"""
         loaded_keys = {getattr(s, "key", "") for s in self.strategies}
-        
-        # JSONですでに読み込まれているものはスキップする
         legacy_list = [
             (AkiSankakuDetector, "aki_sankaku"),
             (NimokuAtamaDetector, "nimoku_atama"),
@@ -86,24 +76,33 @@ class ShapeDetector:
             (NobiDetector, "nobi"),
             (ButsukariDetector, "butsukari")
         ]
-
         for cls, key in legacy_list:
             if key not in loaded_keys:
                 self.strategies.append(cls(self.board_size))
 
-    def detect_all(self, curr_board, prev_board=None, last_move_color=None):
+    def detect_facts(self, curr_board, prev_board=None) -> list[InferenceFact]:
+        """形状検知結果を InferenceFact のリストとして返す"""
         context = DetectionContext(curr_board, prev_board, self.board_size)
-        bad_shapes = []
-        normal_facts = []
+        facts = []
         for strategy in self.strategies:
             category, results = strategy.detect(context)
-            if category == "bad":
-                bad_shapes.extend(results)
-            elif category == "normal":
-                normal_facts.extend(results)
-            elif category == "mixed":
-                bad_shapes.extend(results[0])
-                normal_facts.extend(results[1])
+            severity = 4 if category in ["bad", "mixed"] else 2
+            
+            actual_results = []
+            if category == "mixed" and isinstance(results, tuple):
+                actual_results = results[0] + results[1]
+            else:
+                actual_results = results
+
+            for msg in actual_results:
+                facts.append(InferenceFact(FactCategory.SHAPE, msg, severity, {"key": getattr(strategy, "key", "unknown")}))
+        return facts
+
+    def detect_all(self, curr_board, prev_board=None, last_move_color=None):
+        """(Legacy互換) 検知結果を単一の文字列で返す"""
+        facts = self.detect_facts(curr_board, prev_board)
+        bad_shapes = [f.description for f in facts if f.severity >= 4]
+        normal_facts = [f.description for f in facts if f.severity < 4]
         
         report = []
         if bad_shapes:
@@ -121,12 +120,10 @@ class ShapeDetector:
         for strategy in self.strategies:
             _, results = strategy.detect(context)
             if results:
-                has_actual_results = False
+                has_actual = False
                 if isinstance(results, tuple):
-                    if results[0] or results[1]: has_actual_results = True
-                elif results:
-                    has_actual_results = True
-                if has_actual_results:
-                    key = getattr(strategy, "key", "unknown")
-                    detected_ids.add(key)
+                    if results[0] or results[1]: has_actual = True
+                elif results: has_actual = True
+                if has_actual:
+                    detected_ids.add(getattr(strategy, "key", "unknown"))
         return list(detected_ids)

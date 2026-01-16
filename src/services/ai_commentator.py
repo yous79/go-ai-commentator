@@ -7,6 +7,7 @@ from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME, load_api_key
 from core.knowledge_manager import KnowledgeManager
 from core.stability_analyzer import StabilityAnalyzer
 from core.board_simulator import BoardSimulator, SimulationContext
+from core.inference_fact import InferenceFact, FactCategory, FactCollector
 from services.api_client import api_client
 
 class GeminiCommentator:
@@ -28,10 +29,11 @@ class GeminiCommentator:
             return template.format(**kwargs)
 
     def generate_commentary(self, move_idx, history, board_size=19):
-        """【事実先行型】先に解析を完了させ、確定データをGeminiに渡して解説を生成させる"""
+        """【事実先行型】先に解析を完了させ、構造化された確定データをGeminiに渡して解説を生成させる"""
         try:
             from utils.logger import logger
             logger.info(f"AI Commentary Generation Start (Move {move_idx})", layer="AI_COMMENTATOR")
+            collector = FactCollector()
             
             # 1. 解析データの取得
             ana_data = api_client.analyze_move(history, board_size, include_pv=True)
@@ -39,98 +41,74 @@ class GeminiCommentator:
                 logger.error("AI Commentary: KataGo analysis data fetch failed.", layer="AI_COMMENTATOR")
                 return "【エラー】KataGoによる解析データの取得に失敗しました。"
             
-            # 2. 現在のコンテキストの構築
             curr_ctx = self.simulator.reconstruct_to_context(history, board_size)
-            facts = api_client.detect_shapes(history)
 
-            # 3. 緊急度（温度）と未来予測の解析
+            # 2. 形状検知（事実収集）
+            shape_facts = self.simulator.detector.detect_facts(curr_ctx.board, curr_ctx.prev_board)
+            for f in shape_facts: collector.facts.append(f)
+
+            # 3. 緊急度解析（事実収集）
             urgency_data = api_client.analyze_urgency(history, board_size)
-            urgency_fact = ""
             if urgency_data:
-                urgency_fact = (
-                    f"【未来予測：成功と失敗の対比】\n"
-                    f"- 緊急度: {urgency_data['urgency']:.1f}目\n"
-                    f"- 推奨進行（成功図）: {urgency_data['best_pv']}\n"
-                )
+                u_severity = 5 if urgency_data['is_critical'] else 2
+                u_desc = f"この局面の緊急度は {urgency_data['urgency']:.1f}目 です。{'一手の緩みも許されない急場です。' if urgency_data['is_critical'] else '比較的平穏な局面です。'}"
+                collector.add(FactCategory.URGENCY, u_desc, u_severity, urgency_data)
                 
-                # 被害シミュレーション
+                # 未来の悪形警告
                 thr_pv = urgency_data['opponent_pv']
                 if thr_pv:
-                    urgency_fact += f"- 放置した場合の被害（失敗図）: 相手に {thr_pv} と連打されます。\n"
-                    
-                    # SimulationContextを使用して未来の悪形を検知
                     thr_seq = ["pass"] + thr_pv
                     future_ctx = self.simulator.simulate_sequence(curr_ctx, thr_seq, starting_color=urgency_data['next_player'])
-                    
-                    try:
-                        logger.debug(f"Future shape detection for Threat scenario...", layer="AI_COMMENTATOR")
-                        future_facts = api_client.detect_shapes(future_ctx.history)
-                        if future_facts and "特筆すべき形状" not in future_facts:
-                            urgency_fact += f"- 警告: 放置すると以下の悪形が発生します。\n  {future_facts}\n"
-                    except Exception as e:
-                        logger.warning(f"Future shape detection failed: {e}", layer="AI_COMMENTATOR")
+                    future_shape_facts = self.simulator.detector.detect_facts(future_ctx.board, future_ctx.prev_board)
+                    for f in future_shape_facts:
+                        if f.severity >= 4:
+                            f.description = f"放置すると {f.description} という悪形が発生する恐れがあります。"
+                            collector.facts.append(f)
 
-            # 4. 安定度分析の実行
-            stability_facts = ""
+            # 4. 安定度分析（事実収集）
             ownership = ana_data.get('ownership')
             if ownership:
-                stability_results = self.stability_analyzer.analyze(curr_ctx.board, ownership)
-                logger.debug(f"Stability results: group_count={len(stability_results)}", layer="AI_COMMENTATOR")
-                
-                weak_stones = [r for r in stability_results if r['status'] in ['weak', 'critical']]
-                strong_stones = [r for r in stability_results if r['status'] == 'strong']
-                
-                stability_facts = "【石の強弱（安定度）分析】\n"
-                if weak_stones:
-                    stability_facts += "- ⚠️ 弱い石 (攻められている可能性):\n"
-                    for ws in weak_stones:
-                        stability_facts += f"  - {ws['stones']} ({ws['color']}): 安定度 {ws['stability']:.2f} ({ws['status']})\n"
-                if strong_stones:
-                    stability_facts += "- ✅ 強い石 (安定している):\n"
-                    for ss in strong_stones:
-                        stones_str = str(ss['stones'][:3]) + ("..." if len(ss['stones']) > 3 else "")
-                        stability_facts += f"  - {stones_str} ({ss['color']}): 確定地に近い\n"
+                stability_facts = self.stability_analyzer.analyze_to_facts(curr_ctx.board, ownership)
+                for f in stability_facts: collector.facts.append(f)
+
+            # 5. 勝率・目数差の事実（追加）
+            wr = ana_data.get('winrate_black', 0.5)
+            sl = ana_data.get('score_lead_black', 0.0)
+            collector.add(FactCategory.STRATEGY, f"現在の勝率(黒): {wr:.1%}, 目数差: {sl:.1f}目", severity=3)
+
+            # 6. プロンプトの構築
+            prioritized_facts = collector.get_prioritized_text(limit=12)
             
-            # 5. データの整理
-            logger.debug("Finalizing data for Gemini prompt...", layer="AI_COMMENTATOR")
             candidates = ana_data.get('top_candidates', []) or ana_data.get('candidates', [])
             best = candidates[0] if candidates else {}
             
             pv_list = best.get('pv', [])
             self.last_pv = pv_list
-            
-            # 手番の色を考慮した番号付きリスト作成
             player_color = "黒" if (move_idx % 2 == 0) else "白"
             opp_color = "白" if player_color == "黒" else "黒"
-            colored_seq = []
-            for i, m in enumerate(pv_list):
-                c = player_color if i % 2 == 0 else opp_color
-                colored_seq.append(f"{i+1}: {c}{m}")
-            numbered_seq = ", ".join(colored_seq) if colored_seq else "なし"
+            colored_seq = [f"{i+1}: {player_color if i%2==0 else opp_color}{m}" for i, m in enumerate(pv_list)]
             
             fact_summary = (
-                f"【最新の確定解析データ（引用必須）】\n"
-                f"- 黒の勝率: {ana_data.get('winrate_black', '不明')}\n"
-                f"- 目数差: {ana_data.get('score_lead_black', '不明')}目（正の値は黒リード）\n"
-                f"- AIの推奨手: {best.get('move', 'なし')}\n"
-                f"- 推奨進行（色・番号付き）: {numbered_seq}\n"
-                f"- 盤面の形状事実: {facts}\n"
-                f"{urgency_fact}"
-                f"{stability_facts}\n"
+                f"【最新の確定解析事実（トリアージ済）】\n"
+                f"{prioritized_facts}\n\n"
+                f"【AI推奨手と進行】\n"
+                f"- 推奨手: {best.get('move', 'なし')}\n"
+                f"- 推奨進行: {', '.join(colored_seq) if colored_seq else 'なし'}\n"
                 f"- 推奨手の将来予測: {best.get('future_shape_analysis', '特になし')}\n"
             )
             print(f"DEBUG DATA READY: Winrate(B): {ana_data.get('winrate_black')}")
 
-            # 6. プロンプトの構築
+            # 7. プロンプトの構築（外部テンプレート使用）
             kn = self.knowledge_manager.get_all_knowledge_text()
             player = "黒" if (move_idx % 2 == 0) else "白"
             
-            # ペルソナ（Gemini_Persona.md）の読み込み
             persona_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Gemini_Persona.md"))
             persona_text = ""
             if os.path.exists(persona_path):
-                with open(persona_path, "r", encoding="utf-8") as f:
-                    persona_text = f.read()
+                try:
+                    with open(persona_path, "r", encoding="utf-8") as f:
+                        persona_text = f.read()
+                except: pass
 
             sys_inst = self._load_prompt("go_instructor_system", board_size=board_size, player=player, knowledge=kn)
             if persona_text:
@@ -139,7 +117,7 @@ class GeminiCommentator:
             user_prompt = self._load_prompt("analysis_request", move_idx=move_idx, history=history)
             user_prompt = f"{fact_summary}\n{user_prompt}"
 
-            # 7. 生成リクエスト
+            # 8. 生成リクエスト
             safety = [types.SafetySetting(category=c, threshold='BLOCK_NONE') for c in [
                 'HARM_CATEGORY_HATE_SPEECH', 'HARM_CATEGORY_HARASSMENT', 
                 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'HARM_CATEGORY_DANGEROUS_CONTENT',
