@@ -31,7 +31,7 @@ class AnalysisOrchestrator:
         curr_ctx = self.simulator.reconstruct_to_context(history, bs)
 
         # 3. 形状検知 (現在)
-        shape_facts = self.detector.detect_facts(curr_ctx.board, curr_ctx.prev_board)
+        shape_facts = self.detector.detect_facts(curr_ctx.board, curr_ctx.prev_board, analysis_result=ana_data)
         for f in shape_facts: collector.facts.append(f)
 
         # 4. 緊急度 & 未来予測
