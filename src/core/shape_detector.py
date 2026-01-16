@@ -176,7 +176,7 @@ class ShapeDetector:
         if kasu_ishi_detected:
             facts.append(InferenceFact(
                 FactCategory.MISTAKE, # 形状(SHAPE)というよりは判断ミス(MISTAKE)
-                "死んでいる石（カス石）に対して不要な手入れを行いました。これは手数を浪費する緩着です。",
+                "すでに死んでいる石（カス石）に対して手入れが行われました。",
                 severity=4,
                 metadata={"type": "kasu_ishi_interference"}
             ))

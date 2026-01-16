@@ -29,17 +29,18 @@ class ReportGenerator:
         pdf_items = [] # PDF用のデータ蓄積
 
         for i, (sc_drop, wr_drop, m_idx) in enumerate(all_m):
-            history = self.game.get_history_up_to(m_idx - 1)
+            history_prev = self.game.get_history_up_to(m_idx - 1)
+            history_curr = self.game.get_history_up_to(m_idx)
             board = self.game.get_board_at(m_idx - 1)
             
             try:
                 ana_resp = requests.post(f"{self.api_url}/analyze", 
-                                         json={"history": history, "board_size": self.game.board_size}, 
+                                         json={"history": history_prev, "board_size": self.game.board_size}, 
                                          timeout=40)
                 res = ana_resp.json()
                 
                 det_resp = requests.post(f"{self.api_url}/detect", 
-                                         json={"history": history, "board_size": self.game.board_size}, 
+                                         json={"history": history_curr, "board_size": self.game.board_size}, 
                                          timeout=15)
                 det_facts = det_resp.json().get("facts", "特筆すべき形状なし")
             except Exception as e:
