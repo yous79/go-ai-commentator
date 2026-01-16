@@ -38,7 +38,7 @@ class TermVisualizer:
         # 3. SGFから画像を生成
         return self._render_from_sgf(term_id, sgf_content)
 
-    def visualize_sequence(self, history, sequence, title="Reference Diagram", board_size=19):
+    def visualize_sequence(self, history, sequence, title="Reference Diagram", board_size=19, starting_color=None):
         """現在の履歴に特定の着手シーケンスを追加して画像を生成する"""
         from core.coordinate_transformer import CoordinateTransformer
         from utils.logger import logger
@@ -56,18 +56,27 @@ class TermVisualizer:
                 temp_game.add_move(i, color, *indices if indices else (None, None))
         
         # 2. 追加のシーケンス（連打）を適用
-        last_color = history[-1][0] if (history and len(history) > 0 and len(history[-1]) > 0) else "W"
+        if not starting_color:
+            last_color = history[-1][0] if (history and len(history) > 0 and len(history[-1]) > 0) else "W"
+            current_color = "W" if last_color == "B" else "B"
+        else:
+            current_color = starting_color
         
         if sequence:
             for i, mv in enumerate(sequence):
-                color = "W" if last_color == "B" else "B"
-                last_color = color
-                current_idx = temp_game.total_moves
+                if mv == "pass":
+                    idx = temp_game.total_moves
+                    temp_game.add_move(idx, current_color, None, None)
+                    current_color = "W" if current_color == "B" else "B"
+                    continue
+
+                idx = temp_game.total_moves
                 indices = CoordinateTransformer.gtp_to_indices_static(mv)
-                temp_game.add_move(current_idx, color, *indices if indices else (None, None))
+                if indices:
+                    temp_game.add_move(idx, current_color, *indices)
+                current_color = "W" if current_color == "B" else "B"
 
         # 3. レンダリング
-        # 描画エンジンのサイズを動的に同期（IndexError防止）
         self.renderer.board_size = board_size
         self.renderer.transformer = CoordinateTransformer(board_size, self.renderer.image_size)
         
@@ -77,9 +86,10 @@ class TermVisualizer:
                                        history=temp_game.get_history_up_to(temp_game.total_moves), 
                                        show_numbers=True)
             
-            filename = f"ref_{int(time.time())}.png"
+            filename = f"ref_{{int(time.time())}}_{os.urandom(4).hex()}.png"
             output_path = os.path.join(OUTPUT_BASE_DIR, filename)
             img.save(output_path)
+            
             return output_path, None
         except Exception as e:
             logger.error(f"Error in visualize_sequence rendering: {e}", layer="VISUALIZER")

@@ -150,23 +150,24 @@ class GoAPIClient:
             logger.warning("Analysis skipped: Circuit Breaker is OPEN.", layer="API_CLIENT")
         return None
 
-    def analyze_urgency(self, history, board_size=19, visits=100):
-        """着手の緊急度（温度）を算出し、放置時の被害手順(PV)も取得する"""
+    def analyze_urgency(self, history, board_size=19, visits=150):
+        """着手の緊急度（温度）を算出し、推奨手順と放置時の被害手順の両方を取得する"""
         logger.debug(f"Urgency Check Start: history_len={len(history)}", layer="API_CLIENT")
         
-        # 1. 現在の局面の最善スコアを取得
-        current_res = self.analyze_move(history, board_size, visits, include_pv=False)
+        # 1. 現在の局面の解析（最善手PVを取得）
+        current_res = self.analyze_move(history, board_size, visits, include_pv=True)
         if not current_res: 
-            logger.warning("Urgency Check: current_res is None", layer="API_CLIENT")
             return None
 
-        # 2. パスをした局面のスコアとPVを取得
+        # 自分の最善手のPVを取得
+        curr_cands = current_res.get("top_candidates", []) or current_res.get("candidates", [])
+        best_pv = curr_cands[0].get("pv", [])[:3] if curr_cands else []
+
+        # 2. パスをした局面の解析（相手の連打PVを取得）
         color = "W" if history and history[-1][0] == "B" else "B"
         pass_history = history + [[color, "pass"]]
-        logger.debug(f"Urgency Check: Requesting pass-局面 analysis (player={color})", layer="API_CLIENT")
         pass_res = self.analyze_move(pass_history, board_size, visits, include_pv=True)
         if not pass_res: 
-            logger.warning("Urgency Check: pass_res is None", layer="API_CLIENT")
             return None
 
         score_normal = current_res.get("score_lead_black", 0)
@@ -174,20 +175,18 @@ class GoAPIClient:
         urgency = abs(score_normal - score_pass)
         
         # 相手の連打手順を取得
-        candidates = pass_res.get("top_candidates", []) or pass_res.get("candidates", [])
-        opponent_pv = []
-        if candidates:
-            opponent_pv = candidates[0].get("pv", [])[:2]
-            logger.debug(f"Urgency Check: Opponent PV found: {opponent_pv}", layer="API_CLIENT")
-        else:
-            logger.warning("Urgency Check: No candidates found in pass_res", layer="API_CLIENT")
+        pass_cands = pass_res.get("top_candidates", []) or pass_res.get("candidates", [])
+        opponent_pv = pass_cands[0].get("pv", [])[:3] if pass_cands else []
+
+        logger.debug(f"Urgency Results: best_pv={best_pv}, opponent_pv={opponent_pv}", layer="API_CLIENT")
 
         return {
             "urgency": urgency,
             "score_normal": score_normal,
             "score_pass": score_pass,
             "is_critical": urgency > 10.0,
-            "opponent_pv": opponent_pv,
+            "best_pv": best_pv,      # 成功図用の手順
+            "opponent_pv": opponent_pv, # 失敗図用の手順
             "next_player": color
         }
 

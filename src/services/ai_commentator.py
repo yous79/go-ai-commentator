@@ -43,32 +43,32 @@ class GeminiCommentator:
             facts = api_client.detect_shapes(history)
 
             # 2. 緊急度（温度）の解析
-            logger.debug("Urgency analysis start...", layer="AI_COMMENTATOR")
             urgency_data = api_client.analyze_urgency(history, board_size)
             urgency_fact = ""
+            
             if urgency_data:
                 urgency_fact = (
-                    f"【盤面の緊急度（温度）解析】\n"
+                    f"【未来予測：成功と失敗の対比】\n"
                     f"- 緊急度: {urgency_data['urgency']:.1f}目\n"
-                    f"- 判定: {'🚨 一手の緩みも許されない急場です' if urgency_data['is_critical'] else '平穏な局面、またはヨセの段階です'}\n"
+                    f"- 推奨進行（成功図）: {urgency_data['best_pv']}\n"
                 )
-                # 未来の悪形検知
-                opp_color = urgency_data['next_player']
-                pv = urgency_data['opponent_pv']
-                if pv:
+                
+                # 放置時の警告
+                thr_pv = urgency_data['opponent_pv']
+                if thr_pv:
+                    urgency_fact += f"- 放置した場合の被害（失敗図）: 相手に {thr_pv} と連打されます。\n"
+                    # 失敗図での悪形検知
+                    opp_color = urgency_data['next_player']
                     future_h = history + [[opp_color, "pass"]]
-                    for i, mv in enumerate(pv):
+                    for i, mv in enumerate(thr_pv):
                         c = opp_color if i % 2 == 0 else ("B" if opp_color == "W" else "W")
                         future_h.append([c, mv])
                     
                     try:
-                        logger.debug(f"Future shape detection for PV: {pv}", layer="AI_COMMENTATOR")
                         future_facts = api_client.detect_shapes(future_h)
                         if future_facts and "特筆すべき形状" not in future_facts:
-                            urgency_fact += f"- 放置時の被害予測: 相手に {pv} と連打される恐れがあります。\n"
-                            urgency_fact += f"- 未来の形状警告: 放置すると以下の形が発生します。\n  {future_facts}\n"
-                    except Exception as e:
-                        logger.warning(f"Future shape detection failed: {e}", layer="AI_COMMENTATOR")
+                            urgency_fact += f"- 警告: 放置すると以下の悪形が発生します。\n  {future_facts}\n"
+                    except: pass
 
             # 3. 安定度分析の実行
             logger.debug("Stability analysis start...", layer="AI_COMMENTATOR")

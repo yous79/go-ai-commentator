@@ -287,25 +287,52 @@ class GoReplayApp:
             curr = self.controller.current_move
             h = self.game.get_history_up_to(curr)
             
-            # 解説生成と同時に緊急度解析を行う
+            # 1. 解説生成
             text = self.gemini.generate_commentary(curr, h, self.game.board_size)
             
-            # 緊急度が高い場合、自動的に参考図を生成して表示する
+            # 2. 緊急度解析と参考図データの取得
             urgency_data = self.controller.api_client.analyze_urgency(h, self.game.board_size)
-            ref_path = None
-            if urgency_data and urgency_data.get("is_critical"):
-                pv = urgency_data.get("opponent_pv", [])
-                if pv:
-                    title = f"Damage Prediction (Loss: {urgency_data['urgency']:.1f} pts)"
-                    ref_path, _ = self.visualizer.visualize_sequence(h, pv, title=title, board_size=self.game.board_size)
+            
+            rec_path = None
+            thr_path = None
+            
+            if urgency_data:
+                # 手番の色の決定
+                last_color = h[-1][0] if h else "W"
+                next_color = "W" if last_color == "B" else "B"
+                
+                # 成功図（最善進行）の生成
+                best_pv = urgency_data.get("best_pv", [])
+                if best_pv:
+                    rec_path, _ = self.visualizer.visualize_sequence(h, best_pv, title="AI Recommended Success Plan", 
+                                                                     board_size=self.game.board_size,
+                                                                     starting_color=next_color)
+                
+                # 失敗図（放置被害）の生成 - 緊急時のみ
+                if urgency_data.get("is_critical"):
+                    opp_pv = urgency_data.get("opponent_pv", [])
+                    if opp_pv:
+                        # 自分がパス(next_color)し、相手(last_color)が連打するシナリオ
+                        thr_seq = ["pass"] + opp_pv
+                        title = f"Future Threat Diagram (Potential Loss: {urgency_data['urgency']:.1f})"
+                        # 自分がパスするので、開始色は next_color
+                        thr_path, _ = self.visualizer.visualize_sequence(h, thr_seq, title=title, 
+                                                                         board_size=self.game.board_size,
+                                                                         starting_color=next_color)
 
+            # 3. UIへの反映（非同期）
             self.root.after(0, lambda: self._update_commentary_ui(text))
-            if ref_path:
-                self.root.after(0, lambda: self._show_image_popup("Future Threat Diagram", ref_path))
+            
+            if rec_path:
+                self.root.after(0, lambda: self._show_image_popup("AI Recommended Plan", rec_path))
+            
+            if thr_path:
+                # 少し遅らせて表示し、ウィンドウが重なりすぎないように配慮
+                self.root.after(200, lambda: self._show_image_popup("WARNING: Future Threat", thr_path))
                 
         except Exception as e:
             import traceback
-            traceback.print_exc() # フルスタックトレースをコンソールに出力
+            traceback.print_exc()
             err_msg = str(e)
             self.root.after(0, lambda: self._update_commentary_ui(f"Error: {err_msg}"))
 

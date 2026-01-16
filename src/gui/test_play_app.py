@@ -146,19 +146,41 @@ class TestPlayApp:
                 # 1. AI解説生成
                 text = self.gemini.generate_commentary(len(h), h, self.game.board_size)
                 
-                # 2. 緊急度チェックと自動参考図生成
+                # 2. 緊急度チェックと参考図生成
                 from services.api_client import api_client
                 urgency_data = api_client.analyze_urgency(h, self.game.board_size)
-                ref_path = None
-                if urgency_data and urgency_data.get("is_critical"):
-                    pv = urgency_data.get("opponent_pv", [])
-                    if pv:
-                        title = f"Damage Prediction (Loss: {urgency_data['urgency']:.1f} pts)"
-                        ref_path, _ = self.visualizer.visualize_sequence(h, pv, title=title, board_size=self.game.board_size)
+                
+                rec_path = None
+                thr_path = None
+                
+                if urgency_data:
+                    # 手番の決定
+                    last_color = h[-1][0] if h else "W"
+                    next_color = "W" if last_color == "B" else "B"
+
+                    # 推奨図
+                    best_pv = urgency_data.get("best_pv", [])
+                    if best_pv:
+                        rec_path, _ = self.visualizer.visualize_sequence(h, best_pv, title="Recommended Plan", 
+                                                                         board_size=self.game.board_size,
+                                                                         starting_color=next_color)
+                    
+                    # 失敗図
+                    if urgency_data.get("is_critical"):
+                        opp_pv = urgency_data.get("opponent_pv", [])
+                        if opp_pv:
+                            thr_seq = ["pass"] + opp_pv
+                            title = f"Future Threat (Loss: {urgency_data['urgency']:.1f})"
+                            thr_path, _ = self.visualizer.visualize_sequence(h, thr_seq, title=title, 
+                                                                             board_size=self.game.board_size,
+                                                                             starting_color=next_color)
 
                 self.root.after(0, lambda: self.info_view.set_commentary(text))
-                if ref_path:
-                    self.root.after(0, lambda: self._show_image_popup("Future Threat", ref_path))
+                if rec_path:
+                    self.root.after(0, lambda: self._show_image_popup("AI Recommended Plan", rec_path))
+                if thr_path:
+                    self.root.after(200, lambda: self._show_image_popup("WARNING: Future Threat", thr_path))
+                    
             except Exception as e:
                 import traceback
                 traceback.print_exc()
