@@ -3,7 +3,7 @@ from google.genai import types
 import os
 import json
 import traceback
-from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME
+from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME, load_api_key
 from core.knowledge_manager import KnowledgeManager
 from core.stability_analyzer import StabilityAnalyzer
 from core.board_simulator import BoardSimulator
@@ -24,7 +24,8 @@ class GeminiCommentator:
         if not os.path.exists(filepath):
             return f"Error: Prompt template {name} not found."
         with open(filepath, "r", encoding="utf-8") as f:
-            return f.read().format(**kwargs)
+            template = f.read()
+            return template.format(**kwargs)
 
     def generate_commentary(self, move_idx, history, board_size=19):
         """【事実先行型】先に解析を完了させ、確定データをGeminiに渡して解説を生成させる"""
@@ -38,7 +39,17 @@ class GeminiCommentator:
             
             facts = api_client.detect_shapes(history)
 
-            # 安定度分析の実行
+            # 2. 緊急度（温度）の解析
+            urgency_data = api_client.analyze_urgency(history, board_size, visits=100)
+            urgency_fact = ""
+            if urgency_data:
+                urgency_fact = (
+                    f"【盤面の緊急度（温度）解析】\n"
+                    f"- 緊急度: {urgency_data['urgency']:.1f}目\n"
+                    f"- 判定: {'🚨 一手の緩みも許されない急場です' if urgency_data['is_critical'] else '平穏な局面、またはヨセの段階です'}\n"
+                )
+
+            # 3. 安定度分析の実行
             stability_facts = ""
             ownership = ana_data.get('ownership')
             if ownership:
@@ -56,14 +67,13 @@ class GeminiCommentator:
                 if strong_stones:
                     stability_facts += "- ✅ 強い石 (安定している):\n"
                     for ss in strong_stones:
-                        # 最初の数個だけ表示
                         stones_str = str(ss['stones'][:3]) + ("..." if len(ss['stones']) > 3 else "")
                         stability_facts += f"  - {stones_str} ({ss['color']}): 確定地に近い\n"
             
-            # 2. データの整理
-            best = ana_data.get('top_candidates', [{}])[0]
-            if not best: # 互換性のため
-                best = ana_data.get('candidates', [{}])[0]
+            # 4. データの整理
+            candidates = ana_data.get('top_candidates', []) or ana_data.get('candidates', [])
+            best = candidates[0] if candidates else {}
+            
             pv_list = best.get('pv', [])
             self.last_pv = pv_list
             
@@ -83,22 +93,31 @@ class GeminiCommentator:
                 f"- AIの推奨手: {best.get('move', 'なし')}\n"
                 f"- 推奨進行（色・番号付き）: {numbered_seq}\n"
                 f"- 盤面の形状事実: {facts}\n"
+                f"{urgency_fact}"
                 f"{stability_facts}\n"
                 f"- 推奨手の将来予測: {best.get('future_shape_analysis', '特になし')}\n"
             )
             print(f"DEBUG DATA READY: Winrate(B): {ana_data.get('winrate_black')}")
 
-            # 3. プロンプトの構築（外部テンプレート使用）
+            # 5. プロンプトの構築
             kn = self.knowledge_manager.get_all_knowledge_text()
             player = "黒" if (move_idx % 2 == 0) else "白"
             
+            # ペルソナ（Gemini_Persona.md）の読み込み（簡易的）
+            persona_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Gemini_Persona.md"))
+            persona_text = ""
+            if os.path.exists(persona_path):
+                with open(persona_path, "r", encoding="utf-8") as f:
+                    persona_text = f.read()
+
             sys_inst = self._load_prompt("go_instructor_system", board_size=board_size, player=player, knowledge=kn)
+            if persona_text:
+                sys_inst = f"{sys_inst}\n\n=== 執筆・解説ガイドライン ===\n{persona_text}"
             
             user_prompt = self._load_prompt("analysis_request", move_idx=move_idx, history=history)
-            # fact_summary を追加
             user_prompt = f"{fact_summary}\n{user_prompt}"
 
-            # 4. 生成リクエスト (自律ツールなしのシングルショット、あるいは必要に応じた対話)
+            # 6. 生成リクエスト
             safety = [types.SafetySetting(category=c, threshold='BLOCK_NONE') for c in [
                 'HARM_CATEGORY_HATE_SPEECH', 'HARM_CATEGORY_HARASSMENT', 
                 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'HARM_CATEGORY_DANGEROUS_CONTENT',
@@ -117,17 +136,12 @@ class GeminiCommentator:
             final_text = response.text if response.text else "【エラー】解説の生成に失敗しました。"
 
             # --- 品質ガード (捏造チェック) ---
-            # 先行データと照合
-            real_wr_val = str(ana_data.get('winrate_black', ''))
             real_move = str(best.get('move', ''))
-            
-            # 数値が含まれているか (簡易的な照合)
             has_wr = any(x in final_text for x in ["%", "％", "勝率"])
             has_move = real_move.upper() in final_text.upper() if real_move else True
 
             if not has_wr or not has_move:
                 print(f"DEBUG GUARD FAILED: WR:{has_wr} Move:{has_move}")
-                # 捏造または欠落があった場合の救済（あるいはエラー）
                 return f"【解析結果】\n{fact_summary}\n\n(AIが詳細な解説を生成できませんでしたが、上記データがKataGoによる事実です。)"
 
             return final_text

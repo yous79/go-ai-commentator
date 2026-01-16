@@ -144,6 +144,33 @@ class GoAPIClient:
             logger.warning("Analysis skipped: Circuit Breaker is OPEN.", layer="API_CLIENT")
         return None
 
+    def analyze_urgency(self, history, board_size=19, visits=100):
+        """着手の緊急度（温度）を算出する"""
+        # 1. 現在の局面の最善スコアを取得
+        current_res = self.analyze_move(history, board_size, visits, include_pv=False)
+        if not current_res: return None
+
+        # 2. パスをした局面（相手の手番に交代）のスコアを取得
+        # historyにパス("pass")を追加して解析
+        color = "W" if history and history[-1][0] == "B" else "B"
+        pass_history = history + [[color, "pass"]]
+        pass_res = self.analyze_move(pass_history, board_size, visits, include_pv=False)
+        if not pass_res: return None
+
+        # 3. スコア差を算出
+        # 黒から見て: (最善手のスコア) - (パスした時のスコア) の絶対値が「温度」
+        score_normal = current_res.get("score_lead_black", 0)
+        score_pass = pass_res.get("score_lead_black", 0)
+        
+        urgency = abs(score_normal - score_pass)
+        
+        return {
+            "urgency": urgency,
+            "score_normal": score_normal,
+            "score_pass": score_pass,
+            "is_critical": urgency > 10.0 # 10目以上の差があればクリティカルと判定
+        }
+
     def detect_shapes(self, history):
         """形状検知リクエスト"""
         logger.debug("Requesting shape detection", layer="API_CLIENT")
