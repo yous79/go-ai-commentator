@@ -38,11 +38,11 @@ class BoardSimulator:
             idx = CoordinateTransformer.gtp_to_indices_static(m_str)
             if idx and color:
                 pt = Point(idx[0], idx[1])
-                if i < len(history) - 1:
-                    prev.play(pt, color)
-                try:
-                    curr.play(pt, color)
-                except: pass # 非合法手は無視
+                # 直前の盤面を記録
+                if i == len(history) - 1:
+                    prev = curr.copy()
+                
+                curr.play(pt, color)
 
         last_move_str = history[-1][1] if history else None
         last_move_pt = Point.from_gtp(last_move_str) if (last_move_str and last_move_str != "pass") else None

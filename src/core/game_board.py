@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional, List, Tuple, Set
+from typing import Optional, List, Tuple, Set, Union
 from sgfmill import boards
 from core.point import Point
 
@@ -38,9 +38,18 @@ class GameBoard:
         val = self._board.get(pt.row, pt.col)
         return Color(val) if val else None
 
-    def play(self, pt: Point, color: Color) -> None:
+    def play(self, pt: Point, color: Union[Color, str]) -> None:
         """指定した座標に石を置く（アゲハマ処理はsgfmillが担当）"""
-        self._board.play(pt.row, pt.col, color.value)
+        color_obj = color if isinstance(color, Color) else Color.from_str(color)
+        if not color_obj:
+            return
+            
+        try:
+            self._board.play(pt.row, pt.col, color_obj.value)
+        except Exception as e:
+            # 自殺手やコウなどの反則手の場合は、sgfmillが例外を投げる
+            from utils.logger import logger
+            logger.debug(f"Invalid move at {pt.to_gtp()}: {e}", layer="BOARD")
 
     def is_empty(self, pt: Point) -> bool:
         return self.get(pt) is None
@@ -78,6 +87,13 @@ class GameBoard:
                     liberties.add(neighbor)
         
         return group, liberties
+
+    def copy(self) -> 'GameBoard':
+        """盤面状態を複製する"""
+        new_board = GameBoard(self.side)
+        for pt, color in self.list_occupied_points():
+            new_board.play(pt, color)
+        return new_board
 
     @property
     def raw_board(self):

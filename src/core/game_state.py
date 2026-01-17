@@ -1,4 +1,6 @@
 from sgfmill import sgf, boards
+from core.game_board import GameBoard, Color
+from core.point import Point
 from utils.logger import logger
 
 class GoGameState:
@@ -156,14 +158,15 @@ class GoGameState:
             except: break
         return history
 
-    def get_board_at(self, move_idx):
-        b = boards.Board(self.board_size)
+    def get_board_at(self, move_idx) -> GameBoard:
+        b = GameBoard(self.board_size)
         node = self.sgf_game.get_root()
         for _ in range(move_idx):
             try:
                 node = node[0]
                 color, move = node.get_move()
-                if color and move: b.play(move[0], move[1], color)
+                if color and move:
+                    b.play(Point(move[0], move[1]), Color.from_str(color))
             except: break
         return b
 
