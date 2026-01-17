@@ -45,10 +45,9 @@ class ReportGenerator:
                 print(f"Report Error at Move {m_idx}: {e}")
                 continue
 
-            candidates = res_prev.get('top_candidates', []) or res_prev.get('candidates', [])
-            if candidates:
-                best = candidates[0]
-                pv_list = best.get('pv', [])
+            if res_prev and res_prev.candidates:
+                best = res_prev.candidates[0]
+                pv_list = best.pv
                 pv_str = " -> ".join(pv_list) if pv_list else ""
                 
                 # 参考図画像の生成と保存
@@ -66,7 +65,7 @@ class ReportGenerator:
 
                 prompt = self.commentator._load_prompt(report_template_name, m_idx=m_idx, player_color="黒", 
                                                        wr_drop=f"-{wr_drop:.1%}", sc_drop=f"-{sc_drop:.1f}目", 
-                                                       ai_move=best.get('move', 'なし'), pv_str=pv_str, knowledge=custom_kn)
+                                                       ai_move=best.move, pv_str=pv_str, knowledge=custom_kn)
                 
                 resp_gemini = self.commentator.client.models.generate_content(
                     model=GEMINI_MODEL_NAME, 

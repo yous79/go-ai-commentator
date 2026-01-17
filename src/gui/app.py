@@ -272,9 +272,15 @@ class GoReplayApp:
         if moves and curr < len(moves):
             d = moves[curr]
             if d:
-                wr_text = f"{d.get('winrate_black', 0.5):.1%}"
-                sc_text = f"{d.get('score_lead_black', 0.0):.1f}"
-                cands = d.get('candidates', [])
+                # AnalysisResultオブジェクトか辞書かを判別して属性取得
+                if hasattr(d, 'winrate'):
+                    wr_text = d.winrate_label
+                    sc_text = f"{d.score_lead:.1f}"
+                    cands = [c.__dict__ for c in d.candidates] # UI互換性のために一時的にdict化
+                else:
+                    wr_text = f"{d.get('winrate_black', 0.5):.1%}"
+                    sc_text = f"{d.get('score_lead_black', 0.0):.1f}"
+                    cands = d.get('candidates', [])
         
         self.info_view.update_stats(wr_text, sc_text, "")
         self.lbl_counter.config(text=f"{curr} / {self.game.total_moves}")
@@ -417,13 +423,9 @@ class GoReplayApp:
 
         def _on_success(res):
             if res:
-                new_data = {
-                    "winrate_black": res.get('winrate_black', 0.5), 
-                    "score_lead_black": res.get('score_lead_black', 0.0), 
-                    "candidates": []
-                }
+                # AnalysisResultをそのまま保持する
                 self.game.moves = self.game.moves[:new_idx]
-                self.game.moves.append(new_data)
+                self.game.moves.append(res)
                 self.show_image(new_idx)
             self.info_view.btn_comment.config(state="normal", text="Ask AI Agent")
 

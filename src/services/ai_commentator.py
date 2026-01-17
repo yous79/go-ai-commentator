@@ -32,18 +32,17 @@ class GeminiCommentator:
             
             # 1. Orchestratorによる一括解析
             collector = self.orchestrator.analyze_full(history, board_size)
-            ana_data = getattr(collector, 'raw_analysis', {})
-            if not ana_data:
+            ana_result = getattr(collector, 'raw_analysis', None)
+            if not ana_result:
                 return "【エラー】解析データの取得に失敗しました。"
 
             # 2. 事実のトリアージとサマリー作成
             prioritized_facts = collector.get_prioritized_text(limit=12)
             
             # 3. データの整理 (推奨手など)
-            candidates = ana_data.get('top_candidates', []) or ana_data.get('candidates', [])
-            best = candidates[0] if candidates else {}
+            best = ana_result.candidates[0] if ana_result.candidates else None
             
-            pv_list = best.get('pv', [])
+            pv_list = best.pv if best else []
             self.last_pv = pv_list
             player_color = "黒" if (move_idx % 2 == 0) else "白"
             opp_color = "白" if player_color == "黒" else "黒"
@@ -53,11 +52,10 @@ class GeminiCommentator:
                 f"【最新の確定解析事実（トリアージ済）】\n"
                 f"{prioritized_facts}\n\n"
                 f"【AI推奨手と進行】\n"
-                f"- 推奨手: {best.get('move', 'なし')}\n"
+                f"- 推奨手: {best.move if best else 'なし'}\n"
                 f"- 推奨進行: {', '.join(colored_seq) if colored_seq else 'なし'}\n"
-                f"- 推奨手の将来予測: {best.get('future_shape_analysis', '特になし')}\n"
             )
-            logger.debug(f"Analysis Data Ready: Winrate(B): {ana_data.get('winrate_black')}", layer="AI")
+            logger.debug(f"Analysis Data Ready: Winrate: {ana_result.winrate_label}", layer="AI")
 
             # 4. プロンプトの構築
             kn = self.knowledge_manager.get_all_knowledge_text()

@@ -3,9 +3,11 @@ import threading
 import concurrent.futures
 import time
 from enum import Enum
+from typing import Optional
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from utils.logger import logger
+from core.analysis_dto import AnalysisResult
 
 class CircuitState(Enum):
     CLOSED = "CLOSED"      # 正常：リクエストを許可
@@ -126,8 +128,8 @@ class GoAPIClient:
 
         self.executor.submit(_send)
 
-    def analyze_move(self, history, board_size=19, visits=150, include_pv=True):
-        """特定の手の解析リクエスト"""
+    def analyze_move(self, history, board_size=19, visits=150, include_pv=True) -> Optional[AnalysisResult]:
+        """特定の手の解析リクエストを行い、AnalysisResultオブジェクトを返す"""
         payload = {
             "history": history,
             "board_size": board_size,
@@ -140,12 +142,9 @@ class GoAPIClient:
         
         if resp:
             data = resp.json()
-            cands = data.get('candidates', []) or data.get('top_candidates', [])
-            has_own = 'ownership' in data and data['ownership'] is not None
-            logger.debug(f"Analysis response received: candidates_count={len(cands)}, has_ownership={has_own}", layer="API_CLIENT")
-            if not has_own:
-                logger.warning("Ownership data is missing from API response. Stability analysis will be skipped.", layer="API_CLIENT")
-            return data
+            result = AnalysisResult.from_dict(data)
+            logger.debug(f"Analysis response received: candidates={len(result.candidates)}, has_ownership={result.ownership is not None}", layer="API_CLIENT")
+            return result
         elif err == "CIRCUIT_OPEN":
             logger.warning("Analysis skipped: Circuit Breaker is OPEN.", layer="API_CLIENT")
         return None
