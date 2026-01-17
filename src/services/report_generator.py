@@ -1,22 +1,22 @@
 import os
 import json
-import requests
 from google.genai import types
 from config import GEMINI_MODEL_NAME
 from utils.pdf_generator import PDFGenerator
+from services.api_client import api_client
 
 class ReportGenerator:
     def __init__(self, game_state, renderer, commentator):
         self.game = game_state
         self.renderer = renderer
         self.commentator = commentator # GeminiCommentator instance
-        self.api_url = "http://127.0.0.1:8000"
 
     def generate(self, sgf_name, image_dir):
         """最新の知識ベースと形状検知事実を用いた対局レポート(Markdown & PDF)生成"""
         mb, _ = self.game.calculate_mistakes()
         if not mb: return None, "黒番に顕著な悪手が見つかりませんでした。"
 
+        # 損失の大きいトップ3を抽出
         all_m = sorted(mb, key=lambda x:x[1], reverse=True)[:3]
         all_m = sorted(all_m, key=lambda x:x[2]) 
 
@@ -34,23 +34,22 @@ class ReportGenerator:
             board = self.game.get_board_at(m_idx - 1)
             
             try:
-                ana_resp = requests.post(f"{self.api_url}/analyze", 
-                                         json={"history": history_prev, "board_size": self.game.board_size}, 
-                                         timeout=40)
-                res = ana_resp.json()
+                # 1. 前局面の解析 (AI推奨手を得るため)
+                res_prev = api_client.analyze_move(history_prev, self.game.board_size)
                 
-                det_resp = requests.post(f"{self.api_url}/detect", 
-                                         json={"history": history_curr, "board_size": self.game.board_size}, 
-                                         timeout=15)
-                det_facts = det_resp.json().get("facts", "特筆すべき形状なし")
+                # 2. 現局面のフル解析 (形状・安定度・緊急度などの『事実』を得るため)
+                collector_curr = self.commentator.orchestrator.analyze_full(history_curr, self.game.board_size)
+                det_facts = collector_curr.get_prioritized_text(limit=10)
+                
             except Exception as e:
                 print(f"Report Error at Move {m_idx}: {e}")
                 continue
 
-            if res and 'top_candidates' in res and len(res['top_candidates']) > 0:
-                best = res['top_candidates'][0]
-                pv_str = best.get('future_sequence', "")
-                pv_list = [m.strip() for m in pv_str.split("->")] if pv_str else []
+            candidates = res_prev.get('top_candidates', []) or res_prev.get('candidates', [])
+            if candidates:
+                best = candidates[0]
+                pv_list = best.get('pv', [])
+                pv_str = " -> ".join(pv_list) if pv_list else ""
                 
                 # 参考図画像の生成と保存
                 p_img = self.renderer.render_pv(board, pv_list, "B", 
@@ -59,8 +58,8 @@ class ReportGenerator:
                 img_path = os.path.join(r_dir, f_name)
                 p_img.save(img_path)
                 
-                # Geminiによる個別解説
-                custom_kn = f"{kn}\n\n【この局面の形状事実】:\n{det_facts}"
+                # Geminiによる個別解説 (トリアージされた事実を渡す)
+                custom_kn = f"{kn}\n\n【この局面で検出された事実（重要度順）】:\n{det_facts}"
                 prompt = self.commentator._load_prompt("report_individual", m_idx=m_idx, player_color="黒", 
                                                        wr_drop=f"-{wr_drop:.1%}", sc_drop=f"-{sc_drop:.1f}目", 
                                                        ai_move=best.get('move', 'なし'), pv_str=pv_str, knowledge=custom_kn)
