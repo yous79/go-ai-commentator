@@ -23,6 +23,7 @@ from core.knowledge_manager import KnowledgeManager
 from core.board_simulator import BoardSimulator
 from config import KNOWLEDGE_DIR
 from utils.logger import logger
+from utils.event_bus import event_bus, AppEvents
 
 from gui.board_view import BoardView
 from gui.info_view import InfoView
@@ -47,6 +48,9 @@ class GoReplayApp:
         
         # Async Task Manager
         self.task_manager = AsyncTaskManager(root, max_workers=3)
+        
+        # イベント購読
+        event_bus.subscribe(AppEvents.LEVEL_CHANGED, self.on_level_change)
         
         self._init_ai()
         
@@ -280,19 +284,32 @@ class GoReplayApp:
                 if hasattr(d, 'winrate'):
                     wr_text = d.winrate_label
                     sc_text = f"{d.score_lead:.1f}"
-                    cands = [c.__dict__ for c in d.candidates] # UI互換性のために一時的にdict化
+                    cands = [c.__dict__ for c in d.candidates]
                 else:
                     wr_text = f"{d.get('winrate_black', 0.5):.1%}"
                     sc_text = f"{d.get('score_lead_black', 0.0):.1f}"
                     cands = d.get('candidates', [])
         
-        self.info_view.update_stats(wr_text, sc_text, "")
         self.lbl_counter.config(text=f"{curr} / {self.game.total_moves}")
         
-        if moves:
-            wrs = [m.get('winrate_black', 0.5) if m else 0.5 for m in moves]
-            self.info_view.update_graph(wrs, curr)
+        # --- イベント発行によるUI更新 ---
+        wrs = []
+        for m in moves:
+            if m is None:
+                wrs.append(0.5) # デフォルト値
+            elif hasattr(m, 'winrate'):
+                wrs.append(m.winrate)
+            else:
+                wrs.append(m.get('winrate_black', 0.5))
 
+        event_bus.publish(AppEvents.STATE_UPDATED, {
+            "winrate_text": wr_text,
+            "score_text": sc_text,
+            "winrate_history": wrs,
+            "current_move": curr
+        })
+
+        # board_viewはまだイベント対応していないため直接呼ぶ（移行期）
         self.board_view.update_board(img, self.info_view.review_mode.get(), cands)
 
     def generate_commentary(self):
@@ -483,8 +500,13 @@ class GoReplayApp:
         self.root.destroy()
 
     def run_auto_verify(self, sgf_path: str):
-        """アプリの主要機能を自動検証する"""
+        """アプリの主要機能を自動検証する (タイムアウト付き)"""
         logger.info(f"Starting auto-verification with: {sgf_path}", layer="GUI")
+        self.verification_completed = False
+        
+        # 90秒のタイムアウトを設定
+        self.root.after(90000, self._handle_verification_timeout)
+
         if not os.path.exists(sgf_path):
             logger.error(f"Verification failed: {sgf_path} not found.", layer="GUI")
             return
@@ -493,6 +515,7 @@ class GoReplayApp:
         self.start_analysis(sgf_path)
 
         def _wait_for_analysis():
+            if self.verification_completed: return
             if self.analysis_manager.analyzing:
                 logger.debug("Waiting for analysis to complete...", layer="GUI")
                 self.root.after(2000, _wait_for_analysis)
@@ -506,14 +529,24 @@ class GoReplayApp:
                 self.root.after(5000, _check_commentary_result)
 
         def _check_commentary_result():
+            if self.verification_completed: return
             # InfoViewリファクタリングによりパスが変更された
             text = self.info_view.analysis_tab.txt_commentary.get("1.0", tk.END).strip()
             if len(text) > 50: # 適当な長さがあれば成功とみなす
                 logger.info("Auto-verification SUCCESS: Commentary generated.", layer="GUI")
-                # 検証モード時は自動で閉じることも可能だが、確認のため開いたままにする
+                self.verification_completed = True
             else:
-                logger.error("Auto-verification FAILED: Commentary area is empty.", layer="GUI")
+                # まだ生成中かもしれないので、もう少し待つ
+                logger.debug("Commentary not ready yet, waiting...", layer="GUI")
+                self.root.after(2000, _check_commentary_result)
 
         self.root.after(2000, _wait_for_analysis)
+
+    def _handle_verification_timeout(self):
+        """タイムアウト発生時の処理"""
+        if not self.verification_completed:
+            logger.error("Auto-verification TIMED OUT after 90s.", layer="GUI")
+            # 継続を断念してアプリを閉じる（または警告を出す）
+            self.on_close()
     
         

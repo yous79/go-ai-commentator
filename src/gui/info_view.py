@@ -3,6 +3,7 @@ from tkinter import ttk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from config import TARGET_LEVEL
+from utils.event_bus import event_bus, AppEvents
 
 class AnalysisTab(tk.Frame):
     """解析データ、グラフ、AI解説、悪手一覧を表示するタブ"""
@@ -10,6 +11,20 @@ class AnalysisTab(tk.Frame):
         super().__init__(master, bg="#f0f0f0")
         self.callbacks = callbacks
         self._setup_ui()
+        
+        # イベント購読の開始
+        event_bus.subscribe(AppEvents.STATE_UPDATED, self._on_state_updated)
+
+    def _on_state_updated(self, data):
+        """解析データが更新された際の処理"""
+        # data: {"winrate_text": str, "score_text": str, "winrate_history": list, "current_move": int}
+        if not data: return
+        
+        self.update_stats(data.get("winrate_text", "--%"), data.get("score_text", "--"))
+        
+        wr_history = data.get("winrate_history")
+        if wr_history:
+            self.update_graph(wr_history, data.get("current_move", 0))
 
     def _setup_level_selector(self, parent):
         level_frame = tk.Frame(parent, bg="#f0f0f0")
@@ -102,6 +117,9 @@ class AnalysisTab(tk.Frame):
     def _on_level_changed(self, event):
         val = self.combo_level.get()
         level_key = "intermediate" if "1桁級" in val else "beginner"
+        # イベント発行
+        event_bus.publish(AppEvents.LEVEL_CHANGED, level_key)
+        # コールバック（互換用）
         if 'on_level_change' in self.callbacks:
             self.callbacks['on_level_change'](level_key)
 
