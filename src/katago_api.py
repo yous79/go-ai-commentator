@@ -30,6 +30,7 @@ class AnalysisRequest(BaseModel):
     visits: int = 100
     include_pv_shapes: bool = True
     include_ownership: bool = True
+    include_influence: bool = True
 
 class GameState(BaseModel):
     history: list = []
@@ -65,13 +66,21 @@ async def health():
 async def analyze(req: AnalysisRequest):
     async with engine_lock:
         try:
-            print(f"DEBUG: Starting analysis for {len(req.history)} moves (PV shapes: {req.include_pv_shapes})")
+            print(f"DEBUG: Starting analysis for {len(req.history)} moves (PV shapes: {req.include_pv_shapes}, influence: {req.include_influence})")
             clean_history = sanitize_history(req.history)
             
             # KataGo Analysis
             res = {"error": "Engine initialization failed"}
             for attempt in range(3):
-                res = katago.analyze_situation(clean_history, board_size=req.board_size, priority=True, visits=req.visits)
+                # include_influence パラメータをドライバに渡す
+                res = katago.analyze_situation(
+                    clean_history, 
+                    board_size=req.board_size, 
+                    priority=True, 
+                    visits=req.visits,
+                    include_ownership=req.include_ownership,
+                    include_influence=req.include_influence
+                )
                 if "error" not in res: break
                 await asyncio.sleep(0.5 * (attempt + 1))
 
@@ -81,6 +90,7 @@ async def analyze(req: AnalysisRequest):
             final_wr = res.get('winrate', 0.5)
             final_score = res.get('score', 0.0)
             final_own = res.get('ownership', [])
+            final_inf = res.get('influence', [])
             
             # Future Shape Analysis (PV解析)
             top_candidates = res.get('top_candidates', [])
@@ -112,11 +122,12 @@ async def analyze(req: AnalysisRequest):
                 for cand in top_candidates:
                     cand["future_shape_analysis"] = "（高速解析モード：個別検討で表示）"
                 
-            print(f"DEBUG: Analysis complete. Winrate(B): {final_wr:.1%}")
+            print(f"DEBUG: Analysis complete. Winrate(B): {final_wr:.1%}, Influence: {len(final_inf) > 0}")
             return {
                 "winrate_black": final_wr,
                 "score_lead_black": final_score,
                 "ownership": final_own,
+                "influence": final_inf,
                 "top_candidates": top_candidates
             }
 

@@ -52,7 +52,7 @@ class KataGoDriver:
                 if not line: break
                 f.write(line); f.flush()
 
-    def query(self, moves, board_size=19, visits=500, priority=False):
+    def query(self, moves, board_size=19, visits=500, priority=False, include_ownership=True, include_influence=True):
         if not self.process or self.process.poll() is not None: self.start_engine()
         if priority: self.priority_mode.set()
         query_id = f"q_{{int(time.time() * 1000)}}"
@@ -66,7 +66,8 @@ class KataGoDriver:
             "boardXSize": board_size,
             "boardYSize": board_size,
             "includePolicy": False,
-            "includeOwnership": True,
+            "includeOwnership": include_ownership,
+            "includeInfluence": include_influence,
             "includeOwnershipStdev": False,
             "maxVisits": visits
         }
@@ -97,13 +98,20 @@ class KataGoDriver:
             return {"error": str(e)}
         return {"error": "Unknown error"}
 
-    def analyze_situation(self, moves, board_size=19, priority=False, visits=500):
+    def analyze_situation(self, moves, board_size=19, priority=False, visits=500, include_ownership=True, include_influence=True):
         clean_moves = []
         for m in moves:
             if isinstance(m, (list, tuple)) and len(m) >= 2:
                 clean_moves.append([str(m[0]).upper(), str(m[1]).lower()])
 
-        data = self.query(clean_moves, board_size=board_size, priority=priority, visits=visits)
+        data = self.query(
+            clean_moves, 
+            board_size=board_size, 
+            priority=priority, 
+            visits=visits,
+            include_ownership=include_ownership,
+            include_influence=include_influence
+        )
         if "error" in data: return data
 
         root = data.get('rootInfo', {})
@@ -123,15 +131,22 @@ class KataGoDriver:
         # Ownershipの抽出と正規化
         raw_ownership = root.get('ownership')
         if raw_ownership:
-            # KataGoはNextPlayer視点で返すため、白番なら反転させる
             final_ownership = [-v for v in raw_ownership] if is_white_turn else raw_ownership
         else:
             final_ownership = []
+
+        # Influenceの抽出と正規化 [NEW]
+        raw_influence = root.get('influence')
+        if raw_influence:
+            final_influence = [-v for v in raw_influence] if is_white_turn else raw_influence
+        else:
+            final_influence = []
 
         res = {
             "winrate": final_winrate, 
             "score": final_score, 
             "ownership": final_ownership, 
+            "influence": final_influence,
             "top_candidates": []
         }
 
