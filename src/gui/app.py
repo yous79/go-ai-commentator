@@ -1,16 +1,12 @@
-import tkinter as tk
-from tkinter import filedialog, messagebox, ttk
 import os
 import queue
 import json
 import threading
-import concurrent.futures
 import traceback
 import sys
 import config
 
 from config import OUTPUT_BASE_DIR, load_api_key
-from utils.logger import logger
 from core.game_state import GoGameState
 from core.coordinate_transformer import CoordinateTransformer
 from utils.board_renderer import GoBoardRenderer
@@ -18,9 +14,11 @@ from services.ai_commentator import GeminiCommentator
 from services.analysis_manager import AnalysisManager
 from services.report_generator import ReportGenerator
 from services.term_visualizer import TermVisualizer
+from services.async_task_manager import AsyncTaskManager
 from core.knowledge_manager import KnowledgeManager
 from core.board_simulator import BoardSimulator
 from config import KNOWLEDGE_DIR
+from utils.logger import logger
 
 from gui.board_view import BoardView
 from gui.info_view import InfoView
@@ -41,7 +39,9 @@ class GoReplayApp:
         self.simulator = BoardSimulator() # シミュレーターを保持
         self.knowledge_manager = KnowledgeManager(KNOWLEDGE_DIR)
         self.gemini = None
-        self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=3)
+        
+        # Async Task Manager
+        self.task_manager = AsyncTaskManager(root, max_workers=3)
         
         self._init_ai()
         
@@ -284,35 +284,33 @@ class GoReplayApp:
         self.board_view.update_board(img, self.info_view.review_mode.get(), cands)
 
     def generate_commentary(self):
+        """AI解説を非同期で生成する"""
         if not self.gemini: return
-        self.info_view.btn_comment.config(state="disabled", text="Thinking...")
-        self.executor.submit(self._run_commentary_task)
 
-    def _run_commentary_task(self):
-        try:
-            curr = self.controller.current_move
-            h = self.game.get_history_up_to(curr)
-            
+        curr = self.controller.current_move
+        h = self.game.get_history_up_to(curr)
+        bs = self.game.board_size
+
+        def _task():
             # 1. 解説生成
-            text = self.gemini.generate_commentary(curr, h, self.game.board_size)
+            commentary_text = self.gemini.generate_commentary(curr, h, bs)
             
             # 2. 緊急度解析
-            urgency_data = self.controller.api_client.analyze_urgency(h, self.game.board_size)
+            urgency_data = self.controller.api_client.analyze_urgency(h, bs)
             
             rec_path = None
             thr_path = None
             
             if urgency_data:
-                # SimulationContextの構築
-                curr_ctx = self.simulator.reconstruct_to_context(h, self.game.board_size)
+                curr_ctx = self.simulator.reconstruct_to_context(h, bs)
                 
-                # 成功図（最善進行）の生成
+                # 成功図（最善進行）
                 best_pv = urgency_data.get("best_pv", [])
                 if best_pv:
                     rec_ctx = self.simulator.simulate_sequence(curr_ctx, best_pv)
                     rec_path, _ = self.visualizer.visualize_context(rec_ctx, title="AI Recommended Success Plan")
                 
-                # 失敗図（放置被害）の生成 - 緊急時のみ
+                # 失敗図（放置被害）
                 if urgency_data.get("is_critical"):
                     opp_pv = urgency_data.get("opponent_pv", [])
                     if opp_pv:
@@ -321,40 +319,52 @@ class GoReplayApp:
                         title = f"Future Threat Diagram (Potential Loss: {urgency_data['urgency']:.1f})"
                         thr_path, _ = self.visualizer.visualize_context(thr_ctx, title=title)
 
-            # 3. UIへの反映（非同期）
-            self.root.after(0, lambda: self._update_commentary_ui(text))
-            
-            if rec_path:
-                self.root.after(0, lambda: self._show_image_popup("AI Recommended Plan", rec_path))
-            
-            if thr_path:
-                # 少し遅らせて表示
-                self.root.after(200, lambda: self._show_image_popup("WARNING: Future Threat", thr_path))
-                
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
-            err_msg = str(e)
-            self.root.after(0, lambda: self._update_commentary_ui(f"Error: {err_msg}"))
+            return {
+                "text": commentary_text,
+                "rec_path": rec_path,
+                "thr_path": thr_path
+            }
+
+        def _on_success(res):
+            self._update_commentary_ui(res["text"])
+            if res["rec_path"]:
+                self._show_image_popup("AI Recommended Plan", res["rec_path"])
+            if res["thr_path"]:
+                self.root.after(200, lambda: self._show_image_popup("WARNING: Future Threat", res["thr_path"]))
+
+        def _pre_task():
+            self.info_view.btn_comment.config(state="disabled", text="Thinking...")
+
+        def _on_error(e):
+            self._update_commentary_ui(f"Error: {str(e)}")
+
+        self.task_manager.run_task(_task, on_success=_on_success, on_error=_on_error, pre_task=_pre_task)
 
     def _update_commentary_ui(self, text):
         self.info_view.set_commentary(text)
         self.info_view.btn_comment.config(state="normal", text="Ask AI Agent")
 
     def generate_full_report(self):
+        """対局レポートを非同期で生成する"""
         if not self.report_generator: return
-        self.info_view.btn_report.config(state="disabled", text="Generating...")
-        self.executor.submit(self._run_report_task)
 
-    def _run_report_task(self):
-        try:
-            path, err = self.report_generator.generate(self.controller.current_sgf_name, self.controller.image_dir)
+        def _task():
+            return self.report_generator.generate(self.controller.current_sgf_name, self.controller.image_dir)
+
+        def _on_success(res):
+            path, err = res
             msg = err if err else f"PDFレポートを生成しました:\n{path}"
-            self.root.after(0, lambda: messagebox.showinfo("Done", msg))
-        except Exception as e:
-            self.root.after(0, lambda: messagebox.showerror("Error", str(e)))
-        finally:
-            self.root.after(0, lambda: self.info_view.btn_report.config(state="normal", text="対局レポートを生成"))
+            messagebox.showinfo("Done", msg)
+            self.info_view.btn_report.config(state="normal", text="対局レポートを生成")
+
+        def _on_error(e):
+            messagebox.showerror("Error", f"レポート生成に失敗しました: {str(e)}")
+            self.info_view.btn_report.config(state="normal", text="対局レポートを生成")
+
+        def _pre_task():
+            self.info_view.btn_report.config(state="disabled", text="Generating...")
+
+        self.task_manager.run_task(_task, on_success=_on_success, on_error=_on_error, pre_task=_pre_task)
 
     def show_pv(self):
         curr = self.controller.current_move
@@ -391,22 +401,38 @@ class GoReplayApp:
         self.play_interactive_move(color, None, None)
 
     def play_interactive_move(self, color, row, col):
-        self.info_view.btn_comment.config(state="disabled", text="Analyzing...")
-        def run():
-            try:
-                curr = self.controller.current_move
-                if not self.game.add_move(curr, color, row, col): return
-                new_idx = curr + 1
-                history = self.game.get_history_up_to(new_idx)
-                res = self.controller.api_client.analyze_move(history, self.game.board_size)
-                if res:
-                    new_data = {"winrate_black": res.get('winrate_black', 0.5), "score_lead_black": res.get('score_lead_black', 0.0), "candidates": []}
-                    self.game.moves = self.game.moves[:new_idx]
-                    self.game.moves.append(new_data)
-                    self.root.after(0, lambda: self.show_image(new_idx))
-            except Exception as e: print(f"Interactive Move Error: {e}")
-            finally: self.root.after(0, lambda: self.info_view.btn_comment.config(state="normal", text="Ask AI Agent"))
-        self.executor.submit(run)
+        """ユーザーが盤面をクリックして石を置いた際の非同期処理"""
+        curr = self.controller.current_move
+        if not self.game.add_move(curr, color, row, col): return
+        
+        new_idx = curr + 1
+        history = self.game.get_history_up_to(new_idx)
+        bs = self.game.board_size
+
+        def _task():
+            res = self.controller.api_client.analyze_move(history, bs)
+            return res
+
+        def _on_success(res):
+            if res:
+                new_data = {
+                    "winrate_black": res.get('winrate_black', 0.5), 
+                    "score_lead_black": res.get('score_lead_black', 0.0), 
+                    "candidates": []
+                }
+                self.game.moves = self.game.moves[:new_idx]
+                self.game.moves.append(new_data)
+                self.show_image(new_idx)
+            self.info_view.btn_comment.config(state="normal", text="Ask AI Agent")
+
+        def _pre_task():
+            self.info_view.btn_comment.config(state="disabled", text="Analyzing...")
+
+        def _on_error(e):
+            logger.error(f"Interactive Move Error: {e}", layer="GUI")
+            self.info_view.btn_comment.config(state="normal", text="Ask AI Agent")
+
+        self.task_manager.run_task(_task, on_success=_on_success, on_error=_on_error, pre_task=_pre_task)
 
     def prev_move(self):
         if self.controller.prev_move(): self.update_display()
@@ -428,7 +454,7 @@ class GoReplayApp:
 
     def on_close(self):
         self.analysis_manager.stop_analysis()
-        self.executor.shutdown(wait=False)
+        self.task_manager.shutdown()
         self.root.destroy()
     
         
