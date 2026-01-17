@@ -22,16 +22,16 @@ class StabilityAnalyzer:
             
             if r['status'] == 'dead':
                 severity = 5 if is_large else 4
-                status_msg = "は、AIの認識上すでに死んでいる『カス石』です。これ以上手をかけず、捨て石として活用するか放置すべきです。"
+                status_msg = "は、AIの認識上すでに戦略的役割を終えた『カス石』です。これ以上手をかけず、捨て石として活用するか、放置して大場に先行すべき局面です。"
             elif r['status'] == 'critical':
                 severity = 5
-                status_msg = "は生存確率が極めて低く、死に体です。救援には細心の注意（または捨てる覚悟）が必要です。"
+                status_msg = "は生存確率が極めて低く、死に体に近い状態です。強引に助け出すよりも、周囲への響きを考慮して軽く扱う判断が求められます。"
             elif r['status'] == 'weak':
                 severity = 4
-                status_msg = "は不安定な『弱い石』です。攻防の焦点となっており、補強や活用を検討してください。"
+                status_msg = "は根拠が不十分な『弱い石』であり、盤上の急場（きゅうば）です。この石の補強、あるいは逆襲が局面の焦点となります。"
             elif r['status'] == 'strong':
                 severity = 1
-                status_msg = "は完全に安定しています。"
+                status_msg = "は完全に安定しており、当面の手入れは不要です。"
             
             if status_msg:
                 # 座標リストを簡略化（最初の3つ）

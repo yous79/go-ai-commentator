@@ -15,16 +15,16 @@ def test_sakare_gata_perfect():
     history_incomplete = [
         ["B", "D4"], ["B", "D6"], ["W", "D5"], ["B", "A1"], ["W", "E5"]
     ]
-    curr_i, prev_i, last_i = simulator.reconstruct(history_incomplete)
-    ids_i = detector.detect_ids(curr_i, prev_i, last_i)
+    ctx_i = simulator.reconstruct_to_context(history_incomplete)
+    ids_i = detector.detect_ids(ctx_i.board, ctx_i.prev_board)
     print(f"Scenario 1 (2-stone wall): {ids_i}")
 
     # シナリオ2: 3石の壁（C5, D5, E5） -> 完璧なサカレ形
     history_perfect = [
         ["B", "D4"], ["B", "D6"], ["W", "D5"], ["B", "A1"], ["W", "E5"], ["B", "A2"], ["W", "C5"]
     ]
-    curr_p, prev_p, last_p = simulator.reconstruct(history_perfect)
-    ids_p = detector.detect_ids(curr_p, prev_p, last_p)
+    ctx_p = simulator.reconstruct_to_context(history_perfect)
+    ids_p = detector.detect_ids(ctx_p.board, ctx_p.prev_board)
     print(f"Scenario 2 (3-stone wall): {ids_p}")
 
     success = ("sakare_gata" not in ids_i and 

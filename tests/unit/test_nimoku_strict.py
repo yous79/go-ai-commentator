@@ -16,8 +16,8 @@ def test_nimoku_atama_strict():
         ["W", "F6"], ["B", "E6"],
         ["B", "F7"]
     ]
-    curr_ok, prev_ok, last_ok = simulator.reconstruct(history_ok)
-    ids_ok = detector.detect_ids(curr_ok, prev_ok, last_ok)
+    ctx_ok = simulator.reconstruct_to_context(history_ok)
+    ids_ok = detector.detect_ids(ctx_ok.board, ctx_ok.prev_board)
     print(f"Scenario 1 (Valid): {ids_ok}")
 
     # シナリオ2: 側面石がないパターン (F7:B, F6-F5:W)
@@ -26,8 +26,8 @@ def test_nimoku_atama_strict():
         ["W", "F6"], ["B", "A2"],
         ["B", "F7"]
     ]
-    curr_ns, prev_ns, last_ns = simulator.reconstruct(history_no_side)
-    ids_ns = detector.detect_ids(curr_ns, prev_ns, last_ns)
+    ctx_ns = simulator.reconstruct_to_context(history_no_side)
+    ids_ns = detector.detect_ids(ctx_ns.board, ctx_ns.prev_board)
     print(f"Scenario 2 (No Side Stones): {ids_ns}")
 
     # シナリオ3: 三目あるパターン (F7:B, F6-F5-F4:W, E6-E5-E4:B)
@@ -37,8 +37,8 @@ def test_nimoku_atama_strict():
         ["W", "F6"], ["B", "E6"],
         ["B", "F7"]
     ]
-    curr_3, prev_3, last_3 = simulator.reconstruct(history_three)
-    ids_3 = detector.detect_ids(curr_3, prev_3, last_3)
+    ctx_3 = simulator.reconstruct_to_context(history_three)
+    ids_3 = detector.detect_ids(ctx_3.board, ctx_3.prev_board)
     print(f"Scenario 3 (Three Stones): {ids_3}")
 
     success = ("nimoku_atama" in ids_ok and 
