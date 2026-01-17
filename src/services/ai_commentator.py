@@ -6,6 +6,7 @@ import traceback
 from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME, load_api_key, TARGET_LEVEL
 from core.knowledge_manager import KnowledgeManager
 from services.analysis_orchestrator import AnalysisOrchestrator
+from services.persona import PersonaFactory
 
 class GeminiCommentator:
     def __init__(self, api_key):
@@ -68,11 +69,9 @@ class GeminiCommentator:
                         persona_text = f.read()
                 except: pass
 
-            system_template_name = "go_instructor_system"
-            if TARGET_LEVEL == "beginner":
-                system_template_name = "go_instructor_system_beginner"
-
-            sys_inst = self._load_prompt(system_template_name, board_size=board_size, player=player_color, knowledge=kn)
+            # 人格（Persona）の動的選択
+            persona = PersonaFactory.get_persona(TARGET_LEVEL)
+            sys_inst = self._load_prompt(persona.system_template, board_size=board_size, player=player_color, knowledge=kn)
             
             # 強力な制約の追加
             constraint = (
