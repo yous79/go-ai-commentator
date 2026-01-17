@@ -106,15 +106,36 @@ class GoGameState:
             except: break
         
         new_node = node.new_child(0)
+        c_val = color.value if hasattr(color, 'value') else color.lower()
         if row is None or col is None:
-            new_node.set_move(color.lower(), None)
+            new_node.set_move(c_val, None)
         else:
-            new_node.set_move(color.lower(), (row, col))
+            new_node.set_move(c_val, (row, col))
         
         self._update_total_moves()
-        # Initialize mark entry for the new move (inherited from prev move if desired, but here we start fresh)
-        self.marks_data[move_idx + 1] = {"SQ": set(), "TR": set(), "MA": set()}
+        self.marks_data[self.total_moves] = {"SQ": set(), "TR": set(), "MA": set()}
         return True
+
+    def remove_last_move(self) -> bool:
+        """最新の着手（末尾ノード）を削除する"""
+        if self.total_moves == 0:
+            return False
+            
+        node = self.sgf_game.get_root()
+        # 末尾の親ノードまで移動
+        for _ in range(self.total_moves - 1):
+            try: node = node[0]
+            except: return False
+            
+        # 子ノード（最新手）を削除
+        if len(node) > 0:
+            node.delete()
+            self._update_total_moves()
+            # マークデータも削除
+            if (self.total_moves + 1) in self.marks_data:
+                del self.marks_data[self.total_moves + 1]
+            return True
+        return False
 
     def get_history_up_to(self, move_idx):
         if not self.sgf_game: return []

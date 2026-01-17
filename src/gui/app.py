@@ -10,6 +10,7 @@ import config
 
 from config import OUTPUT_BASE_DIR, load_api_key
 from core.game_state import GoGameState
+from core.game_board import GameBoard, Color
 from core.coordinate_transformer import CoordinateTransformer
 from utils.board_renderer import GoBoardRenderer
 from services.ai_commentator import GeminiCommentator
@@ -17,6 +18,7 @@ from services.analysis_manager import AnalysisManager
 from services.report_generator import ReportGenerator
 from services.term_visualizer import TermVisualizer
 from services.async_task_manager import AsyncTaskManager
+from core.commands import CommandInvoker, PlayMoveCommand
 from core.knowledge_manager import KnowledgeManager
 from core.board_simulator import BoardSimulator
 from config import KNOWLEDGE_DIR
@@ -35,6 +37,7 @@ class GoReplayApp:
         # Core Engine & State
         self.game = GoGameState()
         self.controller = AppController(self.game)
+        self.command_invoker = CommandInvoker()
         self.transformer = CoordinateTransformer()
         self.renderer = GoBoardRenderer()
         self.visualizer = TermVisualizer()
@@ -178,9 +181,10 @@ class GoReplayApp:
         bot.grid_propagate(False)
         bot.columnconfigure(0, weight=1); bot.columnconfigure(4, weight=1)
         tk.Button(bot, text="< Prev", command=self.prev_move, width=15).grid(row=0, column=1, padx=10, pady=10)
+        tk.Button(bot, text="UNDO", command=self.undo_move, width=10, bg="#ffcccc").grid(row=0, column=2, padx=5)
         self.lbl_counter = tk.Label(bot, text="0 / 0", font=("Arial", 12, "bold"), bg="#e0e0e0")
-        self.lbl_counter.grid(row=0, column=2, padx=20)
-        tk.Button(bot, text="Next >", command=self.next_move, width=15).grid(row=0, column=3, padx=10, pady=10)
+        self.lbl_counter.grid(row=0, column=3, padx=20)
+        tk.Button(bot, text="Next >", command=self.next_move, width=15).grid(row=0, column=4, padx=10, pady=10)
 
     def open_sgf(self):
         p = filedialog.askopenfilename(filetypes=[("SGF Files", "*.sgf")])
@@ -408,10 +412,18 @@ class GoReplayApp:
         color = "B" if (self.controller.current_move % 2 == 0) else "W"
         self.play_interactive_move(color, None, None)
 
-    def play_interactive_move(self, color, row, col):
-        """ユーザーが盤面をクリックして石を置いた際の非同期処理"""
+    def play_interactive_move(self, color_str, row, col):
+        """ユーザーが盤面をクリックして石を置いた際の非同期処理 (コマンド化)"""
         curr = self.controller.current_move
-        if not self.game.add_move(curr, color, row, col): return
+        color_obj = Color.from_str(color_str)
+        pt = Point(row, col) if row is not None else None
+        
+        # コマンドの作成
+        cmd = PlayMoveCommand(self.game, curr, color_obj, pt)
+        
+        # 実行 (GameStateの更新)
+        if not self.command_invoker.execute(cmd):
+            return
         
         new_idx = curr + 1
         history = self.game.get_history_up_to(new_idx)
@@ -423,7 +435,6 @@ class GoReplayApp:
 
         def _on_success(res):
             if res:
-                # AnalysisResultをそのまま保持する
                 self.game.moves = self.game.moves[:new_idx]
                 self.game.moves.append(res)
                 self.show_image(new_idx)
@@ -437,6 +448,16 @@ class GoReplayApp:
             self.info_view.btn_comment.config(state="normal", text="Ask AI Agent")
 
         self.task_manager.run_task(_task, on_success=_on_success, on_error=_on_error, pre_task=_pre_task)
+
+    def undo_move(self):
+        """直前の操作を取り消す"""
+        self.command_invoker.undo()
+        # 表示を一つ前に戻す
+        if self.controller.current_move > 0:
+            self.show_image(self.controller.current_move - 1)
+        else:
+            self.update_display()
+        logger.info("Undo performed", layer="GUI")
 
     def prev_move(self):
         if self.controller.prev_move(): self.update_display()
