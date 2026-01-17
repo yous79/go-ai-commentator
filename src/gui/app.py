@@ -409,30 +409,25 @@ class GoReplayApp:
 
     def prev_move(self):
         if self.controller.prev_move(): self.update_display()
+
     def next_move(self):
         if self.controller.next_move(): self.update_display()
+
     def on_resize(self, event):
         if self.controller.image_cache: self.update_display()
-        def goto_mistake(self, color, idx):
-            m = self.moves_m_b[idx] if color == "b" else self.moves_m_w[idx]
-            if m is not None: self.show_image(m)
-    
-            def on_level_change(self, new_level):
-    
-                """解説ターゲットレベルを動的に変更する"""
-    
-                config.TARGET_LEVEL = new_level
-    
-                print(f"Commentary Mode changed to: {new_level}")
-    
-        
-    
-            def on_close(self):
-    
-                self.analysis_manager.stop_analysis()
-    
-                self.executor.shutdown(wait=False)
-    
-                self.root.destroy()
+
+    def goto_mistake(self, color, idx):
+        m = self.moves_m_b[idx] if color == "b" else self.moves_m_w[idx]
+        if m is not None: self.show_image(m)
+
+    def on_level_change(self, new_level):
+        """解説ターゲットレベルを動的に変更する"""
+        config.TARGET_LEVEL = new_level
+        print(f"Commentary Mode changed to: {new_level}")
+
+    def on_close(self):
+        self.analysis_manager.stop_analysis()
+        self.executor.shutdown(wait=False)
+        self.root.destroy()
     
         

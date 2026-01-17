@@ -158,26 +158,16 @@ class InfoView(tk.Frame):
         self.txt_term_desc.config(state="disabled")
         self.btn_visualize.config(state="normal" if can_visualize else "disabled")
 
-        def _on_visualize_click(self):
+    def _on_visualize_click(self):
+        selection = self.list_terms.curselection()
+        if selection:
+            term_name = self.list_terms.get(selection[0])
+            self.callbacks['visualize_term'](term_name)
 
-            selection = self.list_terms.curselection()
-
-            if selection:
-
-                term_name = self.list_terms.get(selection[0])
-
-                self.callbacks['visualize_term'](term_name)
-
-    
-
-        def _on_level_changed(self, event):
-
-            val = self.combo_level.get()
-
-            level_key = "intermediate" if "1桁級" in val else "beginner"
-
-            if 'on_level_change' in self.callbacks:
-
-                self.callbacks['on_level_change'](level_key)
+    def _on_level_changed(self, event):
+        val = self.combo_level.get()
+        level_key = "intermediate" if "1桁級" in val else "beginner"
+        if 'on_level_change' in self.callbacks:
+            self.callbacks['on_level_change'](level_key)
 
     
