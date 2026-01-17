@@ -23,6 +23,7 @@ KNOWLEDGE_DIR = os.path.join(PROJECT_ROOT, "knowledge")
 
 # Gemini Settings
 GEMINI_MODEL_NAME = 'gemini-3-flash-preview'
+TARGET_LEVEL = 'intermediate' # 'beginner' or 'intermediate'
 
 # Helper Functions
 def load_api_key():

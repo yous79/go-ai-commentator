@@ -1,7 +1,7 @@
 import os
 import json
 from google.genai import types
-from config import GEMINI_MODEL_NAME
+from config import GEMINI_MODEL_NAME, TARGET_LEVEL
 from utils.pdf_generator import PDFGenerator
 from services.api_client import api_client
 
@@ -60,7 +60,11 @@ class ReportGenerator:
                 
                 # Geminiによる個別解説 (トリアージされた事実を渡す)
                 custom_kn = f"{kn}\n\n【この局面で検出された事実（重要度順）】:\n{det_facts}"
-                prompt = self.commentator._load_prompt("report_individual", m_idx=m_idx, player_color="黒", 
+                report_template_name = "report_individual"
+                if TARGET_LEVEL == "beginner":
+                    report_template_name = "report_individual_beginner"
+
+                prompt = self.commentator._load_prompt(report_template_name, m_idx=m_idx, player_color="黒", 
                                                        wr_drop=f"-{wr_drop:.1%}", sc_drop=f"-{sc_drop:.1f}目", 
                                                        ai_move=best.get('move', 'なし'), pv_str=pv_str, knowledge=custom_kn)
                 

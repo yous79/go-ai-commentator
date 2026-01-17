@@ -3,7 +3,7 @@ from google.genai import types
 import os
 import json
 import traceback
-from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME, load_api_key
+from config import KNOWLEDGE_DIR, GEMINI_MODEL_NAME, load_api_key, TARGET_LEVEL
 from core.knowledge_manager import KnowledgeManager
 from services.analysis_orchestrator import AnalysisOrchestrator
 
@@ -70,7 +70,11 @@ class GeminiCommentator:
                         persona_text = f.read()
                 except: pass
 
-            sys_inst = self._load_prompt("go_instructor_system", board_size=board_size, player=player_color, knowledge=kn)
+            system_template_name = "go_instructor_system"
+            if TARGET_LEVEL == "beginner":
+                system_template_name = "go_instructor_system_beginner"
+
+            sys_inst = self._load_prompt(system_template_name, board_size=board_size, player=player_color, knowledge=kn)
             
             # 強力な制約の追加
             constraint = (
