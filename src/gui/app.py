@@ -7,6 +7,7 @@ import threading
 import concurrent.futures
 import traceback
 import sys
+import config
 
 from config import OUTPUT_BASE_DIR, load_api_key
 from core.game_state import GoGameState
@@ -62,7 +63,8 @@ class GoReplayApp:
             'update_display': self.update_display,
             'goto_move': self.show_image,
             'on_term_select': self.on_term_select,
-            'visualize_term': self.visualize_term
+            'visualize_term': self.visualize_term,
+            'on_level_change': self.on_level_change
         }
 
         self.setup_layout(callbacks)
@@ -411,10 +413,26 @@ class GoReplayApp:
         if self.controller.next_move(): self.update_display()
     def on_resize(self, event):
         if self.controller.image_cache: self.update_display()
-    def goto_mistake(self, color, idx):
-        m = self.moves_m_b[idx] if color == "b" else self.moves_m_w[idx]
-        if m is not None: self.show_image(m)
-    def on_close(self):
-        self.analysis_manager.stop_analysis()
-        self.executor.shutdown(wait=False)
-        self.root.destroy()
+        def goto_mistake(self, color, idx):
+            m = self.moves_m_b[idx] if color == "b" else self.moves_m_w[idx]
+            if m is not None: self.show_image(m)
+    
+            def on_level_change(self, new_level):
+    
+                """解説ターゲットレベルを動的に変更する"""
+    
+                config.TARGET_LEVEL = new_level
+    
+                print(f"Commentary Mode changed to: {new_level}")
+    
+        
+    
+            def on_close(self):
+    
+                self.analysis_manager.stop_analysis()
+    
+                self.executor.shutdown(wait=False)
+    
+                self.root.destroy()
+    
+        

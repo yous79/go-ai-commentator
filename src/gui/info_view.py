@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from config import TARGET_LEVEL
 
 class InfoView(tk.Frame):
     def __init__(self, master, callbacks):
@@ -35,6 +36,16 @@ class InfoView(tk.Frame):
         self.canvas_graph = FigureCanvasTkAgg(self.fig, master=f)
         self.canvas_graph.get_tk_widget().pack(fill=tk.X, padx=10)
         
+        # Skill Level Selector
+        level_frame = tk.Frame(f, bg="#f0f0f0")
+        level_frame.pack(pady=5)
+        tk.Label(level_frame, text="解説モード:", bg="#f0f0f0").pack(side=tk.LEFT, padx=5)
+        self.combo_level = ttk.Combobox(level_frame, values=["1桁級（中級者）", "2桁級（初心者）"], state="readonly", width=15)
+        init_val = "1桁級（中級者）" if TARGET_LEVEL == "intermediate" else "2桁級（初心者）"
+        self.combo_level.set(init_val)
+        self.combo_level.pack(side=tk.LEFT)
+        self.combo_level.bind("<<ComboboxSelected>>", self._on_level_changed)
+
         # Action Buttons
         btn_frame = tk.Frame(f, bg="#f0f0f0")
         btn_frame.pack(pady=10)
@@ -147,8 +158,26 @@ class InfoView(tk.Frame):
         self.txt_term_desc.config(state="disabled")
         self.btn_visualize.config(state="normal" if can_visualize else "disabled")
 
-    def _on_visualize_click(self):
-        selection = self.list_terms.curselection()
-        if selection:
-            term_name = self.list_terms.get(selection[0])
-            self.callbacks['visualize_term'](term_name)
+        def _on_visualize_click(self):
+
+            selection = self.list_terms.curselection()
+
+            if selection:
+
+                term_name = self.list_terms.get(selection[0])
+
+                self.callbacks['visualize_term'](term_name)
+
+    
+
+        def _on_level_changed(self, event):
+
+            val = self.combo_level.get()
+
+            level_key = "intermediate" if "1桁級" in val else "beginner"
+
+            if 'on_level_change' in self.callbacks:
+
+                self.callbacks['on_level_change'](level_key)
+
+    
