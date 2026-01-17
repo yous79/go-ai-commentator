@@ -1,5 +1,6 @@
 from core.shapes.base_shape import BaseShape
 from core.point import Point
+from core.game_board import Color
 import copy
 
 class GenericPatternDetector(BaseShape):
@@ -72,6 +73,7 @@ class GenericPatternDetector(BaseShape):
                 if target_el.get("state") not in ["self", "last"]: 
                     continue
                 
+                # Point + tuple は Point.__add__ で処理される
                 origin = context.last_move - tuple(target_el["offset"])
                 
                 if self._match_at(context, variant, origin):
@@ -86,36 +88,33 @@ class GenericPatternDetector(BaseShape):
 
     def _match_at(self, context, pattern, origin):
         """特定の原点位置でパターンが一致するか判定する"""
-        from utils.logger import logger
+        last_color_char = context.last_color.value if context.last_color else '.'
+        opp_color_char = self._get_opponent(context.last_color)
         
         for el in pattern["elements"]:
             abs_pos = origin + tuple(el["offset"])
             state_needed = el["state"]
             
-            # 盤外チェック (context.board_size を使用)
+            # 盤外チェック
             if not abs_pos.is_valid(context.board_size):
                 if state_needed == "edge": continue
                 else: return False
             
-            # 石の取得時もサイズを考慮する必要があるため、BaseShapeのメソッドを呼ぶ前にサイズを同期
-            # (detect_facts側で既に同期されているが、念のため)
+            # 石の取得
             self.board_size = context.board_size
             actual = self._get_stone(context.curr_board, abs_pos)
             
             match = False
             if state_needed == "self" or state_needed == "last":
-                match = (actual == context.last_color)
+                match = (actual == last_color_char)
             elif state_needed == "opponent":
-                opp = self._get_opponent(context.last_color)
-                match = (actual == opp)
+                match = (actual == opp_color_char)
             elif state_needed == "empty":
                 match = (actual == '.')
             elif state_needed == "any":
                 match = (actual != 'edge')
             
             if not match:
-                # 非常に詳細なログ（必要に応じてコメントアウト）
-                # logger.debug(f"  Match fail at {abs_pos.to_gtp()}: need {state_needed}, got {actual}", layer="SHAPE_ENGINE")
                 return False
             
         return True

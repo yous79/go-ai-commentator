@@ -1,15 +1,17 @@
 from core.point import Point
+from core.game_board import GameBoard, Color
 from core.inference_fact import InferenceFact, FactCategory
 from core.shapes.generic_detector import GenericPatternDetector
 from core.shapes.ponnuki import PonnukiDetector
 from core.shapes.atari import AtariDetector
 import os
 import json
+from typing import Optional
 from config import KNOWLEDGE_DIR
 
 class DetectionContext:
     """検知に必要な盤面コンテキストを一元管理するクラス"""
-    def __init__(self, curr_board, prev_board, board_size, analysis_result=None):
+    def __init__(self, curr_board: GameBoard, prev_board: Optional[GameBoard], board_size: int, analysis_result=None):
         self.curr_board = curr_board
         self.prev_board = prev_board
         self.board_size = board_size
@@ -22,18 +24,19 @@ class DetectionContext:
             return None, None
         for r in range(self.board_size):
             for c in range(self.board_size):
-                if self.curr_board.get(r, c) and not self.prev_board.get(r, c):
-                    return Point(r, c), self.curr_board.get(r, c)
+                p = Point(r, c)
+                color = self.curr_board.get(p)
+                if color and self.prev_board.is_empty(p):
+                    return p, color
         return None, None
 
-    def get_ownership(self, r, c):
+    def get_ownership(self, pt: Point):
         """指定座標のOwnershipを取得する (黒地: +1.0, 白地: -1.0)"""
         ownership = self.analysis_result.get("ownership")
         if not ownership:
             return 0.0
         
-        # KataGoのOwnershipは通常 1D配列 (row-major)
-        idx = r * self.board_size + c
+        idx = pt.row * self.board_size + pt.col
         if 0 <= idx < len(ownership):
             return ownership[idx]
         return 0.0
@@ -54,6 +57,8 @@ class ShapeDetector:
                 try:
                     with open(path, "r", encoding="utf-8") as f:
                         pattern_def = json.load(f)
+                        # GenericPatternDetector internally might need update too, 
+                        # but for now we focus on the main interface.
                         detector = GenericPatternDetector(pattern_def, self.board_size)
                         self.strategies.append(detector)
                 except Exception as e:
@@ -70,7 +75,7 @@ class ShapeDetector:
             if key not in loaded_keys:
                 self.strategies.append(cls(self.board_size))
 
-    def detect_facts(self, curr_board, prev_board=None, analysis_result=None) -> list[InferenceFact]:
+    def detect_facts(self, curr_board: GameBoard, prev_board: Optional[GameBoard] = None, analysis_result=None) -> list[InferenceFact]:
         """形状検知結果を InferenceFact のリストとして返す"""
         actual_size = curr_board.side
         context = DetectionContext(curr_board, prev_board, actual_size, analysis_result)
@@ -106,78 +111,39 @@ class ShapeDetector:
         move_point = context.last_move
         move_color = context.last_color
         
-        if not move_point or not context.analysis_result:
+        if not move_point or not move_color or not context.analysis_result:
             return []
 
-        # 判定基準: 相手の石に干渉しているが、その石はすでに「死んでいる(Ownershipが自分側)」
-        
-        # 自分の手番の色 (move_color)
         # 相手の色
-        opp_color = "white" if move_color == "black" else "black"
+        opp_color = move_color.opposite()
         
         # 自分の地としての確信度閾値 (0.8以上ならほぼ確定地＝中の相手石は死に石)
         OWNERSHIP_THRESHOLD = 0.8
         
-        # 周囲の確認
-        adjacents = []
-        r, c = move_point.row, move_point.col
-        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            nr, nc = r + dr, c + dc
-            if 0 <= nr < context.board_size and 0 <= nc < context.board_size:
-                adjacents.append(Point(nr, nc))
-
         kasu_ishi_detected = False
         
-        for adj in adjacents:
-            stone = context.curr_board.get(adj.row, adj.col)
-            # 相手の石が隣にあるか？ (または直前に取ったか？ 取った場合は盤面からは消えているため prev_board で確認が必要だが、
-            # ここでは『死に石のそばに打った』『死に石を囲った』ケースを主眼に置く。
-            # 取ったケース(Capture)は石が消えているため curr_board では判定できないが、
-            # Ownershipは『取られた後の盤面』で計算されるため、取った場所は『自分の地』になっているはず。)
+        for adj in move_point.neighbors(context.board_size):
+            stone = context.curr_board.get(adj)
             
             target_is_dead = False
             
             # ケースA: 隣に相手の石があるが、それは死んでいる
             if stone == opp_color:
-                owner_val = context.get_ownership(adj.row, adj.col)
-                # 自分が黒(Black)なら、Ownershipが +1.0 に近ければ黒地＝白石は死んでいる
-                if move_color == "black" and owner_val > OWNERSHIP_THRESHOLD:
+                owner_val = context.get_ownership(adj)
+                # 自分が黒なら、Ownershipが +1.0 に近ければ黒地＝白石は死んでいる
+                if move_color == Color.BLACK and owner_val > OWNERSHIP_THRESHOLD:
                     target_is_dead = True
-                # 自分が白(White)なら、Ownershipが -1.0 に近ければ白地＝黒石は死んでいる
-                elif move_color == "white" and owner_val < -OWNERSHIP_THRESHOLD:
+                # 自分が白なら、Ownershipが -1.0 に近ければ白地＝黒石は死んでいる
+                elif move_color == Color.WHITE and owner_val < -OWNERSHIP_THRESHOLD:
                     target_is_dead = True
             
             if target_is_dead:
                 kasu_ishi_detected = True
                 break
-        
-        # ケースB: 石を取った場合 (直前には石があったが今は消えている)
-        if not kasu_ishi_detected and context.prev_board:
-            # 自分の着手位置、またはその周囲で石が消えたか？
-            # 単純化のため、着手した場所自体は石が置かれたので除外。
-            # アタリから抜いた場合、隣接する位置の石が消えているはず。
-            for adj in adjacents:
-                prev_stone = context.prev_board.get(adj.row, adj.col)
-                curr_stone = context.curr_board.get(adj.row, adj.col)
-                if prev_stone == opp_color and curr_stone is None:
-                    # 石が消えた＝取った
-                    # 取った後の地点(adj)のOwnershipを確認
-                    owner_val = context.get_ownership(adj.row, adj.col)
-                    # 取ったのだから当然自分の地になっているはずだが、
-                    # 重要なのは『取る前から死んでいたか』...判定は難しいが、
-                    # 『取った結果、その場所が完全に自分の地(1.0/-1.0)』であり、かつ
-                    # 『評価値上の利益が少ない』場合にカス石と言える。
-                    # ここではシンプルに「取った場所が完全に自分の地になっている」なら
-                    # それは「取らなくても死んでいたかもしれない」可能性を示唆するが、
-                    # 確実に判定するには「取る前のOwnership」が必要。
-                    # しかし簡易ロジックとして、「相手の石を取った」事実と、外部から評価損情報があれば結合できる。
-                    # 今回は『Ownershipによる死に石判定』に絞るため、ケースBは『取った後の地が確定地』であることだけ確認し、
-                    # あとはプロンプトで「評価損なら指摘せよ」とする。
-                    pass
 
         if kasu_ishi_detected:
             facts.append(InferenceFact(
-                FactCategory.MISTAKE, # 形状(SHAPE)というよりは判断ミス(MISTAKE)
+                FactCategory.MISTAKE, 
                 "すでに死んでいる石（カス石）に対して手入れが行われました。",
                 severity=4,
                 metadata={"type": "kasu_ishi_interference"}
@@ -185,7 +151,10 @@ class ShapeDetector:
 
         return facts
 
-    def detect_ids(self, curr_board, prev_board=None):
+    def detect_ids(self, curr_board: GameBoard, prev_board: Optional[GameBoard] = None):
+        """(Legacy互換) 検知された形状IDのリストを返す"""
+        facts = self.detect_facts(curr_board, prev_board)
+        return list(set([f.metadata.get("key", "unknown") for f in facts]))
         """(Legacy互換) 検知された形状IDのリストを返す"""
         facts = self.detect_facts(curr_board, prev_board)
         return list(set([f.metadata.get("key", "unknown") for f in facts]))

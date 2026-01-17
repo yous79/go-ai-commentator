@@ -1,4 +1,4 @@
-from sgfmill import boards
+from core.game_board import GameBoard, Color
 from core.coordinate_transformer import CoordinateTransformer
 from core.point import Point
 from dataclasses import dataclass
@@ -7,11 +7,11 @@ from typing import List, Optional, Tuple
 @dataclass
 class SimulationContext:
     """特定の局面の状態（盤面、履歴、最新手など）をカプセル化したクラス"""
-    board: any
-    prev_board: Optional[any]
+    board: GameBoard
+    prev_board: Optional[GameBoard]
     history: List[List[str]]
     last_move: Optional[Point]
-    last_color: Optional[str] # 'b' or 'w'
+    last_color: Optional[Color]
     board_size: int
 
 class BoardSimulator:
@@ -20,36 +20,11 @@ class BoardSimulator:
     def __init__(self, board_size=19):
         self.board_size = board_size
 
-    @staticmethod
-    def get_group_and_liberties(board, start_p: Point) -> Tuple[set, set]:
-        """指定した座標の石を含むグループと、その呼吸点（空点）の集合を返す"""
-        color = board.get(start_p.row, start_p.col)
-        if not color:
-            return set(), set()
-        
-        size = board.side
-        group = {start_p}
-        liberties = set()
-        queue = [start_p]
-        
-        while queue:
-            curr = queue.pop(0)
-            for neighbor in curr.neighbors(size):
-                n_color = board.get(neighbor.row, neighbor.col)
-                if n_color == color:
-                    if neighbor not in group:
-                        group.add(neighbor)
-                        queue.append(neighbor)
-                elif n_color is None:
-                    liberties.add(neighbor)
-        
-        return group, liberties
-
     def reconstruct_to_context(self, history, board_size=None) -> SimulationContext:
         """履歴から SimulationContext を生成する（唯一の復元口）"""
         sz = board_size or self.board_size
-        curr = boards.Board(sz)
-        prev = boards.Board(sz)
+        curr = GameBoard(sz)
+        prev = GameBoard(sz)
         
         for i, move_data in enumerate(history):
             if not isinstance(move_data, (list, tuple)) or len(move_data) < 2:
@@ -59,18 +34,19 @@ class BoardSimulator:
             if not m_str or (isinstance(m_str, str) and m_str.lower() == "pass"):
                 continue
             
+            color = Color.from_str(c_str)
             idx = CoordinateTransformer.gtp_to_indices_static(m_str)
-            if idx:
-                row, col = idx
+            if idx and color:
+                pt = Point(idx[0], idx[1])
                 if i < len(history) - 1:
-                    prev.play(row, col, c_str.lower())
+                    prev.play(pt, color)
                 try:
-                    curr.play(row, col, c_str.lower())
+                    curr.play(pt, color)
                 except: pass # 非合法手は無視
 
         last_move_str = history[-1][1] if history else None
         last_move_pt = Point.from_gtp(last_move_str) if (last_move_str and last_move_str != "pass") else None
-        last_color = history[-1][0].lower() if history else None
+        last_color = Color.from_str(history[-1][0]) if history else None
 
         return SimulationContext(
             board=curr,
@@ -87,13 +63,13 @@ class BoardSimulator:
         
         # 開始色の決定
         if starting_color:
-            current_color = starting_color.lower()
+            current_color_obj = Color.from_str(starting_color)
         else:
-            last_c = base_ctx.last_color or 'w'
-            current_color = 'b' if last_c == 'w' else 'w'
+            last_c = base_ctx.last_color or Color.WHITE
+            current_color_obj = last_c.opposite()
         
         for move_str in sequence:
-            new_history.append([current_color.upper(), move_str])
-            current_color = 'w' if current_color == 'b' else 'b'
+            new_history.append([current_color_obj.key.upper()[:1], move_str])
+            current_color_obj = current_color_obj.opposite()
             
         return self.reconstruct_to_context(new_history, base_ctx.board_size)

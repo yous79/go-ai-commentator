@@ -1,5 +1,5 @@
 from core.point import Point
-from core.board_simulator import BoardSimulator
+from core.game_board import GameBoard, Color
 from core.inference_fact import InferenceFact, FactCategory
 
 class AtariDetector:
@@ -19,22 +19,19 @@ class AtariDetector:
         for r in range(size):
             for c in range(size):
                 p = Point(r, c)
-                color = board.get(r, c)
-                if color and p not in visited:
-                    # グループとその呼吸点を取得
-                    group, liberties = BoardSimulator.get_group_and_liberties(board, p)
+                color_obj = board.get(p)
+                if color_obj and p not in visited:
+                    # グループとその呼吸点を取得 (GameBoardのメソッドを使用)
+                    group, liberties = board.get_group_and_liberties(p)
                     visited.update(group)
-                    
-                    # print(f"DEBUG: Group at {p.to_gtp()} color={color} liberties={len(liberties)}")
                     
                     if len(liberties) == 1:
                         # アタリ状態を検知
                         lib_point = list(liberties)[0]
-                        color_name = "黒" if color == 'b' else "白"
                         stones_str = ",".join([s.to_gtp() for s in list(group)[:3]])
                         if len(group) > 3: stones_str += "..."
                         
-                        desc = f"{color_name}の石 [{stones_str}] がアタリ（残り呼吸点: {lib_point.to_gtp()}）です。"
+                        desc = f"{color_obj.label}の石 [{stones_str}] がアタリ（残り呼吸点: {lib_point.to_gtp()}）です。"
                         atari_facts.append(desc)
 
         return "info", atari_facts
