@@ -28,6 +28,10 @@ class TestPlayApp(GoAppBase):
         self.root.title("Go Test Play & Shape Detection Debugger (Rev 40.0)")
         self.root.geometry("1200x950")
 
+        # イベント購読
+        event_bus.subscribe(AppEvents.STATUS_MSG_UPDATED, lambda msg: logger.info(f"Status: {msg}", layer="GUI"))
+        # デバッグ用：進捗バーがないためログ出力のみ
+
         # デバッグモード固有の初期化
         self.game.new_game(19) 
         self.transformer = CoordinateTransformer(19)

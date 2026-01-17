@@ -37,6 +37,13 @@ event_bus = EventBus()
 # Event Type Definitions
 class AppEvents:
     MOVE_CHANGED = "MOVE_CHANGED"       # 手番が移動した (data: move_idx)
-    STATE_UPDATED = "STATE_UPDATED"     # 盤面・解析データが更新された (data: AnalysisResult)
+    STATE_UPDATED = "STATE_UPDATED"     # 盤面・解析データが更新された (data: dict)
     LEVEL_CHANGED = "LEVEL_CHANGED"     # 解説レベルが変更された (data: level_id)
     ANALYSIS_COMPLETED = "ANALYSIS_COMPLETED" # 解析が完了した
+    
+    # --- 新規追加 ---
+    BOARD_REDRAW_REQUESTED = "BOARD_REDRAW_REQUESTED" # 盤面の再描画 (data: dict)
+    MISTAKES_UPDATED = "MISTAKES_UPDATED"             # 悪手情報の更新 (data: dict)
+    COMMENTARY_READY = "COMMENTARY_READY"             # 解説テキストの準備完了 (data: str)
+    STATUS_MSG_UPDATED = "STATUS_MSG_UPDATED"         # ステータスバーのメッセージ (data: str)
+    PROGRESS_UPDATED = "PROGRESS_UPDATED"             # 進捗バーの更新 (data: int)

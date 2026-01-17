@@ -1,5 +1,6 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+from utils.event_bus import event_bus, AppEvents
 
 class BoardView(tk.Frame):
     def __init__(self, master, transformer):
@@ -7,13 +8,25 @@ class BoardView(tk.Frame):
         self.transformer = transformer
         self.canvas = tk.Canvas(self, bg="#333", highlightthickness=0)
         self.canvas.pack(fill=tk.BOTH, expand=True)
-        self.current_photo = None
+        
+        # イベント購読
+        event_bus.subscribe(AppEvents.BOARD_REDRAW_REQUESTED, self._on_redraw_requested)
+
+    def _on_redraw_requested(self, data):
+        """外部（App等）からの再描画要求を処理する"""
+        if not data: return
+        image = data.get("image")
+        show_candidates = data.get("show_candidates", False)
+        candidates = data.get("candidates", [])
+        
+        if image:
+            self.update_board(image, show_candidates, candidates)
 
     def bind_click(self, callback):
         self.canvas.bind("<Button-1>", callback)
 
-    def update_board(self, pil_image, show_candidates=False, candidates=None):
-        self.original_image = pil_image
+    def update_board(self, image, show_candidates=False, candidates=None):
+        self.original_image = image
         self.show_candidates = show_candidates
         self.candidates = candidates if candidates else []
         self.refresh_display()

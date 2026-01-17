@@ -36,6 +36,10 @@ class GoReplayApp(GoAppBase):
         self.root.title("Go AI Commentator (Rev 40.0 God-class decomposed)")
         self.root.geometry("1200x950")
 
+        # イベント購読
+        event_bus.subscribe(AppEvents.STATUS_MSG_UPDATED, lambda msg: self.lbl_status.config(text=msg))
+        event_bus.subscribe(AppEvents.PROGRESS_UPDATED, lambda val: self.progress_bar.config(value=val))
+
         # 再生モード固有の初期化
         self.transformer = CoordinateTransformer()
         self.renderer = GoBoardRenderer()
@@ -205,9 +209,12 @@ class GoReplayApp(GoAppBase):
                 msg, d = self.analysis_manager.app_queue.get_nowait()
                 if msg == "set_max": self.progress_bar.config(maximum=d)
                 elif msg == "progress":
-                    self.lbl_status.config(text=f"Progress: {d} / {int(self.progress_bar['maximum'])}")
+                    cur_max = int(self.progress_bar['maximum'])
+                    event_bus.publish(AppEvents.STATUS_MSG_UPDATED, f"Progress: {d} / {cur_max}")
+                    event_bus.publish(AppEvents.PROGRESS_UPDATED, d)
                 elif msg == "done" or msg == "skip":
-                    self.lbl_status.config(text="Analysis Ready")
+                    event_bus.publish(AppEvents.STATUS_MSG_UPDATED, "Analysis Ready")
+                    event_bus.publish(AppEvents.ANALYSIS_COMPLETED)
                     self._sync_analysis_data()
         except queue.Empty: pass
         self.root.after(100, self._start_queue_monitor)
@@ -220,8 +227,9 @@ class GoReplayApp(GoAppBase):
                 with open(p, "r", encoding="utf-8") as f: d = json.load(f)
                 self.game.moves = d.get("moves", [])
                 mb, mw = self.game.calculate_mistakes()
-                for i in range(3):
-                    self._upd_mistake_ui("b", i, mb); self._upd_mistake_ui("w", i, mw)
+                # イベントによる悪手情報の通知
+                event_bus.publish(AppEvents.MISTAKES_UPDATED, {"color": "b", "mistakes": mb})
+                event_bus.publish(AppEvents.MISTAKES_UPDATED, {"color": "w", "mistakes": mw})
                 self.update_display()
             except: pass
 
@@ -351,8 +359,9 @@ class GoReplayApp(GoAppBase):
         self.task_manager.run_task(_task, on_success=_on_success, on_error=_on_error, pre_task=_pre_task)
 
     def _update_commentary_ui(self, text):
-        self.info_view.set_commentary(text)
-        self.info_view.btn_comment.config(state="normal", text="Ask AI Agent")
+        """AI解説の表示を更新する (イベント経由)"""
+        event_bus.publish(AppEvents.COMMENTARY_READY, text)
+        self.info_view.analysis_tab.btn_comment.config(state="normal", text="Ask AI Agent")
 
     def generate_full_report(self):
         """対局レポートを非同期で生成する"""
@@ -510,6 +519,8 @@ class GoReplayApp(GoAppBase):
             if len(text) > 50: # 適当な長さがあれば成功とみなす
                 logger.info("Auto-verification SUCCESS: Commentary generated.", layer="GUI")
                 self.verification_completed = True
+                # 目標達成。即座に終了する
+                self.root.after(1000, self.on_close)
             else:
                 # まだ生成中かもしれないので、もう少し待つ
                 logger.debug("Commentary not ready yet, waiting...", layer="GUI")

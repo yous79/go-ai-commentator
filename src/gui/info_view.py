@@ -14,6 +14,8 @@ class AnalysisTab(tk.Frame):
         
         # イベント購読の開始
         event_bus.subscribe(AppEvents.STATE_UPDATED, self._on_state_updated)
+        event_bus.subscribe(AppEvents.MISTAKES_UPDATED, self._on_mistakes_updated)
+        event_bus.subscribe(AppEvents.COMMENTARY_READY, self.set_commentary)
 
     def _on_state_updated(self, data):
         """解析データが更新された際の処理"""
@@ -25,6 +27,19 @@ class AnalysisTab(tk.Frame):
         wr_history = data.get("winrate_history")
         if wr_history:
             self.update_graph(wr_history, data.get("current_move", 0))
+
+    def _on_mistakes_updated(self, data):
+        """悪手情報の更新通知を受けた際の処理"""
+        # data: {"color": "b"|"w", "mistakes": list}
+        color = data.get("color")
+        mistakes = data.get("mistakes", [])
+        for i in range(3):
+            if i < len(mistakes):
+                sc_drop, wr_drop, m = mistakes[i]
+                text = f"#{m}: -{wr_drop:.1%} / -{sc_drop:.1f}"
+                self.update_mistake_button(color, i, text, "normal")
+            else:
+                self.update_mistake_button(color, i, "-", "disabled")
 
     def _setup_level_selector(self, parent):
         level_frame = tk.Frame(parent, bg="#f0f0f0")
