@@ -27,6 +27,7 @@ class AnalysisResult:
     winrate: float
     score_lead: float
     ownership: Optional[List[float]] = None
+    influence: Optional[List[float]] = None
     candidates: List[MoveCandidate] = field(default_factory=list)
     
     @property
@@ -54,5 +55,6 @@ class AnalysisResult:
             winrate=root.get('winrate', root.get('winrate_black', 0.5)),
             score_lead=root.get('scoreLead', root.get('score_lead_black', 0.0)),
             ownership=d.get('ownership'),
+            influence=d.get('influence'),
             candidates=candidates
         )

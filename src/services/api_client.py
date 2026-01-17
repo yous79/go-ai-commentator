@@ -135,7 +135,8 @@ class GoAPIClient:
             "board_size": board_size,
             "visits": visits,
             "include_pv_shapes": include_pv,
-            "include_ownership": True
+            "include_ownership": True,
+            "include_influence": True
         }
         logger.debug(f"Requesting analysis: history_len={len(history)}, visits={visits}", layer="API_CLIENT")
         resp, err = self._safe_request("POST", "analyze", json=payload, timeout=60)
@@ -143,7 +144,7 @@ class GoAPIClient:
         if resp:
             data = resp.json()
             result = AnalysisResult.from_dict(data)
-            logger.debug(f"Analysis response received: candidates={len(result.candidates)}, has_ownership={result.ownership is not None}", layer="API_CLIENT")
+            logger.debug(f"Analysis response received: candidates={len(result.candidates)}, has_own={result.ownership is not None}, has_inf={result.influence is not None}", layer="API_CLIENT")
             return result
         elif err == "CIRCUIT_OPEN":
             logger.warning("Analysis skipped: Circuit Breaker is OPEN.", layer="API_CLIENT")
