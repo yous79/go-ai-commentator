@@ -57,7 +57,7 @@ class GeminiCommentator:
                 f"- 推奨進行: {', '.join(colored_seq) if colored_seq else 'なし'}\n"
                 f"- 推奨手の将来予測: {best.get('future_shape_analysis', '特になし')}\n"
             )
-            print(f"DEBUG DATA READY: Winrate(B): {ana_data.get('winrate_black')}")
+            logger.debug(f"Analysis Data Ready: Winrate(B): {ana_data.get('winrate_black')}", layer="AI")
 
             # 4. プロンプトの構築
             kn = self.knowledge_manager.get_all_knowledge_text()

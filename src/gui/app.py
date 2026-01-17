@@ -10,6 +10,7 @@ import sys
 import config
 
 from config import OUTPUT_BASE_DIR, load_api_key
+from utils.logger import logger
 from core.game_state import GoGameState
 from core.coordinate_transformer import CoordinateTransformer
 from utils.board_renderer import GoBoardRenderer
@@ -81,7 +82,7 @@ class GoReplayApp:
         if api_key:
             if self.controller.api_client.health_check():
                 self.gemini = GeminiCommentator(api_key)
-                print("AI Services Initialized.")
+                logger.info("AI Services Initialized.", layer="GUI")
 
     def setup_layout(self, callbacks):
         self.root.rowconfigure(1, weight=1)
@@ -423,7 +424,7 @@ class GoReplayApp:
     def on_level_change(self, new_level):
         """解説ターゲットレベルを動的に変更する"""
         config.TARGET_LEVEL = new_level
-        print(f"Commentary Mode changed to: {new_level}")
+        logger.info(f"Commentary Mode changed to: {new_level}", layer="GUI")
 
     def on_close(self):
         self.analysis_manager.stop_analysis()

@@ -12,10 +12,11 @@ if SRC_DIR not in sys.path:
     sys.path.append(SRC_DIR)
 
 from gui.app import GoReplayApp
+from utils.logger import logger
 
 def start_api_server():
     """APIサーバーをクリーンな状態で自動起動し、準備ができるまで待機する"""
-    print("--- System Startup: Initializing Intelligence Infrastructure ---")
+    logger.info("System Startup: Initializing Intelligence Infrastructure", layer="STARTUP")
     kill_process_on_port(8000)
     kill_legacy_katago()
     
@@ -23,7 +24,7 @@ def start_api_server():
     log_file_path = os.path.join(SRC_DIR, "api_server.log")
     
     # サーバーをバックグラウンド起動
-    print(f"Launching API Server: {api_script}")
+    logger.info(f"Launching API Server: {api_script}", layer="STARTUP")
     with open(log_file_path, "w", encoding="utf-8") as log_file:
         proc = subprocess.Popen([sys.executable, api_script], 
                                 stdout=log_file, stderr=log_file, 
@@ -34,13 +35,13 @@ def start_api_server():
         try:
             resp = requests.get("http://127.0.0.1:8000/health", timeout=1)
             if resp.status_code == 200:
-                print("API Server is Ready.")
+                logger.info("API Server is Ready.", layer="STARTUP")
                 return proc
         except:
             time.sleep(1)
-            if i % 5 == 0: print(f"Waiting for API server to initialize... ({i}s)")
+            if i % 5 == 0: logger.info(f"Waiting for API server to initialize... ({i}s)", layer="STARTUP")
             
-    print("Warning: API Server startup timed out. Proceeding anyway...")
+    logger.warning("API Server startup timed out. Proceeding anyway...", layer="STARTUP")
     return proc
 
 if __name__ == "__main__":
@@ -53,7 +54,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         sgf_path = sys.argv[1]
         if os.path.exists(sgf_path):
-            print(f"Auto-loading SGF: {sgf_path}")
+            logger.info(f"Auto-loading SGF: {sgf_path}", layer="STARTUP")
             # APIサーバーの起動時間を考慮して3秒待つ
             root.after(3000, lambda: app.start_analysis(sgf_path))
             
@@ -62,7 +63,7 @@ if __name__ == "__main__":
                 def auto_step():
                     if app.current_move < app.game.total_moves:
                         app.next_move()
-                        print(f"DEBUG TEST: Auto-stepped to move {app.current_move}")
+                        logger.debug(f"Auto-stepped to move {app.current_move}", layer="STARTUP")
                     root.after(2000, auto_step)
                 root.after(10000, auto_step)
             

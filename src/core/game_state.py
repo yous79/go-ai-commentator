@@ -1,4 +1,5 @@
 from sgfmill import sgf, boards
+from utils.logger import logger
 
 class GoGameState:
     def __init__(self):
@@ -19,7 +20,7 @@ class GoGameState:
         self.total_moves = 0
         self.moves = []
         self.marks_data = {0: {"SQ": set(), "TR": set(), "MA": set()}}
-        print(f"DEBUG: New {board_size}x{board_size} game initialized.")
+        logger.info(f"New {board_size}x{board_size} game initialized.", layer="CORE")
 
     def load_sgf(self, path):
         self.sgf_path = path
@@ -32,7 +33,7 @@ class GoGameState:
             self._import_marks_from_sgf()
             self.moves = []
         except Exception as e:
-            print(f"DEBUG ERROR in load_sgf: {e}")
+            logger.error(f"Failed to load SGF: {e}", layer="CORE")
             raise e
 
     def get_metadata(self):
@@ -88,10 +89,10 @@ class GoGameState:
         
         if point in current_set:
             current_set.remove(point)
-            print(f"DEBUG: Removed {mark_type} at {point} (local)")
+            logger.debug(f"Removed {mark_type} at {point} (local)", layer="CORE")
         else:
             current_set.add(point)
-            print(f"DEBUG: Added {mark_type} at {point} (local)")
+            logger.debug(f"Added {mark_type} at {point} (local)", layer="CORE")
         return True
 
     def get_marks_at(self, move_idx):
