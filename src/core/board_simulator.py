@@ -20,6 +20,31 @@ class BoardSimulator:
     def __init__(self, board_size=19):
         self.board_size = board_size
 
+    @staticmethod
+    def get_group_and_liberties(board, start_p: Point) -> Tuple[set, set]:
+        """指定した座標の石を含むグループと、その呼吸点（空点）の集合を返す"""
+        color = board.get(start_p.row, start_p.col)
+        if not color:
+            return set(), set()
+        
+        size = board.side
+        group = {start_p}
+        liberties = set()
+        queue = [start_p]
+        
+        while queue:
+            curr = queue.pop(0)
+            for neighbor in curr.neighbors(size):
+                n_color = board.get(neighbor.row, neighbor.col)
+                if n_color == color:
+                    if neighbor not in group:
+                        group.add(neighbor)
+                        queue.append(neighbor)
+                elif n_color is None:
+                    liberties.add(neighbor)
+        
+        return group, liberties
+
     def reconstruct_to_context(self, history, board_size=None) -> SimulationContext:
         """履歴から SimulationContext を生成する（唯一の復元口）"""
         sz = board_size or self.board_size

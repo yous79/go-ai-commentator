@@ -2,6 +2,7 @@ from core.point import Point
 from core.inference_fact import InferenceFact, FactCategory
 from core.shapes.generic_detector import GenericPatternDetector
 from core.shapes.ponnuki import PonnukiDetector
+from core.shapes.atari import AtariDetector
 import os
 import json
 from config import KNOWLEDGE_DIR
@@ -62,7 +63,8 @@ class ShapeDetector:
         """動的解析が必要なレガシー（ハイブリッド）戦略を読み込む"""
         loaded_keys = {getattr(s, "key", "") for s in self.strategies}
         legacy_list = [
-            (PonnukiDetector, "ponnuki")
+            (PonnukiDetector, "ponnuki"),
+            (AtariDetector, "atari")
         ]
         for cls, key in legacy_list:
             if key not in loaded_keys:
