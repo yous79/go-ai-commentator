@@ -20,35 +20,28 @@ from config import KNOWLEDGE_DIR, load_api_key
 from services.ai_commentator import GeminiCommentator
 from gui.controller import AppController
 from utils.logger import logger
+from gui.base_app import GoAppBase
 
-class TestPlayApp:
+class TestPlayApp(GoAppBase):
     def __init__(self, root):
-        self.root = root
+        super().__init__(root)
         self.root.title("Go Test Play & Shape Detection Debugger (Rev 40.0)")
         self.root.geometry("1200x950")
 
-        # Core Modules
-        self.game = GoGameState()
-        self.game.new_game(19)
-        self.controller = AppController(self.game)
+        # デバッグモード固有の初期化
+        self.game.new_game(19) 
         self.transformer = CoordinateTransformer(19)
         self.renderer = GoBoardRenderer(19)
         self.detector = ShapeDetector(19)
         self.simulator = BoardSimulator() 
         self.knowledge_manager = KnowledgeManager(KNOWLEDGE_DIR)
         self.visualizer = TermVisualizer()
-        self.gemini = None
-        
-        # Async Task Manager
-        self.task_manager = AsyncTaskManager(root, max_workers=2)
 
         # UI State
         self.current_move = 0
         self.show_numbers = tk.BooleanVar(value=True)
         self.current_tool = tk.StringVar(value="stone")
         self.review_stones = []
-
-        self._init_ai()
 
         callbacks = {
             'comment': self.generate_commentary,
@@ -64,11 +57,6 @@ class TestPlayApp:
         self.setup_layout(callbacks)
         self._load_dictionary_terms()
         self.update_display()
-
-    def _init_ai(self):
-        api_key = load_api_key()
-        if api_key:
-            self.gemini = GeminiCommentator(api_key)
 
     def setup_layout(self, callbacks):
         # 1. Top Frame
@@ -179,7 +167,7 @@ class TestPlayApp:
             return {"text": text, "rec_path": rec_path, "thr_path": thr_path}
 
         def _on_success(res):
-            self.info_view.set_commentary(res["text"])
+            self.info_view.analysis_tab.set_commentary(res["text"])
             if res["rec_path"]:
                 self._show_image_popup("AI Recommended Plan", res["rec_path"])
             if res["thr_path"]:
@@ -187,7 +175,7 @@ class TestPlayApp:
             self.info_view.analysis_tab.btn_comment.config(state="normal", text="Ask AI Agent")
 
         def _on_error(e):
-            self.info_view.set_commentary(f"Error: {str(e)}")
+            self.info_view.analysis_tab.set_commentary(f"Error: {str(e)}")
             self.info_view.analysis_tab.btn_comment.config(state="normal", text="Ask AI Agent")
 
         def _pre_task():
@@ -241,10 +229,6 @@ class TestPlayApp:
                 self.game.toggle_mark(self.current_move, row, col, tool)
                 self.update_display()
 
-    def on_close(self):
-        self.task_manager.shutdown()
-        self.root.destroy()
-
     def pass_move(self):
         color = "B" if (self.current_move % 2 == 0) else "W"
         if self.game.add_move(self.current_move, color, None, None):
@@ -258,7 +242,7 @@ class TestPlayApp:
         img = self.renderer.render(board, last_move=None, analysis_text="", 
                                    history=history, show_numbers=self.show_numbers.get(),
                                    marks=self.game.get_marks_at(self.current_move),
-                                   review_stones=self.review_stones)
+                                   review_stones=None)
         file_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG files", "*.png")])
         if file_path: img.save(file_path)
 
@@ -275,10 +259,10 @@ class TestPlayApp:
                 combined_h.append([color, CoordinateTransformer.indices_to_gtp_static(r, c)])
         
         try:
-            # 2. 統合された履歴からシミュレータで盤面を復元（ここでアゲハマ処理が行われる）
+            # 2. 統合された履歴からシミュレータで盤面を復元
             curr_ctx = self.simulator.reconstruct_to_context(combined_h, self.game.board_size)
             
-            # 3. 復元された最新盤面をレンダリング（review_stonesの上書きは不要になる）
+            # 3. 復元された最新盤面をレンダリング
             img = self.renderer.render(curr_ctx.board, last_move=None, analysis_text=info_text, 
                                        history=combined_h, show_numbers=self.show_numbers.get(),
                                        marks=self.game.get_marks_at(self.current_move))
@@ -298,5 +282,3 @@ class TestPlayApp:
             self.info_view.analysis_tab.set_commentary(text)
         except Exception as e:
             self.info_view.analysis_tab.set_commentary(f"Display Error: {e}")
-            import traceback
-            traceback.print_exc()

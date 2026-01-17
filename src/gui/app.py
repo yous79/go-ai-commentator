@@ -28,31 +28,21 @@ from utils.event_bus import event_bus, AppEvents
 from gui.board_view import BoardView
 from gui.info_view import InfoView
 from gui.controller import AppController
+from gui.base_app import GoAppBase
 
-class GoReplayApp:
+class GoReplayApp(GoAppBase):
     def __init__(self, root):
-        self.root = root
-        self.root.title("Go AI Commentator (Rev 33.0 MVC)")
+        super().__init__(root)
+        self.root.title("Go AI Commentator (Rev 40.0 God-class decomposed)")
         self.root.geometry("1200x950")
 
-        # Core Engine & State
-        self.game = GoGameState()
-        self.controller = AppController(self.game)
-        self.command_invoker = CommandInvoker()
+        # 再生モード固有の初期化
         self.transformer = CoordinateTransformer()
         self.renderer = GoBoardRenderer()
         self.visualizer = TermVisualizer()
-        self.simulator = BoardSimulator() # シミュレーターを保持
+        self.simulator = BoardSimulator() 
         self.knowledge_manager = KnowledgeManager(KNOWLEDGE_DIR)
-        self.gemini = None
-        
-        # Async Task Manager
-        self.task_manager = AsyncTaskManager(root, max_workers=3)
-        
-        # イベント購読
-        event_bus.subscribe(AppEvents.LEVEL_CHANGED, self.on_level_change)
-        
-        self._init_ai()
+        self.command_invoker = CommandInvoker()
         
         self.analysis_manager = AnalysisManager(queue.Queue(), self.renderer)
         self.report_generator = None
@@ -63,7 +53,7 @@ class GoReplayApp:
         self.moves_m_b = [None] * 3
         self.moves_m_w = [None] * 3
 
-        # Callbacks including Dictionary logic
+        # Callbacks
         callbacks = {
             'comment': self.generate_commentary, 
             'report': self.generate_full_report,
@@ -73,8 +63,7 @@ class GoReplayApp:
             'update_display': self.update_display,
             'goto_move': self.show_image,
             'on_term_select': self.on_term_select,
-            'visualize_term': self.visualize_term,
-            'on_level_change': self.on_level_change
+            'visualize_term': self.visualize_term
         }
 
         self.setup_layout(callbacks)
@@ -84,14 +73,6 @@ class GoReplayApp:
         self.root.bind("<Left>", lambda e: self.prev_move())
         self.root.bind("<Right>", lambda e: self.next_move())
         self.root.bind("<Configure>", self.on_resize)
-        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
-
-    def _init_ai(self):
-        api_key = load_api_key()
-        if api_key:
-            if self.controller.api_client.health_check():
-                self.gemini = GeminiCommentator(api_key)
-                logger.info("AI Services Initialized.", layer="GUI")
 
     def setup_layout(self, callbacks):
         self.root.rowconfigure(1, weight=1)
@@ -489,15 +470,9 @@ class GoReplayApp:
         m = self.moves_m_b[idx] if color == "b" else self.moves_m_w[idx]
         if m is not None: self.show_image(m)
 
-    def on_level_change(self, new_level):
-        """解説ターゲットレベルを動的に変更する"""
-        config.TARGET_LEVEL = new_level
-        logger.info(f"Commentary Mode changed to: {new_level}", layer="GUI")
-
     def on_close(self):
         self.analysis_manager.stop_analysis()
-        self.task_manager.shutdown()
-        self.root.destroy()
+        super().on_close()
 
     def run_auto_verify(self, sgf_path: str):
         """アプリの主要機能を自動検証する (タイムアウト付き)"""
