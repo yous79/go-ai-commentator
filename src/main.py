@@ -45,14 +45,10 @@ def start_api_server():
     return proc
 
 if __name__ == "__main__":
-
     api_proc = start_api_server()
-
     
-
     root = tk.Tk()
-
-    app = GoReplayApp(root)
+    app = GoReplayApp(root, api_proc=api_proc)
 
 
 

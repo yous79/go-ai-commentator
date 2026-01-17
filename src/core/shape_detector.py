@@ -32,7 +32,7 @@ class DetectionContext:
 
     def get_ownership(self, pt: Point):
         """指定座標のOwnershipを取得する (黒地: +1.0, 白地: -1.0)"""
-        ownership = self.analysis_result.get("ownership")
+        ownership = self.analysis_result.ownership
         if not ownership:
             return 0.0
         

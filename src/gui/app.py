@@ -31,8 +31,8 @@ from gui.controller import AppController
 from gui.base_app import GoAppBase
 
 class GoReplayApp(GoAppBase):
-    def __init__(self, root):
-        super().__init__(root)
+    def __init__(self, root, api_proc=None):
+        super().__init__(root, api_proc=api_proc)
         self.root.title("Go AI Commentator (Rev 40.0 God-class decomposed)")
         self.root.geometry("1200x950")
 

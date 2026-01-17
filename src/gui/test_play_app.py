@@ -23,8 +23,8 @@ from utils.logger import logger
 from gui.base_app import GoAppBase
 
 class TestPlayApp(GoAppBase):
-    def __init__(self, root):
-        super().__init__(root)
+    def __init__(self, root, api_proc=None):
+        super().__init__(root, api_proc=api_proc)
         self.root.title("Go Test Play & Shape Detection Debugger (Rev 40.0)")
         self.root.geometry("1200x950")
 

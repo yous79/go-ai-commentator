@@ -11,8 +11,9 @@ from utils.logger import logger
 class GoAppBase(ABC):
     """すべての囲碁アプリ（メイン、デバッグ、練習用など）の共通基底クラス"""
     
-    def __init__(self, root: tk.Tk):
+    def __init__(self, root: tk.Tk, api_proc=None):
         self.root = root
+        self.api_proc = api_proc
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
         
         # 1. コア・サービスと状態の初期化
@@ -50,8 +51,15 @@ class GoAppBase(ABC):
         logger.info(f"Commentary Mode changed to: {new_level}", layer="GUI")
 
     def on_close(self):
-        """終了時のクリーンアップ処理（共通）"""
-        logger.info("Closing application...", layer="GUI")
-        # 解析の中断などはControllerやManagerの責務に後ほど集約
-        self.task_manager.shutdown()
-        self.root.destroy()
+        """終了時のクリーンアップ処理（プロセスを強制終了して高速化）"""
+        logger.info("Closing application (Force Exit)...", layer="GUI")
+        
+        # 1. APIプロセスの強制終了
+        if self.api_proc:
+            try:
+                self.api_proc.kill()
+            except: pass
+            
+        # 2. 自分自身のプロセスを即座に終了 (スレッドのjoin待ちをスキップ)
+        import os
+        os._exit(0)
