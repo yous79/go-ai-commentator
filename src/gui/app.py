@@ -481,5 +481,39 @@ class GoReplayApp:
         self.analysis_manager.stop_analysis()
         self.task_manager.shutdown()
         self.root.destroy()
+
+    def run_auto_verify(self, sgf_path: str):
+        """アプリの主要機能を自動検証する"""
+        logger.info(f"Starting auto-verification with: {sgf_path}", layer="GUI")
+        if not os.path.exists(sgf_path):
+            logger.error(f"Verification failed: {sgf_path} not found.", layer="GUI")
+            return
+
+        # 1. SGFロード
+        self.start_analysis(sgf_path)
+
+        def _wait_for_analysis():
+            if self.analysis_manager.analyzing:
+                logger.debug("Waiting for analysis to complete...", layer="GUI")
+                self.root.after(2000, _wait_for_analysis)
+            else:
+                logger.info("Analysis completed. Proceeding to commentary check.", layer="GUI")
+                # 2. 5手目にジャンプ
+                self.show_image(5)
+                # 3. 解説生成を実行
+                self.root.after(1000, self.generate_commentary)
+                # 4. 結果確認の準備 (Textエリアを監視)
+                self.root.after(5000, _check_commentary_result)
+
+        def _check_commentary_result():
+            # InfoViewリファクタリングによりパスが変更された
+            text = self.info_view.analysis_tab.txt_commentary.get("1.0", tk.END).strip()
+            if len(text) > 50: # 適当な長さがあれば成功とみなす
+                logger.info("Auto-verification SUCCESS: Commentary generated.", layer="GUI")
+                # 検証モード時は自動で閉じることも可能だが、確認のため開いたままにする
+            else:
+                logger.error("Auto-verification FAILED: Commentary area is empty.", layer="GUI")
+
+        self.root.after(2000, _wait_for_analysis)
     
         

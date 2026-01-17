@@ -53,15 +53,15 @@ class AnalysisOrchestrator:
                         collector.facts.append(f)
 
         # 5. 安定度分析
-        ownership = ana_data.get('ownership')
+        ownership = ana_data.ownership
         if ownership:
             stability_facts = self.stability_analyzer.analyze_to_facts(curr_ctx.board, ownership)
             for f in stability_facts: collector.facts.append(f)
 
         # 6. 基本統計
-        wr = ana_data.get('winrate_black', 0.5)
-        sl = ana_data.get('score_lead_black', 0.0)
-        collector.add(FactCategory.STRATEGY, f"現在の勝率(黒): {wr:.1%}, 目数差: {sl:.1f}目", severity=3)
+        wr = ana_data.winrate
+        sl = ana_data.score_lead
+        collector.add(FactCategory.STRATEGY, f"現在の勝率(黒): {ana_data.winrate_label}, 目数差: {sl:.1f}目", severity=3)
 
         # 7. 解析データ自体の保持（後続のPV表示などのため）
         collector.raw_analysis = ana_data 

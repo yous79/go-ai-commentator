@@ -159,8 +159,7 @@ class GoAPIClient:
             return None
 
         # 自分の最善手のPVを取得
-        curr_cands = current_res.get("top_candidates", []) or current_res.get("candidates", [])
-        best_pv = curr_cands[0].get("pv", [])[:3] if curr_cands else []
+        best_pv = current_res.candidates[0].pv[:3] if current_res.candidates else []
 
         # 2. パスをした局面の解析（相手の連打PVを取得）
         color = "W" if history and history[-1][0] == "B" else "B"
@@ -169,13 +168,12 @@ class GoAPIClient:
         if not pass_res: 
             return None
 
-        score_normal = current_res.get("score_lead_black", 0)
-        score_pass = pass_res.get("score_lead_black", 0)
+        score_normal = current_res.score_lead
+        score_pass = pass_res.score_lead
         urgency = abs(score_normal - score_pass)
         
         # 相手の連打手順を取得
-        pass_cands = pass_res.get("top_candidates", []) or pass_res.get("candidates", [])
-        opponent_pv = pass_cands[0].get("pv", [])[:3] if pass_cands else []
+        opponent_pv = pass_res.candidates[0].pv[:3] if pass_res.candidates else []
 
         logger.debug(f"Urgency Results: best_pv={best_pv}, opponent_pv={opponent_pv}", layer="API_CLIENT")
 

@@ -45,26 +45,47 @@ def start_api_server():
     return proc
 
 if __name__ == "__main__":
+
     api_proc = start_api_server()
+
     
+
     root = tk.Tk()
+
     app = GoReplayApp(root)
 
+
+
+    # 検証モードのチェック
+
+    is_verify = "--verify" in sys.argv
+
+
+
     # コマンドライン引数があればSGFを自動ロード
-    if len(sys.argv) > 1:
-        sgf_path = sys.argv[1]
-        if os.path.exists(sgf_path):
-            logger.info(f"Auto-loading SGF: {sgf_path}", layer="STARTUP")
-            # APIサーバーの起動時間を考慮して3秒待つ
-            root.after(3000, lambda: app.start_analysis(sgf_path))
+
+    sgf_to_load = None
+
+    if len(sys.argv) > 1 and not sys.argv[1].startswith("--"):
+
+        sgf_to_load = sys.argv[1]
+
+    
+
+    if is_verify:
+
+        logger.info("Auto-verification mode enabled.", layer="STARTUP")
+
+        # サーバー起動を待ってから検証開始
+
+        root.after(4000, lambda: app.run_auto_verify("test.sgf"))
+
+    elif sgf_to_load and os.path.exists(sgf_to_load):
+
+        logger.info(f"Auto-loading SGF: {sgf_to_load}", layer="STARTUP")
+
+        root.after(3000, lambda: app.start_analysis(sgf_to_load))
+
             
-            # テスト用：解析が進んだら自動で手番を進める (第2引数がある場合)
-            if len(sys.argv) > 2:
-                def auto_step():
-                    if app.current_move < app.game.total_moves:
-                        app.next_move()
-                        logger.debug(f"Auto-stepped to move {app.current_move}", layer="STARTUP")
-                    root.after(2000, auto_step)
-                root.after(10000, auto_step)
-            
+
     root.mainloop()

@@ -124,17 +124,18 @@ class AnalysisManager:
                     if not res: continue
                     m_num, ans = res
                     if ans:
-                        move_data = ans
+                        import dataclasses
+                        move_data = dataclasses.asdict(ans)
                         move_data["move_number"] = m_num
                         # Alias for UI
-                        move_data["winrate"] = ans.get("winrate_black")
-                        move_data["score"] = ans.get("score_lead_black")
-                        move_data["candidates"] = ans.get("top_candidates", [])
+                        move_data["winrate"] = ans.winrate
+                        move_data["score"] = ans.score_lead
+                        move_data["candidates"] = [dataclasses.asdict(c) for c in ans.candidates]
                         
                         log["moves"][m_num] = move_data
                         
                         task_info = all_tasks[m_num]
-                        img_text = f"Move {m_num} | Winrate(B): {move_data['winrate']:.1%} | Score(B): {move_data['score']:.1f}"
+                        img_text = f"Move {m_num} | Winrate(B): {ans.winrate_label} | Score(B): {ans.score_lead:.1f}"
                         self.image_writer.add_task(task_info["board"], None, img_text, task_info["history"], m_num)
                         
                         completed_count += 1

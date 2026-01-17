@@ -1,6 +1,8 @@
-﻿from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont
 import os
 from core.coordinate_transformer import CoordinateTransformer
+from core.point import Point
+from core.game_board import Color
 
 class GoBoardRenderer:
     def __init__(self, board_size=19, image_size=850):
@@ -29,7 +31,8 @@ class GoBoardRenderer:
             w, h = right - left, bottom - top
             draw.text((x - w / 2, y - h / 2 - top), text, font=font, fill=fill)
         except:
-            w, h = draw.textsize(text, font=font)
+            # textsize is deprecated but as fallback
+            w, h = 20, 20 
             draw.text((x - w / 2, y - h / 2), text, font=font, fill=fill)
 
     def render(self, board, last_move=None, analysis_text="", history=None, show_numbers=False, marks=None, review_stones=None):
@@ -63,13 +66,14 @@ class GoBoardRenderer:
         rad = gs // 2 - 2
         for r in range(sz):
             for c in range(sz):
-                color = board.get(r, c)
+                p = Point(r, c)
+                color = board.get(p)
                 if color:
                     px, py = self.transformer.indices_to_pixel(r, c)
-                    fill_c = self.color_black if color == 'b' else self.color_white
+                    fill_c = self.color_black if color == Color.BLACK else self.color_white
                     draw.ellipse([px-rad, py-rad, px+rad, py+rad], fill=fill_c, outline="black")
                     if show_numbers and (r, c) in stone_to_num:
-                        num_c = "white" if color == 'b' else "black"
+                        num_c = "white" if color == Color.BLACK else "black"
                         num_s = str(stone_to_num[(r, c)])
                         f_sz = int(rad * 1.2) if len(num_s) <= 2 else int(rad * 0.9)
                         try: fn = ImageFont.truetype("arial.ttf", f_sz)
@@ -77,10 +81,11 @@ class GoBoardRenderer:
                         self._draw_centered_text(draw, px, py, num_s, fn, num_c)
 
         if review_stones:
-            for (r, c), color, num in review_stones:
+            for (r, c), color_str, num in review_stones:
                 px, py = self.transformer.indices_to_pixel(r, c)
-                fill_c = self.color_black if color.lower() == 'b' else self.color_white
-                num_c = "white" if color.lower() == 'b' else "black"
+                color = Color.from_str(color_str)
+                fill_c = self.color_black if color == Color.BLACK else self.color_white
+                num_c = "white" if color == Color.BLACK else "black"
                 draw.ellipse([px-rad, py-rad, px+rad, py+rad], fill=fill_c, outline="red", width=2)
                 num_s = str(num)
                 f_sz = int(rad * 1.2) if len(num_s) <= 2 else int(rad * 0.9)
@@ -93,11 +98,15 @@ class GoBoardRenderer:
                 points = marks.get(prop, [])
                 for r, c in points:
                     px, py = self.transformer.indices_to_pixel(r, c)
-                    stone_color = board.get(r, c)
+                    p = Point(r, c)
+                    stone_color = board.get(p)
                     if not stone_color and review_stones:
                         for (rr, cc), col, n in review_stones:
-                            if rr == r and cc == c: stone_color = col.lower(); break
-                    mark_color = "white" if stone_color == 'b' else "black"
+                            if rr == r and cc == c: stone_color = Color.from_str(col); break
+                    
+                    if not stone_color: continue
+                    mark_color = "white" if stone_color == Color.BLACK else "black"
+                    
                     size = int(rad * 0.6); w = 5
                     if shape == "square":
                         rect = [(px-size, py-size), (px+size, py-size), (px+size, py+size), (px-size, py+size), (px-size, py-size)]
@@ -123,20 +132,20 @@ class GoBoardRenderer:
     def render_pv(self, board, pv_list, starting_color, title=""):
         img = self.render(board, last_move=None, analysis_text=title)
         draw = ImageDraw.Draw(img)
-        curr_color = starting_color
+        curr_color = Color.from_str(starting_color)
         gs = self.transformer.grid_size
         rad = gs // 2 - 2
         for i, m_str in enumerate(pv_list[:10]):
             idx_pair = CoordinateTransformer.gtp_to_indices_static(m_str)
             if idx_pair:
                 px, py = self.transformer.indices_to_pixel(idx_pair[0], idx_pair[1])
-                fill = self.color_black if curr_color == "B" else self.color_white
-                txt_c = "white" if curr_color == "B" else "black"
+                fill = self.color_black if curr_color == Color.BLACK else self.color_white
+                txt_c = "white" if curr_color == Color.BLACK else "black"
                 draw.ellipse([px-rad, py-rad, px+rad, py+rad], fill=fill, outline="black")
                 num_s = str(i+1)
                 f_sz = int(rad * 1.2) if len(num_s) <= 2 else int(rad * 0.9)
                 try: fn = ImageFont.truetype("arial.ttf", f_sz)
                 except: fn = self.font_number
                 self._draw_centered_text(draw, px, py, num_s, fn, txt_c)
-                curr_color = "W" if curr_color == "B" else "B"
+                curr_color = curr_color.opposite()
         return img
