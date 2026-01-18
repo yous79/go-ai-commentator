@@ -10,6 +10,7 @@ import mcp.types as types
 
 # Use the centralized API client
 from services.api_client import api_client
+from services.analysis_orchestrator import AnalysisOrchestrator
 from core.knowledge_repository import KnowledgeRepository
 from services.term_visualizer import TermVisualizer
 
@@ -28,6 +29,24 @@ async def handle_list_resources() -> list[types.Resource]:
             name="Current Game State",
             description="Real-time metadata, history, and current move information for the active game session.",
             mimeType="application/json"
+        ),
+        types.Resource(
+            uri="mcp://analysis/current/ownership-map",
+            name="Detailed Ownership Data",
+            description="Full 19x19 list of ownership values (Black: +1.0, White: -1.0) for the current board position.",
+            mimeType="application/json"
+        ),
+        types.Resource(
+            uri="mcp://analysis/current/influence-map",
+            name="Detailed Influence Data",
+            description="Full 19x19 list of influence (thickness) values for the current board position.",
+            mimeType="application/json"
+        ),
+        types.Resource(
+            uri="mcp://analysis/current/regional-stats",
+            name="Regional Strategic Analysis",
+            description="Statistical breakdown of ownership vs influence across 9 board regions (Corners, Sides, Center).",
+            mimeType="text/plain"
         ),
         types.Resource(
             uri="mcp://game/current/relevant-knowledge",
@@ -81,7 +100,38 @@ async def handle_read_resource(uri: str) -> str:
             summary.append(f"Move {i}: {hist[i]}")
         return "\n".join(summary)
 
+    if uri == "mcp://analysis/current/ownership-map":
+        state = api_client.get_game_state()
+        if not state: return "Error: No game state."
+        res = api_client.analyze_move(state.get('history', []))
+        if res and res.ownership:
+            return json.dumps(res.ownership)
+        return "Ownership data not available for the current position."
+
+    if uri == "mcp://analysis/current/influence-map":
+        state = api_client.get_game_state()
+        if not state: return "Error: No game state."
+        res = api_client.analyze_move(state.get('history', []))
+        if res and res.influence:
+            return json.dumps(res.influence)
+        return "Influence data not available for the current position."
+
+    if uri == "mcp://analysis/current/regional-stats":
+        state = api_client.get_game_state()
+        if not state: return "Error: No game state."
+        hist = state.get('history', [])
+        # オーケストレーターを使用してエリア別分析を実行
+        orch = AnalysisOrchestrator(board_size=state.get('board_size', 19))
+        collector = orch.analyze_full(hist)
+        
+        # 戦略カテゴリの事実を抽出
+        strat_facts = [f.description for f in collector.facts if f.category.name == "STRATEGY"]
+        if not strat_facts: return "エリア別の特筆すべき情勢はありません。"
+        
+        return "### Regional Strategic Analysis\n" + "\n".join([f"- {d}" for d in strat_facts])
+
     if uri == "mcp://game/current/relevant-knowledge":
+...
         state = api_client.get_game_state()
         if not state: return "Error: Could not fetch game state."
         history = state.get('history', [])
