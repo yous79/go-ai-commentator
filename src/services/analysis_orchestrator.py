@@ -1,8 +1,10 @@
 from typing import List
 from core.board_simulator import BoardSimulator, SimulationContext
-from core.inference_fact import InferenceFact, FactCategory, FactCollector
 from core.shape_detector import ShapeDetector
 from core.stability_analyzer import StabilityAnalyzer
+from core.inference_fact import InferenceFact, FactCategory, FactCollector
+from core.analysis_dto import AnalysisResult
+from core.board_region import BoardRegion, RegionType
 from services.api_client import api_client
 from utils.logger import logger
 
@@ -14,6 +16,7 @@ class AnalysisOrchestrator:
         self.simulator = BoardSimulator(board_size)
         self.detector = ShapeDetector(board_size)
         self.stability_analyzer = StabilityAnalyzer(board_size)
+        self.board_region = BoardRegion(board_size)
 
     def analyze_full(self, history, board_size=None) -> FactCollector:
         """全ての解析を実行し、トリアージ済みの FactCollector を返す"""
@@ -77,37 +80,66 @@ class AnalysisOrchestrator:
         return collector
 
     def _analyze_influence(self, influence: List[float], ownership: List[float]) -> List[InferenceFact]:
-        """影響力データを解析し、模様や勢力の事実を抽出する"""
+        """影響力データを解析し、エリアごとの情勢（地 vs 勢力）を抽出する"""
         facts = []
-        bs = self.board_size
         
-        black_total = sum(v for v in influence if v > 0)
-        white_total = sum(abs(v) for v in influence if v < 0)
+        # 1. エリア別統計の算出
+        region_stats = {rt: {"own": 0.0, "inf": 0.0, "count": 0} for rt in RegionType}
         
-        # 勢力バランスの判定
-        balance_ratio = black_total / (white_total + 0.1)
-        if balance_ratio > 1.5:
-            facts.append(InferenceFact(FactCategory.STRATEGY, "黒が盤面全体の勢力（厚み）で圧倒しています。", severity=3))
-        elif balance_ratio < 0.6:
-            facts.append(InferenceFact(FactCategory.STRATEGY, "白が盤面全体の勢力（厚み）で圧倒しています。", severity=3))
-
-        # 模様（Moyo）の特定: 影響力は強いが、まだ地として確定していない領域
-        moyo_count_b = 0
-        moyo_count_w = 0
         for i in range(len(influence)):
-            inf = influence[i]
+            r = i // self.board_size
+            c = i % self.board_size
+            
+            # Pointオブジェクトを介さずに、座標から直接リージョンを取得する簡易ロジック
+            # BoardRegion.get_region は Point を要求するため、ここだけ少し工夫が必要
+            # 今回は BoardRegion の内部ロジックを再利用するため、簡易Pointを作るか、
+            # BoardRegionに (r,c) を受け取るメソッドがあればよいが、
+            # 既存の Point クラスを使うのが最も安全
+            from core.point import Point
+            pt = Point(r, c)
+            rt = self.board_region.get_region(pt)
+            
             own = ownership[i] if ownership else 0
+            inf = influence[i]
             
-            # 黒の模様: 影響力 > 0.5 かつ 所有権 < 0.5
-            if inf > 0.5 and own < 0.5:
-                moyo_count_b += 1
-            # 白の模様: 影響力 < -0.5 かつ 所有権 > -0.5
-            elif inf < -0.5 and own > -0.5:
-                moyo_count_w += 1
-        
-        if moyo_count_b > bs * 2:
-            facts.append(InferenceFact(FactCategory.STRATEGY, f"黒には将来の地になり得る巨大な模様（約{moyo_count_b}目分）が存在します。", severity=4))
-        if moyo_count_w > bs * 2:
-            facts.append(InferenceFact(FactCategory.STRATEGY, f"白には将来の地になり得る巨大な模様（約{moyo_count_w}目分）が存在します。", severity=4))
+            region_stats[rt]["own"] += own
+            region_stats[rt]["inf"] += inf
+            region_stats[rt]["count"] += 1
+
+        # 2. エリアごとの評価と事実生成
+        for rt, stats in region_stats.items():
+            count = stats["count"]
+            if count == 0: continue
             
+            avg_own = stats["own"] / count
+            avg_inf = stats["inf"] / count
+            
+            # 閾値設定
+            TERRITORY_THRES = 0.4
+            INFLUENCE_THRES = 0.3
+            
+            # 状態判定
+            status_own = "中立"
+            if avg_own > TERRITORY_THRES: status_own = "黒地"
+            elif avg_own < -TERRITORY_THRES: status_own = "白地"
+            
+            status_inf = "互角"
+            if avg_inf > INFLUENCE_THRES: status_inf = "黒勢力"
+            elif avg_inf < -INFLUENCE_THRES: status_inf = "白勢力"
+            
+            # 特徴的な乖離を検知
+            msg = ""
+            if status_own == "黒地" and status_inf == "白勢力":
+                msg = f"{rt.value}は黒の実利ですが、白の厚みが勝り、薄い状態です。"
+            elif status_own == "白地" and status_inf == "黒勢力":
+                msg = f"{rt.value}は白の実利ですが、黒の厚みが勝り、薄い状態です。"
+            elif status_own == "中立":
+                if status_inf == "黒勢力":
+                    msg = f"{rt.value}は黒の有望な模様（勢力圏）となっています。"
+                elif status_inf == "白勢力":
+                    msg = f"{rt.value}は白の有望な模様（勢力圏）となっています。"
+            
+            if msg:
+                facts.append(InferenceFact(FactCategory.STRATEGY, msg, severity=3))
+
         return facts
