@@ -6,7 +6,9 @@ import queue
 import requests
 import traceback
 import concurrent.futures
-from sgfmill import sgf, boards
+from sgfmill import sgf
+from core.game_board import GameBoard, Color
+from core.point import Point
 from config import OUTPUT_BASE_DIR
 from services.api_client import api_client
 
@@ -95,13 +97,14 @@ class AnalysisManager:
             
             all_tasks = []
             history = []
-            temp_board = boards.Board(board_size)
+            temp_board = GameBoard(board_size)
             for m_num, node in enumerate(nodes):
                 color, move = node.get_move()
                 if color and move:
-                    temp_board.play(move[0], move[1], color)
+                    c_obj = Color.from_str(color)
+                    temp_board.play(Point(move[0], move[1]), c_obj)
                     cols = "ABCDEFGHJKLMNOPQRST"
-                    history.append(["B" if color == 'b' else "W", cols[move[1]] + str(move[0]+1)])
+                    history.append([c_obj.key.upper()[:1], cols[move[1]] + str(move[0]+1)])
                 elif color: # pass
                     history.append(["B" if color == 'b' else "W", "pass"])
                 

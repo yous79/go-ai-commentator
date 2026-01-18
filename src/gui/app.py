@@ -18,6 +18,7 @@ from services.analysis_manager import AnalysisManager
 from services.report_generator import ReportGenerator
 from services.term_visualizer import TermVisualizer
 from services.async_task_manager import AsyncTaskManager
+from services.analysis_service import AnalysisService
 from core.commands import CommandInvoker, PlayMoveCommand
 from core.knowledge_manager import KnowledgeManager
 from core.board_simulator import BoardSimulator
@@ -420,15 +421,13 @@ class GoReplayApp(GoAppBase):
         self.play_interactive_move(color, None, None)
 
     def play_interactive_move(self, color_str, row, col):
-        """ユーザーが盤面をクリックして石を置いた際の非同期処理 (コマンド化)"""
+        """ユーザーが盤面をクリックして石を置いた際の非同期処理 (コマンド化 + サービス化)"""
         curr = self.controller.current_move
         color_obj = Color.from_str(color_str)
         pt = Point(row, col) if row is not None else None
         
-        # コマンドの作成
+        # コマンドの作成と実行
         cmd = PlayMoveCommand(self.game, curr, color_obj, pt)
-        
-        # 実行 (GameStateの更新)
         if not self.command_invoker.execute(cmd):
             return
         
@@ -436,25 +435,13 @@ class GoReplayApp(GoAppBase):
         history = self.game.get_history_up_to(new_idx)
         bs = self.game.board_size
 
-        def _task():
-            res = self.controller.api_client.analyze_move(history, bs)
-            return res
-
-        def _on_success(res):
-            if res:
-                self.game.moves = self.game.moves[:new_idx]
-                self.game.moves.append(res)
-                self.show_image(new_idx)
-            self.info_view.btn_comment.config(state="normal", text="Ask AI Agent")
-
-        def _pre_task():
-            self.info_view.btn_comment.config(state="disabled", text="Analyzing...")
-
-        def _on_error(e):
-            logger.error(f"Interactive Move Error: {e}", layer="GUI")
-            self.info_view.btn_comment.config(state="normal", text="Ask AI Agent")
-
-        self.task_manager.run_task(_task, on_success=_on_success, on_error=_on_error, pre_task=_pre_task)
+        # 分析サービスへ依頼 (表示更新はイベントバス経由で自動で行われる)
+        self.info_view.analysis_tab.btn_comment.config(state="disabled", text="Analyzing...")
+        self.analysis_service.request_analysis(history, bs)
+        
+        # ボタン復帰のための遅延処理（またはイベント購読を検討）
+        self.root.after(500, lambda: self.info_view.analysis_tab.btn_comment.config(state="normal", text="Ask AI Agent"))
+        self.show_image(new_idx)
 
     def undo_move(self):
         """直前の操作を取り消す"""

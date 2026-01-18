@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from core.game_state import GoGameState
 from gui.controller import AppController
 from services.async_task_manager import AsyncTaskManager
+from services.analysis_service import AnalysisService
 from utils.event_bus import event_bus, AppEvents
 from services.ai_commentator import GeminiCommentator
 from config import load_api_key
@@ -20,6 +21,7 @@ class GoAppBase(ABC):
         self.game = GoGameState()
         self.controller = AppController(self.game)
         self.task_manager = AsyncTaskManager(root, max_workers=3)
+        self.analysis_service = AnalysisService(self.task_manager)
         self.gemini = None
         
         # 2. 共通のイベント購読
