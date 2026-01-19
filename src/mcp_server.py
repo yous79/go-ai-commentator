@@ -134,6 +134,28 @@ def visualize_urgency(history: List[Move], board_size: int = 19) -> str:
     path, err = term_visualizer.visualize_sequence(clean_history, pv, title=title, board_size=board_size)
     return f"図を生成しました: {path}\n相手の連打手順: {pv}"
 
+@mcp.tool()
+def simulate_scenario(sequence: List[Move], board_size: int = 19) -> str:
+    """
+    『もしここに打ったらどうなるか』という仮定のシナリオをシミュレーション解析します。
+    現在の対局履歴の末尾に指定の手順を付け足した局面の解析結果を返します。
+    
+    Args:
+        sequence: 付け足したい手順のリスト (例: [{"color": "B", "coord": "D4"}, {"color": "W", "coord": "C10"}])
+        board_size: 盤面サイズ
+    """
+    state = api_client.get_game_state()
+    if not state: return "Error: No current game state."
+    
+    current_history = state.get('history', [])
+    sim_history = [m.to_list() for m in sequence]
+    
+    res = api_client.analyze_simulation(current_history, sim_history, board_size)
+    if not res: return "Error: Simulation failed."
+    
+    from dataclasses import asdict
+    return json.dumps(asdict(res), indent=2, ensure_ascii=False)
+
 # --- Prompts ---
 
 @mcp.prompt("go-instructor-system")

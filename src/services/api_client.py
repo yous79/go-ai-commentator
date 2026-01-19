@@ -3,7 +3,7 @@ import threading
 import concurrent.futures
 import time
 from enum import Enum
-from typing import Optional
+from typing import Optional, Dict, List
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from utils.logger import logger
@@ -199,14 +199,20 @@ class GoAPIClient:
             return "APIサーバーが一時停止中のため、形状検知をスキップしました。"
         return "検知エラーが発生しました。"
 
-    def detect_shape_ids(self, history):
-        """形状ID検知リクエスト"""
-        logger.debug("Requesting shape ID detection", layer="API_CLIENT")
-        resp, err = self._safe_request("POST", "detect/ids", json={"history": history}, timeout=10)
-        
-        if resp:
-            return resp.json().get("ids", [])
-        return []
+    def detect_shape_ids(self, history: list, board_size: int = 19) -> List[str]:
+        """現在の盤面から検知された形状のIDリストを取得する"""
+        payload = {"history": history, "board_size": board_size}
+        resp, _ = self._safe_request("POST", "detect/ids", json=payload)
+        return resp.json().get("ids", []) if resp else []
+
+    def analyze_simulation(self, current_history: list, sim_sequence: list, board_size: int = 19) -> Optional[AnalysisResult]:
+        """
+        現在の履歴にシミュレーション手順を加え、その最終局面を解析する。
+        sim_sequence: [['B', 'D4'], ['W', 'C6']] のような形式
+        """
+        full_history = list(current_history) + sim_sequence
+        logger.info(f"Simulating scenario: {len(sim_sequence)} moves added.", layer="API_CLIENT")
+        return self.analyze_move(full_history, board_size)
 
     def get_game_state(self):
         """現在の対局状態（同期されているもの）を取得"""
