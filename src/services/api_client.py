@@ -214,6 +214,16 @@ class GoAPIClient:
         logger.info(f"Simulating scenario: {len(sim_sequence)} moves added.", layer="API_CLIENT")
         return self.analyze_move(full_history, board_size)
 
+    def analyze_batch_simulations(self, current_history: list, sequences: List[list], board_size: int = 19) -> List[Optional[AnalysisResult]]:
+        """
+        複数のシミュレーション手順を順次解析し、結果のリストを返す。
+        """
+        results = []
+        for seq in sequences:
+            res = self.analyze_simulation(current_history, seq, board_size)
+            results.append(res)
+        return results
+
     def get_game_state(self):
         """現在の対局状態（同期されているもの）を取得"""
         resp, err = self._safe_request("GET", "game/state", timeout=3)

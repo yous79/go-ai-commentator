@@ -19,6 +19,7 @@ class AnalysisModule:
         # 2. Tools
         mcp.tool()(self.katago_analyze)
         mcp.tool()(self.simulate_scenario)
+        mcp.tool()(self.compare_scenarios)
 
     def get_ownership_map(self) -> str:
         """現在の局面における全19x19マスの所有権（地）の生数値データを取得します。"""
@@ -86,4 +87,39 @@ class AnalysisModule:
         if not res: return "Error: Simulation failed."
         from dataclasses import asdict
         return json.dumps(asdict(res), indent=2, ensure_ascii=False)
+
+    def compare_scenarios(self, scenarios: List[List[Move]], board_size: int = 19) -> str:
+        """
+        複数の仮定シナリオを同時に解析し、その結果（勝率、目数差）を比較します。
+        
+        Args:
+            scenarios: 比較したい手順のリストのリスト
+            board_size: 盤面サイズ
+        """
+        state = api_client.get_game_state()
+        if not state: return "Error: No game state."
+        current_history = state.get('history', [])
+        
+        results = []
+        for i, seq in enumerate(scenarios):
+            sim_history = [m.to_list() for m in seq]
+            res = api_client.analyze_simulation(current_history, sim_history, board_size)
+            if res:
+                from dataclasses import asdict
+                results.append({
+                    "scenario_index": i,
+                    "winrate": res.winrate,
+                    "winrate_label": res.winrate_label,
+                    "score_lead": res.score_lead,
+                    "data": asdict(res)
+                })
+        
+        # 差分の計算 (シナリオ0を基準とする)
+        if len(results) >= 2:
+            base = results[0]
+            for other in results[1:]:
+                other["diff_winrate"] = other["winrate"] - base["winrate"]
+                other["diff_score"] = other["score_lead"] - base["score_lead"]
+        
+        return json.dumps(results, indent=2, ensure_ascii=False)
 
