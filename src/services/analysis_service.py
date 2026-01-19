@@ -64,35 +64,24 @@ class AnalysisService:
     def inject_results(self, moves_data: List[Any], board_size: int = 19):
         """バッチ解析結果（リスト）を一括でキャッシュに注入する"""
         logger.info(f"Injecting {len(moves_data)} results into AnalysisService cache.", layer="ANALYSIS_SERVICE")
-        
-        # 履歴を1手ずつ再現しながらハッシュを生成して格納
-        history = []
-        for i, data in enumerate(moves_data):
-            if not data: continue
-            
-            # 履歴の更新
-            color = "B" if i % 2 != 0 else "W" # 1手目は黒
-            if i == 0: color = "W" # 0手目（初期盤面）は便宜上白の後の黒番とみなす？ 
-            # 実際には SGF からの情報を元にするのが正確だが、ここでは簡易化
-            
-            # AnalysisResultへの変換
-            if not isinstance(data, AnalysisResult):
-                res_obj = AnalysisResult.from_dict(data)
-            else:
-                res_obj = data
-            
-            # ハッシュ登録 (ここでは本来のhistoryが必要だが、
-            # 簡易的にインデックスでも管理できるようにするか検討)
-            # とりあえず、現在の手順から逆算して登録を試みる
-            pass
-
-        # 暫定：インデックスベースの高速アクセス用
         self._index_cache = moves_data 
 
     def get_by_index(self, idx: int) -> Optional[AnalysisResult]:
-        """インデックスによる取得（バッチ解析データ用）"""
-        if hasattr(self, '_index_cache') and idx < len(self._index_cache):
-            data = self._index_cache[idx]
-            if not data: return None
-            return data if isinstance(data, AnalysisResult) else AnalysisResult.from_dict(data)
-        return None
+        """
+        指定された手数（インデックス）の解析結果を取得する。
+        """
+        if not hasattr(self, '_index_cache') or idx >= len(self._index_cache):
+            return None
+            
+        data = self._index_cache[idx]
+        if not data: return None
+        
+        if isinstance(data, AnalysisResult):
+            return data
+        return AnalysisResult.from_dict(data)
+
+    def get_history_up_to(self, idx: int) -> List[List[str]]:
+        """指定手数までの履歴を再構成する（ハッシュ生成用）"""
+        # ここでは本来のSGF等の全履歴が必要だが、現状はアプリ側の管理に依存
+        # サービスの独立性を高めるため、将来的に履歴管理もここに寄せる
+        return []
