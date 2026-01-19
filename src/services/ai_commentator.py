@@ -58,35 +58,22 @@ class GeminiCommentator:
             )
             logger.debug(f"Analysis Data Ready: Winrate: {ana_result.winrate_label}", layer="AI")
 
-            # 4. プロンプトの構築
-            kn = self.knowledge_manager.get_all_knowledge_text()
-            
-            persona_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Gemini_Persona.md"))
-            persona_text = ""
-            if os.path.exists(persona_path):
-                try:
-                    with open(persona_path, "r", encoding="utf-8") as f:
-                        persona_text = f.read()
-                except: pass
-
-            # 人格（Persona）の動的選択
-            persona = PersonaFactory.get_persona(TARGET_LEVEL)
-            sys_inst = self._load_prompt(persona.system_template, board_size=board_size, player=player_color, knowledge=kn)
-            
-            # 強力な制約の追加
-            constraint = (
-                "\n\n=== IMPORTANT CONSTRAINT ===\n"
+            # 4. プロンプトの構築 (Prompt Offloading対応)
+            # 詳細な定義は MCP リソース mcp://prompts/system/instructor-guidelines に移譲
+            sys_inst = (
+                "あなたはプロの囲碁インストラクターです。\n"
+                "以下のリソースからあなたの『基本哲学』『指導方針』『人格定義』を読み取り、それに完全に従ってください。\n"
+                "- mcp://prompts/system/instructor-guidelines\n\n"
+                "また、局面に現れている具体的な悪形や手筋の定義については、以下のリソースも参照してください。\n"
+                "- mcp://game/current/relevant-knowledge\n\n"
+                "=== IMPORTANT CONSTRAINT ===\n"
                 "You MUST NOT call any tools or functions. You already have all necessary analysis data.\n"
                 "Your task is ONLY to provide a text commentary based on the facts provided above.\n"
                 "Focus on reasoning and instruction, using the provided prioritized facts.\n"
             )
-            if persona_text:
-                sys_inst = f"{sys_inst}\n\n=== 執筆・解説ガイドライン ===\n{persona_text}{constraint}"
-            else:
-                sys_inst = f"{sys_inst}{constraint}"
             
             user_prompt = self._load_prompt("analysis_request", move_idx=move_idx, history=history)
-            user_prompt = f"{fact_summary}\n{user_prompt}"
+            user_prompt = f"【最新の解析事実】\n{fact_summary}\n\n{user_prompt}"
 
             # 5. 生成リクエスト
             safety = [types.SafetySetting(category=c, threshold='BLOCK_NONE') for c in [
@@ -97,11 +84,11 @@ class GeminiCommentator:
 
             response = self.client.models.generate_content(
                 model=GEMINI_MODEL_NAME,
-                contents=[types.Content(role="user", parts=[types.Part(text=user_prompt)])],
                 config=types.GenerateContentConfig(
                     system_instruction=sys_inst,
                     safety_settings=safety
-                )
+                ),
+                contents=[types.Content(role="user", parts=[types.Part(text=user_prompt)])]
             )
 
             # 堅牢なテキスト抽出

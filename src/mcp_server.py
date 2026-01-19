@@ -86,6 +86,16 @@ def get_move_regional_stats(idx: int) -> str:
     
     return f"### Regional Strategic Analysis (Move {idx})\n" + "\n".join([f"- {d}" for d in strat_facts])
 
+# --- System Prompts as Resources ---
+
+@mcp.resource("mcp://prompts/system/instructor-guidelines")
+def get_instructor_guidelines() -> str:
+    """囲碁インストラクターとしての基本哲学、指導方針、および人格定義を取得します。"""
+    filepath = os.path.join(PROMPT_ROOT, "go_instructor_system.md")
+    if not os.path.exists(filepath): return "Error: Guideline file not found."
+    with open(filepath, "r", encoding="utf-8") as f:
+        return f.read()
+
 # --- Tools ---
 
 @mcp.tool()
