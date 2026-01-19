@@ -492,8 +492,8 @@ class GoReplayApp(GoAppBase):
                 self.root.after(2000, _wait_for_analysis)
             else:
                 logger.info("Analysis completed. Proceeding to commentary check.", layer="GUI")
-                # 2. 5手目にジャンプ
-                self.show_image(5)
+                # 2. 4手目にジャンプ
+                self.show_image(4)
                 # 3. 解説生成を実行
                 self.root.after(1000, self.generate_commentary)
                 # 4. 結果確認の準備 (Textエリアを監視)

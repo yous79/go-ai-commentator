@@ -74,10 +74,12 @@ class KnowledgeModule:
                     return self.repo.get_item_content(c, i)
 
     def detect_shapes(self, history: List[Move], board_size: int = 19) -> str:
-        """現在の盤面から、幾何学的な形状（アキ三角など）を事実として抽出します。"""
+        """現在の盤面から、幾何学的な形状（アキ三角など）を構造化された事実として抽出します。解消地点などのメタデータも含みます。"""
         clean_history = [m.to_list() for m in history]
         facts = api_client.detect_shapes(clean_history, board_size)
-        return facts
+        if not facts or (is_list := isinstance(facts, list) and len(facts) == 0):
+            return "特筆すべき形状は検出されませんでした。"
+        return json.dumps(facts, indent=2, ensure_ascii=False)
 
     def visualize_urgency(self, history: List[Move], board_size: int = 19) -> str:
         ""『もし今パスをしたら相手にどこを打たれるか』の被害予測図を生成します。"""

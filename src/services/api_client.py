@@ -188,16 +188,18 @@ class GoAPIClient:
             "next_player": color
         }
 
-    def detect_shapes(self, history):
+    def detect_shapes(self, history, board_size=19):
         """形状検知リクエスト"""
-        logger.debug("Requesting shape detection", layer="API_CLIENT")
-        resp, err = self._safe_request("POST", "detect", json={"history": history}, timeout=10)
+        logger.debug(f"Requesting shape detection: board_size={board_size}", layer="API_CLIENT")
+        payload = {"history": history, "board_size": board_size}
+        resp, err = self._safe_request("POST", "detect", json=payload, timeout=10)
         
         if resp:
-            return resp.json().get("facts", "特筆すべき形状は検出されませんでした。")
+            # 構造化された事実リストをそのまま返す
+            return resp.json().get("facts", [])
         elif err == "CIRCUIT_OPEN":
-            return "APIサーバーが一時停止中のため、形状検知をスキップしました。"
-        return "検知エラーが発生しました。"
+            return [{"description": "APIサーバーが一時停止中のため、形状検知をスキップしました。", "severity": 2, "category": "SYSTEM", "metadata": {}}]
+        return [{"description": "検知エラーが発生しました。", "severity": 4, "category": "SYSTEM", "metadata": {}}]
 
     def detect_shape_ids(self, history: list, board_size: int = 19) -> List[str]:
         """現在の盤面から検知された形状のIDリストを取得する"""

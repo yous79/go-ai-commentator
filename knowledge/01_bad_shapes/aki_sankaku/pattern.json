@@ -3,6 +3,7 @@
     "name": "アキ三角",
     "category": "bad",
     "message": "効率の悪い【アキ三角】の形です（{}）。",
+    "remedy_offset": [1, 1],
     "auto_rotate": true,
     "auto_reflect": true,
     "patterns": [

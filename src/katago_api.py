@@ -152,8 +152,18 @@ async def detect(req: AnalysisRequest):
         clean_history = sanitize_history(req.history)
         ctx = simulator.reconstruct_to_context(clean_history, req.board_size)
         facts = detector.detect_facts(ctx.board, ctx.prev_board)
-        text = "\n".join([f.description for f in facts])
-        return {"facts": text if text else "特筆すべき形状は検出されませんでした。"}
+        
+        # 構造化データとして返す
+        fact_list = []
+        for f in facts:
+            fact_list.append({
+                "description": f.description,
+                "severity": f.severity,
+                "category": f.category.name,
+                "metadata": f.metadata
+            })
+            
+        return {"facts": fact_list}
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"error": str(e), "traceback": traceback.format_exc()})

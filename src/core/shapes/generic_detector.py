@@ -22,8 +22,10 @@ class GenericPatternDetector(BaseShape):
         all_variants = []
         auto_rotate = self.pattern_def.get("auto_rotate", True)
         auto_reflect = self.pattern_def.get("auto_reflect", True)
+        base_remedy = self.pattern_def.get("remedy_offset")
 
         for bp in base_patterns:
+            bp["remedy_offset"] = base_remedy
             variants = [bp]
             
             if auto_reflect:
@@ -31,12 +33,15 @@ class GenericPatternDetector(BaseShape):
                 reflected = copy.deepcopy(bp)
                 for el in reflected["elements"]:
                     el["offset"] = [el["offset"][0], -el["offset"][1]]
+                if base_remedy:
+                    reflected["remedy_offset"] = [base_remedy[0], -base_remedy[1]]
                 variants.append(reflected)
 
             if auto_rotate:
                 rotated_variants = []
                 for v in variants:
                     # 90, 180, 270度回転
+                    v_remedy = v.get("remedy_offset")
                     for angle in [90, 180, 270]:
                         rv = copy.deepcopy(v)
                         for el in rv["elements"]:
@@ -44,6 +49,13 @@ class GenericPatternDetector(BaseShape):
                             if angle == 90:    el["offset"] = [c, -r]
                             elif angle == 180: el["offset"] = [-r, -c]
                             elif angle == 270: el["offset"] = [-c, r]
+                        
+                        if v_remedy:
+                            r, c = v_remedy
+                            if angle == 90:    rv["remedy_offset"] = [c, -r]
+                            elif angle == 180: rv["remedy_offset"] = [-r, -c]
+                            elif angle == 270: rv["remedy_offset"] = [-c, r]
+                        
                         rotated_variants.append(rv)
                 variants.extend(rotated_variants)
             
@@ -70,17 +82,25 @@ class GenericPatternDetector(BaseShape):
 
         for variant in self.patterns:
             for i, target_el in enumerate(variant["elements"]):
-                if target_el.get("state") not in ["self", "last"]: 
+                if target_el.get("state") != "last": 
                     continue
                 
-                # Point + tuple は Point.__add__ で処理される
                 origin = context.last_move - tuple(target_el["offset"])
                 
                 if self._match_at(context, variant, origin):
                     coord = context.last_move.to_gtp()
                     if coord not in matched_points:
                         msg = self.message_template.format(coord)
-                        results.append(msg)
+                        
+                        # 構造化データとして結果を構築
+                        res_data = {"message": msg}
+                        remedy_off = variant.get("remedy_offset")
+                        if remedy_off:
+                            abs_remedy = origin + tuple(remedy_off)
+                            if abs_remedy.is_valid(context.board_size):
+                                res_data["remedy_gtp"] = abs_remedy.to_gtp()
+                        
+                        results.append(res_data)
                         matched_points.add(coord)
                     break 
 
@@ -89,7 +109,7 @@ class GenericPatternDetector(BaseShape):
     def _match_at(self, context, pattern, origin):
         """特定の原点位置でパターンが一致するか判定する"""
         last_color_char = context.last_color.value if context.last_color else '.'
-        opp_color_char = self._get_opponent(context.last_color)
+        opp_color_char = 'w' if last_color_char == 'b' else 'b'
         
         for el in pattern["elements"]:
             abs_pos = origin + tuple(el["offset"])
@@ -101,18 +121,27 @@ class GenericPatternDetector(BaseShape):
                 else: return False
             
             # 石の取得
-            self.board_size = context.board_size
-            actual = self._get_stone(context.curr_board, abs_pos)
+            actual = context.curr_board.get(abs_pos)
+            actual_char = actual.value if actual else '.'
             
             match = False
             if state_needed == "self" or state_needed == "last":
-                match = (actual == last_color_char)
+                match = (actual_char == last_color_char)
             elif state_needed == "opponent":
-                match = (actual == opp_color_char)
+                match = (actual_char == opp_color_char)
             elif state_needed == "empty":
-                match = (actual == '.')
+                if actual_char == '.':
+                    match = True
+                    # 【重要】取り（Capture）の判定
+                    if context.prev_board:
+                        prev_stone = context.prev_board.get(abs_pos)
+                        if prev_stone and prev_stone.value == opp_color_char:
+                            if self.category == "bad":
+                                match = False # 取りの結果としての空点はアキとはみなさない
+                else:
+                    match = False
             elif state_needed == "any":
-                match = (actual != 'edge')
+                match = (actual_char != 'edge')
             
             if not match:
                 return False

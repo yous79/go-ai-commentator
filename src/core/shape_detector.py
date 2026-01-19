@@ -96,8 +96,17 @@ class ShapeDetector:
             else:
                 actual_results = results
 
-            for msg in actual_results:
-                facts.append(InferenceFact(FactCategory.SHAPE, msg, severity, {"key": getattr(strategy, "key", "unknown")}))
+            for res in actual_results:
+                msg = res["message"] if isinstance(res, dict) else res
+                metadata = {"key": getattr(strategy, "key", "unknown")}
+                
+                if isinstance(res, dict):
+                    # remedy_gtp などの追加情報をメタデータに統合
+                    for k, v in res.items():
+                        if k != "message":
+                            metadata[k] = v
+
+                facts.append(InferenceFact(FactCategory.SHAPE, msg, severity, metadata))
         
         # 2. カス石・過剰干渉の検知 (新規)
         inefficient_moves = self._detect_inefficient_moves(context)
