@@ -15,6 +15,7 @@ from core.board_simulator import BoardSimulator
 from core.knowledge_manager import KnowledgeManager
 from services.term_visualizer import TermVisualizer
 from services.async_task_manager import AsyncTaskManager
+from services.analysis_service import AnalysisService
 from utils.event_bus import event_bus, AppEvents
 from config import KNOWLEDGE_DIR, load_api_key
 from services.ai_commentator import GeminiCommentator
@@ -30,7 +31,6 @@ class TestPlayApp(GoAppBase):
 
         # イベント購読
         event_bus.subscribe(AppEvents.STATUS_MSG_UPDATED, lambda msg: logger.info(f"Status: {msg}", layer="GUI"))
-        # デバッグ用：進捗バーがないためログ出力のみ
 
         # デバッグモード固有の初期化
         self.game.new_game(19) 
@@ -46,6 +46,7 @@ class TestPlayApp(GoAppBase):
         self.show_numbers = tk.BooleanVar(value=True)
         self.current_tool = tk.StringVar(value="stone")
         self.review_stones = []
+        self.redo_review_stones = [] # Redo用のスタックを追加
 
         callbacks = {
             'comment': self.generate_commentary,
@@ -61,6 +62,11 @@ class TestPlayApp(GoAppBase):
         self.setup_layout(callbacks)
         self._load_dictionary_terms()
         self.update_display()
+
+        # キーバインドの追加
+        self.root.bind_all("<Left>", self.prev_move)
+        self.root.bind_all("<Right>", self.next_move)
+        self.root.focus_set()
 
     def setup_layout(self, callbacks):
         # 1. Top Frame
@@ -195,22 +201,49 @@ class TestPlayApp(GoAppBase):
         self.detector = ShapeDetector(size)
         self.current_move = 0
         self.review_stones = []
+        self.redo_review_stones = [] # クリア
         self.update_display()
 
     def clear_review(self):
         self.review_stones = []
+        self.redo_review_stones = [] # クリア
         self.update_display()
 
     def undo_move(self):
-        if self.info_view.analysis_tab.edit_mode.get() and self.review_stones:
-            self.review_stones.pop(); self.update_display(); return
-        if self.current_move > 0:
-            self.current_move -= 1; self.update_display()
+        """1手戻る（ボタン用）"""
+        self.prev_move()
 
     def prev_move(self, event=None):
-        if self.current_move > 0: self.current_move -= 1; self.update_display()
+        logger.debug(f"Event: Left Key pressed. Current move: {self.current_move}, Review: {len(self.review_stones)}", layer="GUI")
+        # 1. 検討モードの石があれば、Redoバッファに移して消す
+        if self.info_view.analysis_tab.edit_mode.get() and self.review_stones:
+            stone = self.review_stones.pop()
+            self.redo_review_stones.append(stone)
+            self.update_display()
+            return
+
+        # 2. 検討用の石がなければ、正規手順を戻す
+        if self.current_move > 0:
+            self.current_move -= 1
+            self.update_display()
+        else:
+            logger.debug("Already at the start of the game.", layer="GUI")
+
     def next_move(self, event=None):
-        if self.current_move < self.game.total_moves: self.current_move += 1; self.update_display()
+        logger.debug(f"Event: Right Key pressed. Current move: {self.current_move}, Redo: {len(self.redo_review_stones)}", layer="GUI")
+        # 1. Redoバッファに石があれば、それを復元する
+        if self.info_view.analysis_tab.edit_mode.get() and self.redo_review_stones:
+            stone = self.redo_review_stones.pop()
+            self.review_stones.append(stone)
+            self.update_display()
+            return
+
+        # 2. Redoバッファがなければ、正規手順を進める
+        if self.current_move < self.game.total_moves:
+            self.current_move += 1
+            self.update_display()
+        else:
+            logger.debug("Already at the latest move.", layer="GUI")
 
     def click_on_board(self, event):
         cw, ch = self.board_view.canvas.winfo_width(), self.board_view.canvas.winfo_height()
@@ -222,12 +255,17 @@ class TestPlayApp(GoAppBase):
                 color = "B" if ((self.current_move + len(self.review_stones)) % 2 == 0) else "W"
                 if not any(s[0] == (row, col) for s in self.review_stones):
                     self.review_stones.append(((row, col), color, len(self.review_stones) + 1))
+                    self.redo_review_stones = [] # 新しく打ったらRedo不可
                     self.update_display()
                 return
             if tool == "stone":
                 color = "B" if (self.current_move % 2 == 0) else "W"
                 if self.game.add_move(self.current_move, color, row, col):
                     self.current_move += 1
+                    self.redo_review_stones = [] # 新しく打ったらRedo不可
+                    # 検討モードでなければ解析をリクエスト
+                    h = self.game.get_history_up_to(self.current_move)
+                    self.analysis_service.request_analysis(h, self.game.board_size)
                     self.update_display()
             else:
                 self.game.toggle_mark(self.current_move, row, col, tool)
@@ -272,14 +310,20 @@ class TestPlayApp(GoAppBase):
                                        marks=self.game.get_marks_at(self.current_move))
             self.board_view.update_board(img)
 
-            # 4. 形状検知
-            facts = self.detector.detect_facts(curr_ctx.board, curr_ctx.prev_board)
+            # 4. 解析サービスのキャッシュからデータを取得
+            ana_data = self.analysis_service.get_by_index(self.current_move)
+            
+            # 5. 形状検知
+            facts = self.detector.detect_facts(curr_ctx.board, curr_ctx.prev_board, analysis_result=ana_data)
             text = "\n".join([f.description for f in facts])
             
-            # イベント発行によるUI更新
+            # 6. イベント発行によるUI更新
+            winrate = ana_data.winrate_label if ana_data else "--%"
+            score = f"{ana_data.score_lead:.1f}" if ana_data else "--"
+            
             event_bus.publish(AppEvents.STATE_UPDATED, {
-                "winrate_text": "--%",
-                "score_text": "--",
+                "winrate_text": winrate,
+                "score_text": score,
                 "winrate_history": [],
                 "current_move": self.current_move
             })

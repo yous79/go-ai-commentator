@@ -102,11 +102,19 @@ class GoGameState:
         return self.marks_data.get(move_idx, {"SQ": set(), "TR": set(), "MA": set()})
 
     def add_move(self, move_idx, color, row, col):
+        # 1. 指定された手数まで移動
         node = self.sgf_game.get_root()
         for _ in range(move_idx):
-            try: node = node[0]
-            except: break
+            try:
+                node = node[0]
+            except:
+                break
         
+        # 2. もし既存の子ノード（次の一手）がある場合は、それを削除して上書きする
+        while len(node) > 0:
+            node[0].delete()
+            
+        # 3. 新しい着手ノードを作成
         new_node = node.new_child(0)
         c_val = color.value if hasattr(color, 'value') else color.lower()
         if row is None or col is None:
@@ -114,8 +122,10 @@ class GoGameState:
         else:
             new_node.set_move(c_val, (row, col))
         
+        # 4. 全手数を更新
         self._update_total_moves()
         self.marks_data[self.total_moves] = {"SQ": set(), "TR": set(), "MA": set()}
+        logger.debug(f"Added move at {move_idx}. New total_moves: {self.total_moves}", layer="CORE")
         return True
 
     def remove_last_move(self) -> bool:
