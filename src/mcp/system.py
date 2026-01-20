@@ -1,11 +1,15 @@
 import os
+from typing import List
 from mcp.server.fastmcp import FastMCP
+from mcp.session import SessionManager
+from core.mcp_types import Move
 
 class SystemModule:
-    """人格定義、プロンプトテンプレート、システムメタデータを管理するモジュール"""
+    """人格定義、プロンプトテンプレート、システムメタデータ、セッション管理を担当するモジュール"""
     
-    def __init__(self, mcp: FastMCP, prompt_root: str):
+    def __init__(self, mcp: FastMCP, prompt_root: str, session_manager: SessionManager):
         self.prompt_root = prompt_root
+        self.session = session_manager
         
         # 1. Resources
         mcp.resource("mcp://prompts/system/instructor-guidelines")(self.get_instructor_guidelines)
@@ -13,6 +17,9 @@ class SystemModule:
         # 2. Prompts
         mcp.prompt("go-instructor-system")(self.prompt_instructor_system)
         mcp.prompt("analysis-request")(self.prompt_analysis_request)
+
+        # 3. Tools
+        mcp.tool()(self.sync_session)
 
     def get_instructor_guidelines(self) -> str:
         """囲碁インストラクターとしての基本哲学、指導方針、および人格定義を取得します。"""
@@ -34,3 +41,19 @@ class SystemModule:
         with open(filepath, "r", encoding="utf-8") as f:
             template = f.read()
         return template.format(move_idx=move_idx, history=history)
+
+    def sync_session(self, history: List[Move], board_size: int = 19) -> str:
+        """
+        現在の対局状態（履歴と盤面サイズ）をサーバーに同期し、オフロードします。
+        局面フェーズの判定結果も返します。
+        """
+        clean_history = [m.to_list() for m in history]
+        self.session.update(clean_history, board_size)
+        
+        # フェーズ判定を実行
+        from services.analysis_orchestrator import AnalysisOrchestrator
+        orch = AnalysisOrchestrator(board_size=board_size)
+        collector = orch.analyze_full(clean_history)
+        phase = collector.get_game_phase()
+        
+        return f"Session synced. Context contains {len(clean_history)} moves. Game phase: {phase}"

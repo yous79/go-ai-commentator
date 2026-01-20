@@ -59,6 +59,11 @@ class AnalysisOrchestrator:
         # 5. 安定度分析
         ownership = ana_data.ownership
         if ownership:
+            # 5.1 終盤判定 [NEW]
+            is_endgame = self.analyze_game_phase(ownership)
+            if is_endgame:
+                collector.add(FactCategory.STRATEGY, "【局面ステータス】終盤（ヨセ）に入りました。細かな得失と正確な計算が重要です。", severity=2, metadata={"phase": "endgame"})
+            
             stability_facts = self.stability_analyzer.analyze_to_facts(curr_ctx.board, ownership)
             for f in stability_facts: collector.facts.append(f)
 
@@ -78,6 +83,22 @@ class AnalysisOrchestrator:
         collector.context = curr_ctx
 
         return collector
+
+    def analyze_game_phase(self, ownership_data: List[float]) -> bool:
+        """盤面の確定度合いから終盤かどうかを判定する"""
+        if not ownership_data:
+            return False
+        
+        # |ownership| > 0.9 (90%以上の確率で地が確定) の地点をカウント
+        SETTLED_THRESHOLD = 0.9
+        settled_points = sum(1 for val in ownership_data if abs(val) > SETTLED_THRESHOLD)
+        
+        # 盤面全体の 85% 以上が確定していれば「終盤」とみなす
+        total_points = len(ownership_data)
+        settlement_ratio = settled_points / total_points
+        
+        logger.debug(f"Game Phase Analysis: Settlement Ratio = {settlement_ratio:.1%}", layer="ORCHESTRATOR")
+        return settlement_ratio > 0.85
 
     def _analyze_influence(self, influence: List[float], ownership: List[float]) -> List[InferenceFact]:
         """影響力データを解析し、エリアごとの情勢（地 vs 勢力）を抽出する"""

@@ -47,3 +47,10 @@ class FactCollector:
 
     def clear(self):
         self.facts = []
+
+    def get_game_phase(self) -> str:
+        """事実セットの中から局面フェーズ（終盤等）を特定して返す"""
+        for f in self.facts:
+            if "phase" in f.metadata:
+                return f.metadata["phase"]
+        return "normal"
