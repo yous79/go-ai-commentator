@@ -37,8 +37,11 @@ class GeminiCommentator:
             if not ana_result:
                 return "【エラー】解析データの取得に失敗しました。"
 
-            # 2. 事実のトリアージとサマリー作成
-            prioritized_facts = collector.get_prioritized_text(limit=12)
+            # 2. 事実のトリアージと時間軸別サマリー作成
+            from core.inference_fact import TemporalScope
+            immediate_facts = collector.get_scope_summary(TemporalScope.IMMEDIATE)
+            existing_facts = collector.get_prioritized_text(limit=8) # EXISTING事実
+            predicted_facts = collector.get_scope_summary(TemporalScope.PREDICTED)
             
             # 3. データの整理 (推奨手など)
             best = ana_result.candidates[0] if ana_result.candidates else None
@@ -50,8 +53,12 @@ class GeminiCommentator:
             colored_seq = [f"{i+1}: {player_color if i%2==0 else opp_color}{m}" for i, m in enumerate(pv_list)]
             
             fact_summary = (
-                f"【最新の確定解析事実（トリアージ済）】\n"
-                f"{prioritized_facts}\n\n"
+                f"【最新手 Evaluation (Immediate)】\n"
+                f"{immediate_facts or '(特筆すべき変化なし)'}\n\n"
+                f"【局面の現状 Review (Existing)】\n"
+                f"{existing_facts}\n\n"
+                f"【将来の予測 Prediction (Predicted)】\n"
+                f"{predicted_facts or '(特筆すべき予測なし)'}\n\n"
                 f"【AI推奨手と進行】\n"
                 f"- 推奨手: {best.move if best else 'なし'}\n"
                 f"- 推奨進行: {', '.join(colored_seq) if colored_seq else 'なし'}\n"

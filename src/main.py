@@ -69,11 +69,8 @@ if __name__ == "__main__":
     
 
     if is_verify:
-
         logger.info("Auto-verification mode enabled.", layer="STARTUP")
-
-        # サーバー起動を待ってから検証開始
-
+        # サーバー起動を待ってから自動検証
         root.after(4000, lambda: app.run_auto_verify("test.sgf"))
 
     elif sgf_to_load and os.path.exists(sgf_to_load):

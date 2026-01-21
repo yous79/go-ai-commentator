@@ -2,6 +2,7 @@ from sgfmill import sgf, boards
 from core.game_board import GameBoard, Color
 from core.point import Point
 from utils.logger import logger
+import sys
 
 class GoGameState:
     def __init__(self):
@@ -102,7 +103,14 @@ class GoGameState:
         return self.marks_data.get(move_idx, {"SQ": set(), "TR": set(), "MA": set()})
 
     def add_move(self, move_idx, color, row, col):
-        # 1. 指定された手数まで移動
+        # 1. 合法手チェック (自殺手、コウなど)
+        if row is not None and col is not None:
+            curr_board = self.get_board_at(move_idx)
+            if not curr_board.is_legal(Point(row, col), color):
+                logger.warning(f"Illegal move rejected: {color}[{row},{col}]", layer="CORE")
+                return False
+
+        # 2. 指定された手数まで移動
         node = self.sgf_game.get_root()
         for _ in range(move_idx):
             try:
@@ -171,13 +179,23 @@ class GoGameState:
     def get_board_at(self, move_idx) -> GameBoard:
         b = GameBoard(self.board_size)
         node = self.sgf_game.get_root()
-        for _ in range(move_idx):
+        for i in range(move_idx):
             try:
                 node = node[0]
                 color, move = node.get_move()
-                if color and move:
-                    b.play(Point(move[0], move[1]), Color.from_str(color))
-            except: break
+                if color:
+                    color_obj = Color.from_str(color)
+                    if move:
+                        pt = Point(move[0], move[1])
+                        # SGFの着手なので基本は合法のはずだが、エラー時はログを出す
+                        if not b.is_legal(pt, color_obj):
+                            sys.stderr.write(f"[CORE] Replay Warning: Move {i} ({color_obj.label}{pt.to_gtp()}) is illegal according to current state.\n")
+                        b.play(pt, color_obj)
+                    else:
+                        b.apply_pass()
+            except Exception as e:
+                sys.stderr.write(f"[CORE] Replay Error at move {i}: {e}\n")
+                break
         return b
 
     def calculate_mistakes(self):

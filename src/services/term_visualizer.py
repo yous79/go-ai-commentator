@@ -35,7 +35,7 @@ class TermVisualizer:
                 show_numbers=True
             )
             
-            filename = f"ref_{{int(time.time())}}_{os.urandom(4).hex()}.png"
+            filename = f"ref_{int(time.time())}_{os.urandom(4).hex()}.png"
             output_path = os.path.join(OUTPUT_BASE_DIR, filename)
             img.save(output_path)
             return output_path, None

@@ -129,27 +129,27 @@ class AnalysisManager:
                     if ans:
                         from dataclasses import is_dataclass, asdict
                         if is_dataclass(ans):
+                            # UIやJSON保存用に辞書化
                             move_data = asdict(ans)
-                            # Alias for UI
+                            # 後方互換性および表示用のエイリアス
                             move_data["winrate"] = ans.winrate
                             move_data["score"] = ans.score_lead
+                            move_data["winrate_label"] = ans.winrate_label
                             move_data["candidates"] = [asdict(c) for c in ans.candidates]
+                            
+                            img_text = f"Move {m_num} | Winrate(B): {ans.winrate_label} | Score(B): {ans.score_lead:.1f}"
                         else:
+                            # 辞書として返ってきた場合のフォールバック
                             move_data = ans
-                            move_data["winrate"] = ans.get("winrate_black")
-                            move_data["score"] = ans.get("score_lead_black")
-                            move_data["candidates"] = ans.get("top_candidates", [])
+                            move_data["winrate"] = ans.get("winrate_black", 0.5)
+                            move_data["score"] = ans.get("score_lead_black", 0.0)
+                            move_data["candidates"] = ans.get("top_candidates", []) or ans.get("candidates", [])
+                            img_text = f"Move {m_num} | Winrate(B): {move_data['winrate']:.1%} | Score(B): {move_data['score']:.1f}"
 
                         move_data["move_number"] = m_num
                         log["moves"][m_num] = move_data
                         
                         task_info = all_tasks[m_num]
-                        # ansがオブジェクトならプロパティを、辞書ならキーを使用
-                        if hasattr(ans, 'winrate_label'):
-                            img_text = f"Move {m_num} | Winrate(B): {ans.winrate_label} | Score(B): {ans.score_lead:.1f}"
-                        else:
-                            img_text = f"Move {m_num} | Winrate(B): {move_data['winrate']:.1%} | Score(B): {move_data['score']:.1f}"
-                        
                         self.image_writer.add_task(task_info["board"], None, img_text, task_info["history"], m_num)
                         
                         completed_count += 1

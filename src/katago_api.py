@@ -160,6 +160,7 @@ async def detect(req: AnalysisRequest):
                 "description": f.description,
                 "severity": f.severity,
                 "category": f.category.name,
+                "scope": f.scope.value, # スコープを追加
                 "metadata": f.metadata
             })
             

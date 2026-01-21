@@ -246,3 +246,1134 @@
 [2026-01-16 21:12:29] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
 [2026-01-16 21:14:38] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
 [2026-01-16 21:14:38] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 08:53:01] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-17 08:53:44] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 12)
+[2026-01-17 08:53:44] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 12)
+[2026-01-17 08:55:46] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 14)
+[2026-01-17 08:55:46] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 14)
+[2026-01-17 09:00:38] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-17 09:00:59] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-17 09:01:09] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-17 09:01:09] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 09:01:12] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-17 09:01:12] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 09:01:21] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-17 09:01:21] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-17 09:12:50] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-17 09:12:58] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-17 09:12:58] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 09:13:04] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-17 09:13:04] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 09:13:05] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-17 09:13:05] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-17 09:30:54] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-17 09:30:59] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-17 09:30:59] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 09:31:03] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-17 09:31:03] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 09:31:07] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-17 09:31:07] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 09:31:12] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-17 09:31:12] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 09:31:15] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-17 09:31:15] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 09:31:22] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 7)
+[2026-01-17 09:31:22] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 7)
+[2026-01-17 09:32:40] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 09:32:40] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 09:42:04] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-17 09:42:08] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-17 09:42:08] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 09:42:16] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 7)
+[2026-01-17 09:42:16] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 7)
+[2026-01-17 10:15:42] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 10:15:42] [CONTROLLER] [ERROR] Failed to load image C:\Users\youst\go-ai-commentator\output_images\test\move_000.png: image file is truncated
+[2026-01-17 10:15:42] [CONTROLLER] [ERROR] Failed to load image C:\Users\youst\go-ai-commentator\output_images\test\move_000.png: cannot identify image file 'C:\\Users\\youst\\go-ai-commentator\\output_images\\test\\move_000.png'
+[2026-01-17 10:15:47] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-17 10:15:47] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 10:16:09] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-17 10:16:09] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-17 10:37:05] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-17 10:37:31] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-17 10:37:31] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-17 10:39:54] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-17 10:39:54] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-17 10:40:27] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 6)
+[2026-01-17 10:40:27] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 6)
+[2026-01-17 11:04:52] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 11:04:53] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 11:04:54] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 11:04:55] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 11:07:08] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-17 11:07:41] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 11:07:41] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 11:22:46] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 11:22:47] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 11:22:47] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 11:22:48] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 11:25:42] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-17 11:25:53] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-17 11:25:53] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 11:25:56] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-17 11:25:56] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-17 11:26:20] [VISUALIZER] [ERROR] Error in visualize_context rendering: GameBoard.get() takes 2 positional arguments but 3 were given
+[2026-01-17 11:26:20] [VISUALIZER] [ERROR] Error in visualize_context rendering: GameBoard.get() takes 2 positional arguments but 3 were given
+[2026-01-17 11:36:17] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 11:36:18] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 11:36:18] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 11:36:19] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 11:36:20] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 11:36:42] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 11:36:43] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 11:36:43] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 11:36:44] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 11:36:45] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 11:37:21] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-17 11:37:30] [API_CLIENT] [ERROR] API Connection Failed at game/state: ('Connection aborted.', ConnectionResetError(10054, '既存の接続はリモート ホストに強制的に切断されました。', None, 10054, None))
+[2026-01-17 11:37:30] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 11:37:31] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 3)
+[2026-01-17 11:37:31] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 3)
+[2026-01-17 11:37:57] [VISUALIZER] [ERROR] Error in visualize_context rendering: GameBoard.get() takes 2 positional arguments but 3 were given
+[2026-01-17 11:37:57] [VISUALIZER] [ERROR] Error in visualize_context rendering: GameBoard.get() takes 2 positional arguments but 3 were given
+[2026-01-17 11:39:33] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-17 11:54:29] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 11:54:30] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 11:54:30] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 11:54:31] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 11:54:32] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 11:55:28] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-17 11:56:27] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 11:56:28] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 11:56:28] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 11:56:29] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 11:56:30] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 11:56:43] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-17 12:41:35] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 12:41:35] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 12:41:38] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 12:41:38] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 12:41:39] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 12:41:40] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 13:47:57] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 13:47:58] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 13:48:00] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 13:48:00] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 13:48:01] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 13:48:02] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 13:53:28] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 13:53:29] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 13:53:31] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 13:53:31] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 13:53:32] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 13:53:34] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 13:53:43] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-17 13:53:47] [GUI] [INFO] Commentary Mode changed to: beginner
+[2026-01-17 13:53:51] [API_CLIENT] [ERROR] API Connection Failed at game/state: ('Connection aborted.', ConnectionResetError(10054, '既存の接続はリモート ホストに強制的に切断されました。', None, 10054, None))
+[2026-01-17 13:53:51] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 13:53:57] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 13:53:57] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 13:54:04] [ASYNC] [ERROR] Async task failed: 'AnalysisResult' object has no attribute 'get'
+[2026-01-17 13:54:14] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 13:54:14] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 13:54:14] [ASYNC] [ERROR] Async task failed: 'AnalysisResult' object has no attribute 'get'
+[2026-01-17 13:55:45] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 13:55:46] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 13:55:48] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 13:55:48] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 13:55:50] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 13:55:51] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 13:56:16] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-17 13:56:21] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-17 13:56:21] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 13:56:23] [GUI] [INFO] Commentary Mode changed to: beginner
+[2026-01-17 13:56:25] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 13:56:25] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 13:56:44] [VISUALIZER] [ERROR] Error in visualize_context rendering: GameBoard.get() takes 2 positional arguments but 3 were given
+[2026-01-17 13:56:44] [VISUALIZER] [ERROR] Error in visualize_context rendering: GameBoard.get() takes 2 positional arguments but 3 were given
+[2026-01-17 13:56:54] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-17 14:09:50] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 14:09:51] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 14:09:53] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 14:09:53] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 14:09:55] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 14:09:56] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 14:09:56] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-17 14:10:00] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-17 14:10:00] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 14:10:18] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-17 14:10:19] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 14:10:19] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 14:10:21] [VISUALIZER] [ERROR] Error in visualize_context rendering: GameBoard.get() takes 2 positional arguments but 3 were given
+[2026-01-17 14:10:21] [VISUALIZER] [ERROR] Error in visualize_context rendering: GameBoard.get() takes 2 positional arguments but 3 were given
+[2026-01-17 14:10:39] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-17 14:27:02] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 14:27:03] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 14:27:05] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 14:27:05] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 14:27:07] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 14:27:08] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 14:27:08] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-17 14:27:12] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-17 14:27:12] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 14:27:30] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-17 14:27:31] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 14:27:31] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 14:27:35] [GUI] [ERROR] Auto-verification FAILED: Commentary area is empty.
+[2026-01-17 14:28:39] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-17 14:30:48] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 14:30:49] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 14:30:51] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 14:30:51] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 14:30:53] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 14:30:54] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 14:30:55] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-17 14:30:59] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-17 14:30:59] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 14:31:16] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-17 14:31:17] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 14:31:17] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 14:31:21] [GUI] [ERROR] Auto-verification FAILED: Commentary area is empty.
+[2026-01-17 14:31:23] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-17 14:49:44] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 14:49:45] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 14:49:47] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 14:49:47] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 14:49:49] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 14:49:50] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 14:49:50] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-17 14:49:54] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-17 14:49:54] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 14:50:13] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-17 14:51:37] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-17 14:54:24] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 14:54:25] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 14:54:27] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 14:54:27] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 14:54:28] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 14:54:29] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 14:54:30] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-17 14:54:34] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-17 14:54:34] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 14:54:50] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-17 14:56:04] [GUI] [ERROR] Auto-verification TIMED OUT after 90s.
+[2026-01-17 14:56:04] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-17 15:04:56] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 15:04:57] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 15:04:59] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 15:04:59] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 15:05:01] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 15:05:02] [GUI] [INFO] AI Services Initialized.
+[2026-01-17 15:05:02] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-17 15:05:06] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-17 15:05:06] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 15:05:24] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-17 15:05:25] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 15:05:25] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 15:05:43] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-17 15:20:55] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-17 15:30:43] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-17 15:30:44] [ASYNC] [INFO] AsyncTaskManager initialized with 2 workers.
+[2026-01-17 15:34:34] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-17 15:34:36] [ASYNC] [INFO] AsyncTaskManager initialized with 2 workers.
+[2026-01-17 15:37:07] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-17 15:37:08] [ASYNC] [INFO] AsyncTaskManager initialized with 2 workers.
+[2026-01-17 15:42:17] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-17 15:42:19] [ASYNC] [INFO] AsyncTaskManager initialized with 2 workers.
+[2026-01-17 15:44:00] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-17 15:44:01] [ASYNC] [INFO] AsyncTaskManager initialized with 2 workers.
+[2026-01-17 15:51:29] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-17 15:51:29] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-17 15:51:30] [ASYNC] [INFO] AsyncTaskManager initialized with 2 workers.
+[2026-01-17 16:53:58] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-17 16:53:58] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 16:53:59] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-17 16:53:59] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-17 16:54:30] [GUI] [INFO] Closing application...
+[2026-01-17 16:54:30] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-17 17:05:05] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 17:05:06] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 17:05:08] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 17:05:08] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 17:05:08] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 17:05:09] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-17 17:05:47] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 17:05:48] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 17:05:50] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 17:05:50] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 17:05:50] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 17:05:52] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-17 17:05:53] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-17 17:05:57] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-17 17:05:57] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 17:06:14] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-17 17:06:16] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 17:06:16] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 17:06:32] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-17 17:08:32] [GUI] [INFO] Closing application...
+[2026-01-17 17:08:32] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-17 17:15:42] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 17:15:43] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 17:15:45] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 17:15:45] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 17:15:45] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 17:15:47] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-17 17:15:48] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-17 17:15:52] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-17 17:15:52] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 17:16:10] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-17 17:16:11] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 17:16:11] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 17:16:27] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-17 17:16:28] [GUI] [INFO] Closing application...
+[2026-01-17 17:16:28] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-17 17:52:47] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 17:52:48] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 17:52:50] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 17:52:50] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 17:52:50] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 17:52:51] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-17 17:52:53] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-17 17:52:57] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-17 17:52:57] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 17:53:15] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-17 17:53:16] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 17:53:16] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 17:53:32] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-17 17:53:33] [GUI] [INFO] Closing application...
+[2026-01-17 17:53:33] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-17 20:22:29] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 20:22:30] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 20:22:32] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 20:22:32] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 20:22:32] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 20:22:34] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-17 20:22:50] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-17 20:23:29] [GUI] [INFO] Commentary Mode changed to: beginner
+[2026-01-17 20:23:30] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 20:23:30] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 20:24:18] [GUI] [INFO] Commentary Mode changed to: intermediate
+[2026-01-17 20:24:28] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 20:24:28] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 20:38:02] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 6)
+[2026-01-17 20:38:02] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 6)
+[2026-01-17 20:38:06] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 6)
+[2026-01-17 20:38:06] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 6)
+[2026-01-17 20:38:12] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 6)
+[2026-01-17 20:38:12] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 6)
+[2026-01-17 20:38:13] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 6)
+[2026-01-17 20:38:13] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 6)
+[2026-01-17 20:38:14] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 6)
+[2026-01-17 20:38:14] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 6)
+[2026-01-17 20:55:11] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 20:55:12] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 20:55:14] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 20:55:14] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 20:55:14] [ASYNC] [INFO] AsyncTaskManager initialized with 3 workers.
+[2026-01-17 20:55:15] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-17 20:55:17] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-17 20:55:21] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-17 20:55:21] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 20:55:39] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-17 20:55:40] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 20:55:40] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 20:55:56] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-17 20:55:57] [GUI] [INFO] Closing application...
+[2026-01-17 20:55:57] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-17 21:01:45] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 21:01:46] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 21:01:49] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 21:01:49] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 21:01:49] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-17 21:01:50] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-17 21:01:52] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-17 21:01:56] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-17 21:01:56] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 21:02:13] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-17 21:02:14] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 21:02:14] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 21:02:30] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-17 21:02:31] [GUI] [INFO] Closing application...
+[2026-01-17 21:02:31] [GUI] [INFO] Terminating API Server process...
+[2026-01-17 21:02:31] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-17 21:07:13] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 21:07:13] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 21:07:15] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 21:07:15] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 21:07:15] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-17 21:07:17] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-17 21:07:18] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-17 21:07:22] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-17 21:07:22] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 21:07:40] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-17 21:07:41] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 21:07:41] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 21:07:55] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-17 21:07:56] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-17 21:22:21] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 21:22:21] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 21:22:23] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 21:22:23] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 21:22:23] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-17 21:22:25] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-17 21:22:26] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-17 21:22:30] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-17 21:22:30] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 21:22:48] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-17 21:22:49] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 21:22:49] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 21:23:07] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-17 21:23:08] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-17 21:36:36] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 21:36:37] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 21:36:39] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 21:36:39] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 21:36:39] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-17 21:36:40] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-17 21:36:42] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-17 21:36:46] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-17 21:36:46] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-17 21:37:03] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-17 21:37:05] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-17 21:37:05] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-17 21:37:21] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-17 21:37:22] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-17 21:40:20] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-17 21:40:20] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-17 21:40:22] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-17 21:40:22] [STARTUP] [INFO] API Server is Ready.
+[2026-01-17 21:40:22] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-17 21:40:23] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-17 21:40:45] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-17 21:40:54] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-17 21:40:54] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-17 21:40:56] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 6)
+[2026-01-17 21:40:56] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 6)
+[2026-01-18 14:25:53] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-18 14:25:54] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-18 14:25:56] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-18 14:25:56] [STARTUP] [INFO] API Server is Ready.
+[2026-01-18 14:25:56] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-18 14:25:57] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-18 14:27:21] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-18 14:27:29] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-18 14:27:29] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-18 14:27:33] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-18 14:27:33] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-18 14:27:37] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-18 14:27:37] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-18 14:27:38] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-18 14:27:38] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-18 14:32:40] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 6)
+[2026-01-18 14:32:40] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 6)
+[2026-01-18 14:34:11] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 6)
+[2026-01-18 14:34:11] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 6)
+[2026-01-18 15:05:25] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-18 15:05:27] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-18 15:07:23] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-18 15:07:24] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-18 15:07:26] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-18 15:07:26] [STARTUP] [INFO] API Server is Ready.
+[2026-01-18 15:07:26] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-18 15:07:29] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-18 15:07:31] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-18 15:07:35] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-18 15:07:35] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-18 15:07:54] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-18 15:07:55] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-18 15:07:55] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-18 15:08:09] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-18 15:08:10] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-18 15:10:40] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-18 15:10:41] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-18 15:10:43] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-18 15:10:43] [STARTUP] [INFO] API Server is Ready.
+[2026-01-18 15:10:43] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-18 15:10:44] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-18 15:10:46] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-18 15:10:50] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-18 15:10:50] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-18 15:11:07] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-18 15:11:08] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-18 15:11:08] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-18 15:11:22] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-18 15:11:23] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-18 21:05:17] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-18 21:05:17] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-18 21:05:19] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-18 21:05:19] [STARTUP] [INFO] API Server is Ready.
+[2026-01-18 21:05:19] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-18 21:06:13] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-18 21:06:14] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-18 21:06:16] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-18 21:06:16] [STARTUP] [INFO] API Server is Ready.
+[2026-01-18 21:06:16] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-18 21:06:17] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-18 21:06:19] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-18 21:06:23] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-18 21:06:23] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-18 21:06:41] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-18 21:06:42] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-18 21:06:42] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-18 21:06:58] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-18 21:06:59] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-18 21:08:06] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-18 21:08:07] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-18 21:08:09] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-18 21:08:09] [STARTUP] [INFO] API Server is Ready.
+[2026-01-18 21:08:09] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-18 21:08:10] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-18 21:08:41] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\sample
+[2026-01-18 21:08:49] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-18 21:08:49] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-18 21:08:52] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-18 21:08:52] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-18 21:08:58] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-18 21:08:58] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-18 21:09:26] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 13)
+[2026-01-18 21:09:26] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 13)
+[2026-01-18 21:12:49] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-18 21:34:48] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-18 21:34:49] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-18 21:34:51] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-18 21:34:51] [STARTUP] [INFO] API Server is Ready.
+[2026-01-18 21:34:51] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-18 21:34:52] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-18 21:34:54] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-18 21:34:58] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-18 21:34:58] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-18 21:35:16] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-18 21:35:17] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-18 21:35:17] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-18 21:35:33] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-18 21:35:34] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 13:09:49] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 13:09:50] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 13:09:52] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 13:09:52] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 13:09:52] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 13:09:54] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 13:10:08] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-19 13:10:19] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-19 13:10:19] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-19 13:10:21] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-19 13:10:21] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-19 13:11:14] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 13:16:54] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 13:16:54] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 13:16:56] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 13:16:56] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 13:16:56] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 13:16:58] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 13:16:59] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-19 13:17:03] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-19 13:17:03] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-19 13:17:21] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-19 13:17:22] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-19 13:17:22] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-19 13:17:38] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-19 13:17:39] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 13:20:16] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 13:20:16] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 13:20:19] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 13:20:19] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 13:20:19] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 13:20:20] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 13:20:22] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-19 13:20:26] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-19 13:20:26] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-19 13:20:44] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-19 13:20:45] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-19 13:20:45] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-19 13:20:59] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-19 13:21:00] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 13:31:32] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 13:31:33] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 13:31:35] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 13:31:35] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 13:31:35] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 13:31:36] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 13:31:38] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-19 13:31:42] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-19 13:31:42] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-19 13:32:00] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-19 13:32:01] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-19 13:32:01] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-19 13:32:19] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-19 13:32:20] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 14:33:36] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 14:33:37] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 14:33:39] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 14:33:39] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 14:33:39] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 14:33:42] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 14:33:44] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-19 14:33:48] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-19 14:33:48] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-19 14:34:19] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-19 14:34:21] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-19 14:34:21] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-19 14:34:41] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-19 14:34:42] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 15:37:08] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 15:37:09] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 15:37:11] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 15:37:11] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 15:37:11] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 15:37:12] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 15:37:14] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-19 15:37:18] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-19 15:37:18] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-19 15:37:36] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-19 15:37:37] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-19 15:37:37] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-19 15:37:53] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-19 15:37:54] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 15:48:54] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 15:48:55] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 15:48:57] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 15:48:57] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 15:48:57] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 15:48:58] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 15:49:00] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-19 15:49:04] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-19 15:49:04] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-19 15:49:21] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-19 15:49:23] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-19 15:49:23] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-19 15:49:37] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-19 15:49:38] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 15:50:28] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 15:50:28] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 15:50:30] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 15:50:30] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 15:50:30] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 15:50:32] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 15:53:27] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-19 15:53:36] [API_CLIENT] [ERROR] API Connection Failed at game/state: ('Connection aborted.', ConnectionResetError(10054, '既存の接続はリモート ホストに強制的に切断されました。', None, 10054, None))
+[2026-01-19 15:53:36] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-19 15:53:41] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-19 15:53:41] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-19 16:27:39] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 6)
+[2026-01-19 16:27:39] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 6)
+[2026-01-19 16:37:49] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 16:37:50] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 16:37:52] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 16:37:52] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 16:37:52] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 16:37:52] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 16:37:54] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 16:37:54] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 16:38:43] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 16:40:50] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 16:40:51] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 16:40:53] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 16:40:53] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 16:40:53] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 16:40:53] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 16:40:55] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 16:40:55] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 16:41:31] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 16:42:56] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 16:42:57] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 16:42:59] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 16:42:59] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 16:42:59] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 16:42:59] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 16:43:01] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 16:43:01] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 16:44:27] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 16:44:29] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 16:44:31] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 16:44:31] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 16:44:31] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 16:44:31] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 16:44:33] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 16:44:33] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 16:47:55] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 16:47:56] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 16:47:58] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 16:47:58] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 16:47:58] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 16:47:58] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 16:48:00] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 16:48:00] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 16:48:24] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 16:49:27] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 16:49:27] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 16:49:30] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 16:49:30] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 16:49:30] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 16:49:30] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 16:49:31] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 16:49:31] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 16:53:21] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 20:57:13] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 20:57:14] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 20:57:16] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 20:57:16] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 20:57:16] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 20:57:16] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 20:57:17] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 20:57:17] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 21:02:59] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 21:03:07] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 21:03:08] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 21:03:10] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 21:03:10] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 21:03:10] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 21:03:10] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 21:03:11] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 21:03:11] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 21:03:45] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 21:05:39] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 21:05:39] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 21:05:41] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 21:05:41] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 21:05:41] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 21:05:41] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 21:05:42] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 21:05:42] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 21:05:54] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 21:07:44] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 21:07:45] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 21:07:47] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 21:07:47] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 21:07:47] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 21:07:47] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 21:07:48] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 21:07:48] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 21:10:22] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 21:10:23] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 21:10:25] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 21:10:25] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 21:10:25] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 21:10:25] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 21:10:26] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 21:10:26] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 21:12:31] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 21:12:31] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 21:12:33] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 21:12:33] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 21:12:33] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 21:12:34] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 21:12:35] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 21:12:35] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 21:13:54] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 21:13:55] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 21:13:57] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 21:13:57] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 21:13:57] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 21:13:57] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 21:13:58] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 21:13:58] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 21:16:02] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 21:16:03] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 21:16:05] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 21:16:05] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 21:16:05] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 21:16:05] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 21:16:07] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 21:16:07] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 21:16:56] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-19 21:18:37] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 21:18:37] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 21:18:39] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 21:18:39] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 21:18:39] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-19 21:18:39] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 21:18:40] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 21:18:40] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-19 21:41:42] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-19 21:41:43] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-19 21:41:45] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-19 21:41:45] [STARTUP] [INFO] API Server is Ready.
+[2026-01-19 21:41:45] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-19 21:41:47] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-19 21:41:48] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-19 21:41:52] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-19 21:41:52] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-19 21:42:10] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-19 21:42:11] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-19 21:42:11] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-19 21:42:25] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-19 21:42:26] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 13:34:46] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 13:34:46] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 13:34:48] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 13:34:48] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 13:34:49] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 13:34:50] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 13:34:52] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-20 13:34:56] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-20 13:34:56] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-20 13:35:13] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-20 13:35:14] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-20 13:35:14] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-20 13:35:30] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-20 13:35:31] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 14:06:00] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 14:06:00] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 14:06:02] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 14:06:03] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 14:06:03] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 14:06:04] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 14:06:06] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-20 14:06:10] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-20 14:06:10] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-20 14:06:27] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-20 14:06:28] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-20 14:06:28] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-20 14:06:43] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-20 14:06:44] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 14:15:01] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 14:15:01] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 14:15:04] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 14:15:04] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 14:15:04] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 14:15:05] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 14:15:21] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-20 14:15:33] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-20 14:15:33] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-20 14:15:44] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-20 14:15:44] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-20 14:15:46] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-20 14:15:46] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-20 14:17:55] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 14:23:45] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 14:23:46] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 14:23:48] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 14:23:48] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 14:23:48] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 14:23:49] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 14:23:51] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-20 14:23:55] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-20 14:23:55] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-20 14:24:13] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-20 14:24:14] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-20 14:24:14] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-20 14:24:35] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 14:25:10] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 14:25:10] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 14:25:12] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 14:25:12] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 14:25:12] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 14:25:13] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 14:25:15] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-20 14:25:19] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-20 14:25:19] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-20 14:25:36] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-20 14:25:38] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-20 14:25:38] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-20 14:25:54] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-20 14:25:55] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 14:29:42] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 14:29:43] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 14:29:45] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 14:29:45] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 14:29:45] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 14:29:46] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 14:30:24] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-20 14:30:51] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-20 14:30:51] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-20 14:33:25] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 14:33:37] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 14:33:38] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 14:33:40] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 14:33:40] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 14:33:40] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 14:33:41] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 14:33:54] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-20 14:34:43] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 13)
+[2026-01-20 14:34:43] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 13)
+[2026-01-20 14:36:33] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 14:40:51] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 14:40:51] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 14:40:54] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 14:40:54] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 14:40:54] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 14:40:55] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 14:40:56] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-20 14:41:00] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-20 14:41:01] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-20 14:41:18] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-20 14:41:19] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-20 14:41:19] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-20 14:41:30] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 14:41:52] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 14:41:52] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 14:41:54] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 14:41:54] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 14:41:54] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 14:41:56] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 14:41:57] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-20 14:42:01] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-20 14:42:01] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-20 14:42:19] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-20 14:42:20] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-20 14:42:20] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-20 14:42:34] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-20 14:42:35] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 14:52:54] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 14:52:54] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 14:52:56] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 14:52:56] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 14:52:56] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 14:52:57] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 14:52:59] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-20 14:53:03] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-20 14:53:03] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-20 14:53:20] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-20 14:53:22] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-20 14:53:22] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-20 14:53:38] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-20 14:53:39] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 15:00:42] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 15:00:43] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 15:00:45] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 15:00:45] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 15:00:45] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 15:02:14] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 15:02:14] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 15:02:16] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 15:02:16] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 15:02:17] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 15:02:18] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 15:02:19] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-20 15:02:23] [GUI] [INFO] Starting auto-verification with: ko_test.sgf
+[2026-01-20 15:02:23] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\ko_test
+[2026-01-20 15:02:29] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-20 15:02:29] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-20 15:02:52] [API_CLIENT] [ERROR] API HTTP Error: 503 at analyze
+[2026-01-20 15:02:52] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-20 15:02:55] [API_CLIENT] [ERROR] API HTTP Error: 503 at analyze
+[2026-01-20 15:02:55] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (2/3)
+[2026-01-20 15:02:58] [API_CLIENT] [ERROR] API HTTP Error: 503 at analyze
+[2026-01-20 15:02:58] [API_CLIENT] [ERROR] Circuit Breaker: OPENED due to 3 consecutive failures
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:02:58] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:03:01] [API_CLIENT] [ERROR] API HTTP Error: 503 at analyze
+[2026-01-20 15:03:04] [API_CLIENT] [ERROR] API HTTP Error: 503 at analyze
+[2026-01-20 15:03:07] [API_CLIENT] [ERROR] API HTTP Error: 503 at analyze
+[2026-01-20 15:03:09] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-20 15:03:10] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 0)
+[2026-01-20 15:03:10] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 0)
+[2026-01-20 15:03:10] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:03:10] [API_CLIENT] [WARNING] Analysis skipped: Circuit Breaker is OPEN.
+[2026-01-20 15:03:53] [GUI] [ERROR] Auto-verification TIMED OUT after 90s.
+[2026-01-20 15:03:53] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 15:04:36] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 15:04:37] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 15:04:39] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 15:04:39] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 15:04:39] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 15:04:40] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 15:04:42] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-20 15:04:46] [GUI] [INFO] Starting auto-verification with: ko_simple.sgf
+[2026-01-20 15:04:46] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\ko_simple
+[2026-01-20 15:04:51] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-20 15:04:51] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-20 15:05:14] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-20 15:05:15] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 24)
+[2026-01-20 15:05:15] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 24)
+[2026-01-20 15:05:31] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-20 15:05:32] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 15:17:30] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 15:17:31] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 15:17:33] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 15:17:33] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 15:17:33] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-20 15:17:33] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 15:17:34] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 15:17:34] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-20 15:28:29] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 15:28:29] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 15:28:31] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 15:28:31] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 15:28:32] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 15:28:33] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 15:28:34] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-20 15:28:38] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-20 15:28:38] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-20 15:28:54] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-20 15:28:55] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-20 15:28:55] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-20 15:29:11] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-20 15:29:12] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 16:26:03] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 16:26:17] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 16:26:18] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 16:26:20] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 16:26:20] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 16:26:20] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-20 16:26:20] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 16:26:21] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 16:26:21] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-20 16:27:14] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 16:29:51] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 16:29:51] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 16:29:53] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 16:29:53] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 16:29:53] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-20 16:29:53] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 16:29:54] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 16:29:55] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-20 16:31:07] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 16:31:07] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 16:31:10] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 16:31:10] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 16:31:10] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 16:31:11] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 16:31:13] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-20 16:31:17] [GUI] [INFO] Starting auto-verification with: test.sgf
+[2026-01-20 16:31:17] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-20 16:31:34] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-20 16:31:35] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 16:34:48] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 16:34:48] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 16:34:50] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 16:34:50] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 16:34:50] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 16:34:52] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 16:34:53] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-20 16:34:57] [GUI] [INFO] Starting auto-verification with: ko_simple.sgf
+[2026-01-20 16:34:57] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\ko_simple
+[2026-01-20 16:35:23] [GUI] [INFO] Analysis completed. Proceeding to commentary check.
+[2026-01-20 16:35:25] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 24)
+[2026-01-20 16:35:25] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 24)
+[2026-01-20 16:35:43] [GUI] [INFO] Auto-verification SUCCESS: Commentary generated.
+[2026-01-20 16:35:44] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 16:36:16] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 16:36:25] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 16:36:25] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 16:36:27] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 16:36:27] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 16:36:27] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-20 16:36:27] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 16:36:28] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 16:36:28] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-20 16:37:12] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 16:49:26] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 16:49:26] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 16:49:28] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 16:49:28] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 16:49:28] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-20 16:49:29] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 16:49:30] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 16:49:30] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-20 16:51:41] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 16:51:41] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 16:51:43] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 16:51:43] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 16:51:43] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-20 16:51:43] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 16:51:45] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 16:51:45] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-20 16:57:50] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 16:57:51] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 16:57:53] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 16:57:53] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 16:57:53] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-20 16:57:53] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 16:57:54] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 16:57:54] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-20 17:01:27] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 17:01:36] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 17:01:36] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 17:01:38] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 17:01:38] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 17:01:38] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-20 17:01:38] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 17:01:40] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 17:01:40] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-20 17:07:14] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 17:07:15] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 17:07:17] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 17:07:17] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 17:07:17] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-20 17:07:17] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 17:07:18] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 17:07:18] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-20 17:12:09] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 17:12:10] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 17:12:12] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 17:12:12] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 17:12:12] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 17:12:13] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 17:12:15] [STARTUP] [INFO] Auto-verification mode enabled.
+[2026-01-20 17:12:19] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-20 20:43:51] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 20:43:52] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 20:43:54] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 20:43:54] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 20:43:54] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-20 20:43:54] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 20:43:56] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 20:43:56] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-20 20:47:36] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 20:47:37] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 20:47:39] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 20:47:39] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 20:47:39] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-20 20:47:39] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 20:47:41] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 20:47:41] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-20 20:52:09] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 20:52:10] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 20:52:12] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 20:52:12] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 20:52:12] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-20 20:52:12] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 20:52:13] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 20:52:13] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-20 20:58:21] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 20:58:22] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 20:58:24] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 20:58:24] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 20:58:24] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-20 20:58:24] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 20:58:25] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 20:58:25] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-20 20:58:48] [GUI] [INFO] 着手禁止点です: L11 (自殺手、またはコウ)
+[2026-01-20 21:06:53] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-20 21:06:54] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-20 21:06:56] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-20 21:06:56] [STARTUP] [INFO] API Server is Ready.
+[2026-01-20 21:06:56] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-20 21:06:56] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-20 21:06:57] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-20 21:06:57] [CORE] [INFO] New 19x19 game initialized.

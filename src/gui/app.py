@@ -11,6 +11,7 @@ import config
 from config import OUTPUT_BASE_DIR, load_api_key
 from core.game_state import GoGameState
 from core.game_board import GameBoard, Color
+from core.point import Point
 from core.coordinate_transformer import CoordinateTransformer
 from utils.board_renderer import GoBoardRenderer
 from services.ai_commentator import GeminiCommentator
@@ -271,13 +272,16 @@ class GoReplayApp(GoAppBase):
             d = moves[curr]
             if d:
                 # AnalysisResultオブジェクトか辞書かを判別して属性取得
-                if hasattr(d, 'winrate'):
+                if hasattr(d, 'winrate_label'):
                     wr_text = d.winrate_label
                     sc_text = f"{d.score_lead:.1f}"
-                    cands = [c.__dict__ for c in d.candidates]
-                else:
-                    wr_text = f"{d.get('winrate_black', 0.5):.1%}"
-                    sc_text = f"{d.get('score_lead_black', 0.0):.1f}"
+                    # candidateもオブジェクトなら辞書化
+                    from dataclasses import is_dataclass, asdict
+                    cands = [asdict(c) if is_dataclass(c) else c for c in d.candidates]
+                elif isinstance(d, dict):
+                    # 辞書（analysis.jsonからロードされた場合など）
+                    wr_text = d.get('winrate_label', f"{d.get('winrate_black', 0.5):.1%}")
+                    sc_text = f"{d.get('score_lead', d.get('score_lead_black', 0.0)):.1f}"
                     cands = d.get('candidates', [])
         
         self.lbl_counter.config(text=f"{curr} / {self.game.total_moves}")
@@ -286,11 +290,13 @@ class GoReplayApp(GoAppBase):
         wrs = []
         for m in moves:
             if m is None:
-                wrs.append(0.5) # デフォルト値
+                wrs.append(0.5)
             elif hasattr(m, 'winrate'):
                 wrs.append(m.winrate)
+            elif isinstance(m, dict):
+                wrs.append(m.get('winrate', m.get('winrate_black', 0.5)))
             else:
-                wrs.append(m.get('winrate_black', 0.5))
+                wrs.append(0.5)
 
         event_bus.publish(AppEvents.STATE_UPDATED, {
             "winrate_text": wr_text,

@@ -6,6 +6,7 @@ from PIL import ImageTk
 
 from core.game_state import GoGameState
 from core.game_board import Color
+from core.point import Point
 from core.coordinate_transformer import CoordinateTransformer
 from utils.board_renderer import GoBoardRenderer
 from gui.board_view import BoardView
@@ -253,16 +254,49 @@ class TestPlayApp(GoAppBase):
             tool = self.current_tool.get()
             if self.info_view.analysis_tab.edit_mode.get() and tool == "stone":
                 color = "B" if ((self.current_move + len(self.review_stones)) % 2 == 0) else "W"
-                if not any(s[0] == (row, col) for s in self.review_stones):
-                    self.review_stones.append(((row, col), color, len(self.review_stones) + 1))
-                    self.redo_review_stones = [] # 新しく打ったらRedo不可
-                    self.update_display()
+                
+                # 現在の局面（正規手順 + 既存の検討用の石）を正確に復元
+                combined_h = list(self.game.get_history_up_to(self.current_move))
+                for (r, c), c_col, _ in self.review_stones:
+                    combined_h.append([c_col, CoordinateTransformer.indices_to_gtp_static(r, c)])
+                
+                # 一時的なシミュレーションを実行
+                temp_ctx = self.simulator.reconstruct_to_context(combined_h, self.game.board_size)
+                target_pt = Point(row, col)
+                
+                if temp_ctx.board.is_legal(target_pt, color):
+                    if not any(s[0] == (row, col) for s in self.review_stones):
+                        self.review_stones.append(((row, col), color, len(self.review_stones) + 1))
+                        self.redo_review_stones = [] # 新しく打ったらRedo不可
+                        self.update_display()
+                else:
+                    msg = f"Reject: {target_pt.to_gtp()} is illegal (Suicide or Ko)"
+                    sys.stderr.write(f"[GUI] {msg}\n")
+                    sys.stderr.flush()
+                    messagebox.showerror("ルール違反", f"{target_pt.to_gtp()} は打てません。")
                 return
             if tool == "stone":
                 color = "B" if (self.current_move % 2 == 0) else "W"
+                # 合法手チェック
+                curr_board = self.game.get_board_at(self.current_move)
+                target_pt = Point(row, col)
+                if not curr_board.is_legal(target_pt, color):
+                    msg = f"着手禁止点です: {target_pt.to_gtp()} (自殺手、またはコウ)"
+                    print(f"[GUI] {msg}")
+                    messagebox.showerror("ルール違反", msg)
+                    return
+
                 if self.game.add_move(self.current_move, color, row, col):
+                    # 実際の手順におけるキャプチャを確認
+                    curr_board = self.game.get_board_at(self.current_move + 1)
+                    # 一手前のボードとの差分からキャプチャを特定（簡易的）
+                    prev_board = self.game.get_board_at(self.current_move)
+                    
                     self.current_move += 1
                     self.redo_review_stones = [] # 新しく打ったらRedo不可
+                    
+                    logger.info(f"Move {self.current_move} played at {CoordinateTransformer.indices_to_gtp_static(row, col)}", layer="GUI")
+                    
                     # 検討モードでなければ解析をリクエスト
                     h = self.game.get_history_up_to(self.current_move)
                     self.analysis_service.request_analysis(h, self.game.board_size)

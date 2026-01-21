@@ -55,7 +55,7 @@ class KataGoDriver:
     def query(self, moves, board_size=19, visits=500, priority=False, include_ownership=True, include_influence=True):
         if not self.process or self.process.poll() is not None: self.start_engine()
         if priority: self.priority_mode.set()
-        query_id = f"q_{{int(time.time() * 1000)}}"
+        query_id = f"q_{int(time.time() * 1000)}"
         
         # KataGo Analysis Query Format
         query = {

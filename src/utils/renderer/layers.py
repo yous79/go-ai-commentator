@@ -59,29 +59,41 @@ class CoordinateLayer(RenderLayer):
 class StoneLayer(RenderLayer):
     """盤上の石と手数を描画するレイヤー"""
     def draw(self, draw: ImageDraw.ImageDraw, ctx: RenderContext):
+        from utils.logger import logger
         gs = ctx.transformer.grid_size
         rad = gs // 2 - 2
         sz = ctx.board_size
         
-        # History map for numbers
-        stone_to_num = {}
-        if ctx.history and ctx.show_numbers:
-            for i, mv in enumerate(ctx.history):
-                idx = CoordinateTransformer.gtp_to_indices_static(mv[1])
-                if idx: stone_to_num[idx] = i + 1
-
-        # 1. Existing Stones
+        # 1. 現在の盤面から石の分布を把握
+        current_stones = {}
         for r in range(sz):
             for c in range(sz):
                 p = Point(r, c)
                 color = ctx.board.get(p)
                 if color:
-                    self._draw_stone(draw, ctx, r, c, color, rad, stone_to_num.get((r, c)))
+                    current_stones[(r, c)] = color
 
-        # 2. Review Stones
+        # 2. 手数番号のマップ作成 (現在の盤面に存在する石のみ)
+        stone_to_num = {}
+        if ctx.history and ctx.show_numbers:
+            for i, mv in enumerate(ctx.history):
+                idx = CoordinateTransformer.gtp_to_indices_static(mv[1])
+                # 盤面に石が存在し、かつ色が一致する場合のみ番号を表示
+                if idx in current_stones:
+                    # 注意: 同一地点に打ち直された場合、最新の手番番号で上書きされる
+                    stone_to_num[idx] = i + 1
+        
+        logger.debug(f"StoneLayer: Board has {len(current_stones)} stones. Rendering {len(stone_to_num)} numbers.", layer="RENDERER")
+
+        # 3. 石の描画
+        for (r, c), color in current_stones.items():
+            self._draw_stone(draw, ctx, r, c, color, rad, stone_to_num.get((r, c)))
+
+        # 4. 検討用の石（Review Stones）の描画
         if ctx.review_stones:
             for (r, c), color_str, num in ctx.review_stones:
                 color = Color.from_str(color_str)
+                # 検討用の石は現在の盤面を無視して（上書きして）描画
                 self._draw_stone(draw, ctx, r, c, color, rad, num, outline="red", width=2)
 
     def _draw_stone(self, draw, ctx, r, c, color: Color, rad, number=None, outline="black", width=1):

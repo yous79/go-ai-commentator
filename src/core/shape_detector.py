@@ -106,7 +106,8 @@ class ShapeDetector:
                         if k != "message":
                             metadata[k] = v
 
-                facts.append(InferenceFact(FactCategory.SHAPE, msg, severity, metadata))
+                from core.inference_fact import TemporalScope
+                facts.append(InferenceFact(FactCategory.SHAPE, msg, severity, metadata, scope=TemporalScope.IMMEDIATE))
         
         # 2. カス石・過剰干渉の検知 (新規)
         inefficient_moves = self._detect_inefficient_moves(context)
@@ -151,11 +152,13 @@ class ShapeDetector:
                 break
 
         if kasu_ishi_detected:
+            from core.inference_fact import TemporalScope
             facts.append(InferenceFact(
                 FactCategory.MISTAKE, 
                 "すでに死んでいる石（カス石）に対して手入れが行われました。",
                 severity=4,
-                metadata={"type": "kasu_ishi_interference"}
+                metadata={"type": "kasu_ishi_interference"},
+                scope=TemporalScope.IMMEDIATE
             ))
 
         return facts

@@ -13,6 +13,7 @@ class SimulationContext:
     last_move: Optional[Point]
     last_color: Optional[Color]
     board_size: int
+    captured_points: List[Point] = None # 最新手で取られた石のリスト
 
 class BoardSimulator:
     """着手履歴やPVに基づいて盤面を復元・シミュレーションするクラス"""
@@ -25,16 +26,22 @@ class BoardSimulator:
         sz = board_size or self.board_size
         curr = GameBoard(sz)
         prev = GameBoard(sz)
+        last_captured = []
         
         for i, move_data in enumerate(history):
             if not isinstance(move_data, (list, tuple)) or len(move_data) < 2:
                 continue
             
             c_str, m_str = move_data[0], move_data[1]
+            color = Color.from_str(c_str)
+            
             if not m_str or (isinstance(m_str, str) and m_str.lower() == "pass"):
+                # パスの場合はコウの状態を解除して次へ
+                curr.apply_pass()
+                if i == len(history) - 1:
+                    prev = curr.copy()
                 continue
             
-            color = Color.from_str(c_str)
             idx = CoordinateTransformer.gtp_to_indices_static(m_str)
             if idx and color:
                 pt = Point(idx[0], idx[1])
@@ -42,7 +49,16 @@ class BoardSimulator:
                 if i == len(history) - 1:
                     prev = curr.copy()
                 
-                curr.play(pt, color)
+                # 合法手チェック（自殺手・コウ等の不備のある履歴をスキップ）
+                if curr.is_legal(pt, color):
+                    # 石を置き、キャプチャ情報を取得
+                    captured = curr.play(pt, color)
+                    # 最後の手の場合のみキャプチャ情報を保持
+                    if i == len(history) - 1:
+                        last_captured = captured
+                else:
+                    from utils.logger import logger
+                    logger.warning(f"Skipping illegal move in history: {c_str}[{m_str}] at move {i}", layer="SIMULATOR")
 
         last_move_str = history[-1][1] if history else None
         last_move_pt = Point.from_gtp(last_move_str) if (last_move_str and last_move_str != "pass") else None
@@ -54,7 +70,8 @@ class BoardSimulator:
             history=history,
             last_move=last_move_pt,
             last_color=last_color,
-            board_size=sz
+            board_size=sz,
+            captured_points=last_captured
         )
 
     def simulate_sequence(self, base_ctx: SimulationContext, sequence: List[str], starting_color=None) -> SimulationContext:
