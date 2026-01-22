@@ -32,6 +32,8 @@ class TestPlayApp(GoAppBase):
 
         # イベント購読
         event_bus.subscribe(AppEvents.STATUS_MSG_UPDATED, lambda msg: logger.info(f"Status: {msg}", layer="GUI"))
+        event_bus.subscribe(AppEvents.COMMENTARY_READY, lambda text: self.info_view.analysis_tab.set_commentary(text))
+        event_bus.subscribe("AI_DIAGRAMS_READY", self._on_ai_diagrams_ready)
 
         # デバッグモード固有の初期化
         self.game.new_game(19) 
@@ -138,8 +140,16 @@ class TestPlayApp(GoAppBase):
         img = Image.open(image_path); img.thumbnail((600, 600))
         photo = ImageTk.PhotoImage(img); lbl = tk.Label(top, image=photo); lbl.image = photo; lbl.pack(padx=10, pady=10)
 
+    def _on_ai_diagrams_ready(self, res):
+        """AIが生成した図を表示する"""
+        if res.get("rec_path"):
+            self._show_image_popup("AI Recommended Plan", res["rec_path"])
+        if res.get("thr_path"):
+            self.root.after(200, lambda: self._show_image_popup("WARNING: Future Threat", res["thr_path"]))
+        self.info_view.analysis_tab.btn_comment.config(state="normal", text="Ask AI Agent")
+
     def generate_commentary(self):
-        """AI解説を非同期で生成する"""
+        """AI解説をサービス経由で非同期実行する"""
         if not self.gemini: return
         
         h = list(self.game.get_history_up_to(self.current_move))
@@ -148,51 +158,13 @@ class TestPlayApp(GoAppBase):
         
         bs = self.game.board_size
 
-        def _task():
-            # 1. AI解説生成
-            text = self.gemini.generate_commentary(len(h), h, bs)
-            
-            # 2. 緊急度チェックと参考図生成
-            urgency_data = self.controller.api_client.analyze_urgency(h, bs)
-            
-            rec_path = None
-            thr_path = None
-            
-            if urgency_data:
-                curr_ctx = self.simulator.reconstruct_to_context(h, bs)
-                # 推奨図
-                best_pv = urgency_data.get("best_pv", [])
-                if best_pv:
-                    rec_ctx = self.simulator.simulate_sequence(curr_ctx, best_pv)
-                    rec_path, _ = self.visualizer.visualize_context(rec_ctx, title="Recommended Plan")
-                
-                # 失敗図
-                if urgency_data.get("is_critical"):
-                    opp_pv = urgency_data.get("opponent_pv", [])
-                    if opp_pv:
-                        thr_seq = ["pass"] + opp_pv
-                        thr_ctx = self.simulator.simulate_sequence(curr_ctx, thr_seq, starting_color=urgency_data['next_player'])
-                        title = f"Future Threat (Loss: {urgency_data['urgency']:.1f})"
-                        thr_path, _ = self.visualizer.visualize_context(thr_ctx, title=title)
-
-            return {"text": text, "rec_path": rec_path, "thr_path": thr_path}
-
-        def _on_success(res):
-            self.info_view.analysis_tab.set_commentary(res["text"])
-            if res["rec_path"]:
-                self._show_image_popup("AI Recommended Plan", res["rec_path"])
-            if res["thr_path"]:
-                self.root.after(200, lambda: self._show_image_popup("WARNING: Future Threat", res["thr_path"]))
-            self.info_view.analysis_tab.btn_comment.config(state="normal", text="Ask AI Agent")
-
-        def _on_error(e):
-            self.info_view.analysis_tab.set_commentary(f"Error: {str(e)}")
-            self.info_view.analysis_tab.btn_comment.config(state="normal", text="Ask AI Agent")
-
-        def _pre_task():
-            self.info_view.analysis_tab.btn_comment.config(state="disabled", text="Thinking...")
-
-        self.task_manager.run_task(_task, on_success=_on_success, on_error=_on_error, pre_task=_pre_task)
+        self.info_view.analysis_tab.btn_comment.config(state="disabled", text="Thinking...")
+        
+        # サービスに処理を譲渡
+        self.analysis_service.generate_full_context_analysis(
+            len(h), h, bs, 
+            self.gemini, self.simulator, self.visualizer
+        )
 
     def reset_game(self, size):
         self.game.new_game(size)
@@ -254,6 +226,7 @@ class TestPlayApp(GoAppBase):
             tool = self.current_tool.get()
             if self.info_view.analysis_tab.edit_mode.get() and tool == "stone":
                 color = "B" if ((self.current_move + len(self.review_stones)) % 2 == 0) else "W"
+                logger.info(f"EDIT MODE Attempt -> Move: {self.current_move + len(self.review_stones) + 1}, Color: {color}, Point: {CoordinateTransformer.indices_to_gtp_static(row, col)}", layer="GUI")
                 
                 # 現在の局面（正規手順 + 既存の検討用の石）を正確に復元
                 combined_h = list(self.game.get_history_up_to(self.current_move))
@@ -265,10 +238,13 @@ class TestPlayApp(GoAppBase):
                 target_pt = Point(row, col)
                 
                 if temp_ctx.board.is_legal(target_pt, color):
-                    if not any(s[0] == (row, col) for s in self.review_stones):
-                        self.review_stones.append(((row, col), color, len(self.review_stones) + 1))
-                        self.redo_review_stones = [] # 新しく打ったらRedo不可
-                        self.update_display()
+                    # 同一座標のチェックを削除（囲碁では一度抜かれた場所に再度打つことが可能なため）
+                    self.review_stones.append(((row, col), color, len(self.review_stones) + 1))
+                    sys.stdout.write(f"[GUI] Placed review stone: {color}[{target_pt.to_gtp()}] (Total review stones: {len(self.review_stones)})\n")
+                    sys.stdout.flush()
+                    
+                    self.redo_review_stones = [] # 新しく打ったらRedo不可
+                    self.update_display()
                 else:
                     msg = f"Reject: {target_pt.to_gtp()} is illegal (Suicide or Ko)"
                     sys.stderr.write(f"[GUI] {msg}\n")
@@ -277,6 +253,7 @@ class TestPlayApp(GoAppBase):
                 return
             if tool == "stone":
                 color = "B" if (self.current_move % 2 == 0) else "W"
+                logger.info(f"NORMAL MODE Attempt -> Move: {self.current_move + 1}, Color: {color}, Point: {CoordinateTransformer.indices_to_gtp_static(row, col)}", layer="GUI")
                 # 合法手チェック
                 curr_board = self.game.get_board_at(self.current_move)
                 target_pt = Point(row, col)

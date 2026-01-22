@@ -3,6 +3,7 @@ from core.coordinate_transformer import CoordinateTransformer
 from core.point import Point
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
+import sys
 
 @dataclass
 class SimulationContext:
@@ -28,6 +29,9 @@ class BoardSimulator:
         prev = GameBoard(sz)
         last_captured = []
         
+        # 履歴再生のログ
+        sys.stdout.write(f"[SIMULATOR] Reconstructing board from history (len: {len(history)})...\n")
+        
         for i, move_data in enumerate(history):
             if not isinstance(move_data, (list, tuple)) or len(move_data) < 2:
                 continue
@@ -36,8 +40,8 @@ class BoardSimulator:
             color = Color.from_str(c_str)
             
             if not m_str or (isinstance(m_str, str) and m_str.lower() == "pass"):
-                # パスの場合はコウの状態を解除して次へ
                 curr.apply_pass()
+                sys.stdout.write(f"[SIMULATOR] Move {i+1}: PASS by {c_str}\n")
                 if i == len(history) - 1:
                     prev = curr.copy()
                 continue
@@ -45,20 +49,20 @@ class BoardSimulator:
             idx = CoordinateTransformer.gtp_to_indices_static(m_str)
             if idx and color:
                 pt = Point(idx[0], idx[1])
-                # 直前の盤面を記録
                 if i == len(history) - 1:
                     prev = curr.copy()
                 
-                # 合法手チェック（自殺手・コウ等の不備のある履歴をスキップ）
+                # 合法手チェック
                 if curr.is_legal(pt, color):
-                    # 石を置き、キャプチャ情報を取得
                     captured = curr.play(pt, color)
-                    # 最後の手の場合のみキャプチャ情報を保持
                     if i == len(history) - 1:
                         last_captured = captured
                 else:
-                    from utils.logger import logger
-                    logger.warning(f"Skipping illegal move in history: {c_str}[{m_str}] at move {i}", layer="SIMULATOR")
+                    sys.stderr.write(f"[SIMULATOR] ERROR: Illegal move in history at {i+1}: {c_str}[{m_str}]\n")
+                    sys.stderr.flush()
+        
+        sys.stdout.write(f"[SIMULATOR] Reconstruction finished. Final Ko: {curr.ko_point.to_gtp() if curr.ko_point else 'None'}\n")
+        sys.stdout.flush()
 
         last_move_str = history[-1][1] if history else None
         last_move_pt = Point.from_gtp(last_move_str) if (last_move_str and last_move_str != "pass") else None

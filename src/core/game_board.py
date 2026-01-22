@@ -56,22 +56,47 @@ class GameBoard:
         if not color_obj or not pt.is_valid(self.side):
             return False
         
+        # 詳細ログ
+        ko_str = f", Ko: {self.ko_point.to_gtp()}" if self.ko_point else ""
+        sys.stdout.write(f"[BOARD] Validating Move -> Color: {color_obj.label}({color_obj.value}), Point: {pt.to_gtp()}{ko_str}\n")
+        sys.stdout.flush()
+
+        # 1. 座標の重複チェック
         if self.get(pt):
+            sys.stderr.write(f"[BOARD] Result: ILLEGAL | Reason: OCCUPIED at {pt.to_gtp()}\n")
+            sys.stderr.flush()
             return False
 
-        # サンドボックス作成
+        # 2. コウのチェック
+        if self.ko_point and pt == self.ko_point:
+            sys.stderr.write(f"[BOARD] Result: ILLEGAL | Reason: KO at {pt.to_gtp()}\n")
+            sys.stderr.flush()
+            return False
+
+        # 3. 自殺手のチェック（実際に置いてみる）
         test_board = self._board.copy()
-        if self.ko_point:
-            test_board.ko_point = (self.ko_point.row, self.ko_point.col)
-        else:
-            test_board.ko_point = None
-        
         try:
-            test_board.play(pt.row, pt.col, color_obj.value)
+            # play() は石が打ち抜かれるリストを返す（Noneを返す可能性も考慮）
+            captured = test_board.play(pt.row, pt.col, color_obj.value)
+            
+            # 石が盤面に残っているか確認（自殺手なら打ち抜かれて消えているはず）
+            if test_board.get(pt.row, pt.col) is None:
+                lib_info = []
+                for n in pt.neighbors(self.side):
+                    n_val = self.get(n)
+                    n_color = n_val.label if n_val else "空"
+                    lib_info.append(f"{n.to_gtp()}:{n_color}")
+                sys.stderr.write(f"[BOARD] Result: ILLEGAL | Reason: SUICIDE at {pt.to_gtp()} (Neighbors: {', '.join(lib_info)})\n")
+                sys.stderr.flush()
+                return False
+            
+            sys.stdout.write(f"[BOARD] Result: LEGAL for {pt.to_gtp()}\n")
+            sys.stdout.flush()
             return True
         except ValueError as e:
-            reason = str(e).lower()
-            sys.stderr.write(f"[BOARD] Reject {pt.to_gtp()}: {reason}\n")
+            # sgfmillが投げるその他のエラー
+            sys.stderr.write(f"[BOARD] Result: ILLEGAL | Reason: SGFMILL REJECT ({e})\n")
+            sys.stderr.flush()
             return False
 
     def play(self, pt: Point, color: Union[Color, str]) -> List[Point]:
@@ -79,23 +104,41 @@ class GameBoard:
         color_obj = color if isinstance(color, Color) else Color.from_str(color)
         if not color_obj: return []
         
-        if self.ko_point:
-            self._board.ko_point = (int(self.ko_point.row), int(self.ko_point.col))
-        else:
-            self._board.ko_point = None
-
         try:
+            # 1. 石を置く
             captured_raw = self._board.play(pt.row, pt.col, color_obj.value)
             
-            if self._board.ko_point:
-                r, c = self._board.ko_point
-                self.ko_point = Point(r, c)
-            else:
-                self.ko_point = None
+            # captured_raw の形式を正規化 (単一タプルまたはリストに対応)
+            captured_pts = []
+            if captured_raw:
+                if isinstance(captured_raw, tuple) and len(captured_raw) == 2 and isinstance(captured_raw[0], int):
+                    items = [captured_raw]
+                else:
+                    items = captured_raw
                 
-            return [Point(r, c) for r, c in captured_raw] if captured_raw else []
+                for item in items:
+                    if isinstance(item, (list, tuple)) and len(item) == 2:
+                        captured_pts.append(Point(item[0], item[1]))
+
+            # 2. コウの判定
+            old_ko = self.ko_point
+            self.ko_point = None
+            if old_ko:
+                sys.stdout.write(f"[BOARD] Ko Point Cleared (was {old_ko.to_gtp()})\n")
+                sys.stdout.flush()
+            
+            if len(captured_pts) == 1:
+                group, liberties = self.get_group_and_liberties(pt)
+                if len(group) == 1 and len(liberties) == 1:
+                    if captured_pts[0] in liberties:
+                        self.ko_point = captured_pts[0]
+                        sys.stdout.write(f"[BOARD] New KO established at {self.ko_point.to_gtp()}\n")
+                        sys.stdout.flush()
+            
+            return captured_pts
         except Exception as e:
             sys.stderr.write(f"[BOARD] Play Error at {pt.to_gtp()}: {e}\n")
+            sys.stderr.flush()
             return []
 
     def apply_pass(self) -> None:
