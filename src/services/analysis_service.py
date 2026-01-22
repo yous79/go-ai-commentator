@@ -5,6 +5,7 @@ from core.analysis_dto import AnalysisResult
 from services.api_client import api_client
 from utils.event_bus import event_bus, AppEvents
 from utils.logger import logger
+from core.point import Point
 
 class AnalysisService:
     """
@@ -80,8 +81,49 @@ class AnalysisService:
             return data
         return AnalysisResult.from_dict(data)
 
-    def get_history_up_to(self, idx: int) -> List[List[str]]:
-        """指定手数までの履歴を再構成する（ハッシュ生成用）"""
-        # ここでは本来のSGF等の全履歴が必要だが、現状はアプリ側の管理に依存
-        # サービスの独立性を高めるため、将来的に履歴管理もここに寄せる
-        return []
+    def generate_full_context_analysis(self, move_idx, history, board_size, gemini, simulator, visualizer):
+        """
+        解説生成、緊急度解析、および成功/失敗図の生成を一括して非同期で実行する。
+        """
+        def _task():
+            # 1. 解説生成
+            commentary_text = gemini.generate_commentary(move_idx, history, board_size)
+            
+            # 2. 緊急度解析
+            urgency_data = api_client.analyze_urgency(history, board_size)
+            
+            rec_path = None
+            thr_path = None
+            
+            if urgency_data:
+                curr_ctx = simulator.reconstruct_to_context(history, board_size)
+                
+                # 成功図（最善進行）
+                best_pv = urgency_data.get("best_pv", [])
+                if best_pv:
+                    rec_ctx = simulator.simulate_sequence(curr_ctx, best_pv)
+                    rec_path, _ = visualizer.visualize_context(rec_ctx, title="AI Recommended Success Plan")
+                
+                # 失敗図（放置被害）
+                if urgency_data.get("is_critical"):
+                    opp_pv = urgency_data.get("opponent_pv", [])
+                    if opp_pv:
+                        thr_seq = ["pass"] + opp_pv
+                        thr_ctx = simulator.simulate_sequence(curr_ctx, thr_seq, starting_color=urgency_data['next_player'])
+                        title = f"Future Threat Diagram (Potential Loss: {urgency_data['urgency']:.1f})"
+                        thr_path, _ = visualizer.visualize_context(thr_ctx, title=title)
+
+            return {
+                "text": commentary_text,
+                "rec_path": rec_path,
+                "thr_path": thr_path
+            }
+
+        def _on_success(res):
+            # 結果をイベントバスに通知 (UI側でポップアップ等を行う)
+            event_bus.publish(AppEvents.COMMENTARY_READY, res["text"])
+            # 特殊な結果（画像パス）は追加データとして送るか、別のイベントにする
+            if res["rec_path"] or res["thr_path"]:
+                event_bus.publish("AI_DIAGRAMS_READY", res)
+
+        self.task_manager.run_task(_task, on_success=_on_success)

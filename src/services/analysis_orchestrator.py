@@ -14,7 +14,8 @@ from services.fact_providers import (
     InfluenceFactProvider,
     KoFactProvider,
     UrgencyFactProvider,
-    BaseFactProvider
+    BaseFactProvider,
+    BasicStatsFactProvider
 )
 
 class AnalysisOrchestrator:
@@ -29,6 +30,7 @@ class AnalysisOrchestrator:
         
         # プロバイダの登録
         self.providers: List[BaseFactProvider] = [
+            BasicStatsFactProvider(board_size),
             ShapeFactProvider(board_size, self.detector),
             UrgencyFactProvider(board_size, self.simulator, self.detector),
             StabilityFactProvider(board_size, self.stability_analyzer),
@@ -62,9 +64,7 @@ class AnalysisOrchestrator:
             except Exception as e:
                 logger.error(f"Provider {provider.__class__.__name__} failed: {e}", layer="ORCHESTRATOR")
 
-        # 4. 基本統計の追加
-        sl = ana_data.score_lead
-        collector.add(FactCategory.STRATEGY, f"現在の勝率(黒): {ana_data.winrate_label}, 目数差: {sl:.1f}目", severity=3, scope=TemporalScope.EXISTING)
+        # 4. (Basic stats now handled by BasicStatsFactProvider)
 
         # 5. ルール適合性チェック (デバッグ用)
         if curr_ctx.last_move:

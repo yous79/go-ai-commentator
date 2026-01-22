@@ -148,6 +148,7 @@ class UrgencyFactProvider(BaseFactProvider):
                         f.scope = TemporalScope.PREDICTED
                         collector.facts.append(f)
 
+
 class KoFactProvider(BaseFactProvider):
     """コウの発生や解消を検知するプロバイダ"""
     
@@ -157,3 +158,15 @@ class KoFactProvider(BaseFactProvider):
             cap_pt = context.captured_points[0]
             msg = f"最新の着手によって {cap_pt.to_gtp()} の石が取られました。コウの争いが始まる可能性があります。"
             collector.add(FactCategory.STRATEGY, msg, severity=4, metadata={"type": "ko_initiation", "point": cap_pt.to_gtp()}, scope=TemporalScope.IMMEDIATE)
+
+class BasicStatsFactProvider(BaseFactProvider):
+    """勝率や目数差などの基本統計情報を事実として提供するプロバイダ"""
+    
+    def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
+        sl = analysis.score_lead
+        collector.add(
+            FactCategory.STRATEGY, 
+            f"現在の勝率(黒): {analysis.winrate_label}, 目数差: {sl:.1f}目", 
+            severity=3, 
+            scope=TemporalScope.EXISTING
+        )

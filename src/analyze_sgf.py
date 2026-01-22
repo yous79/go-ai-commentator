@@ -128,34 +128,8 @@ class BoardRenderer:
             curr_color = "W" if curr_color == "B" else "B"
         return img
 
-class KataGoEngine:
-    def __init__(self, board_size=19):
-        self.board_size = board_size
-        cmd = [KATAGO_EXE, "analysis", "-config", CONFIG, "-model", MODEL]
-        self.process = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
-        print("Initializing KataGo...", flush=True)
-        while True:
-            line = self.process.stderr.readline()
-            if "Started, ready to begin handling requests" in line:
-                print("KataGo is ready.", flush=True)
-                break
-            if not line and self.process.poll() is not None:
-                sys.exit(1)
-
-    def analyze(self, moves, komi=6.5):
-        query = {"id": "analysis", "moves": moves, "rules": "japanese", "komi": komi, "boardXSize": self.board_size, "boardYSize": self.board_size, "maxVisits": 500}
-        try:
-            self.process.stdin.write(json.dumps(query) + "\n")
-            self.process.stdin.flush()
-            while True:
-                line = self.process.stdout.readline()
-                if not line: break
-                resp = json.loads(line)
-                if resp.get("id") == "analysis": return resp
-        except: return None
-
-    def close(self):
-        self.process.terminate()
+from services.api_client import api_client
+from services.analysis_orchestrator import AnalysisOrchestrator
 
 def main():
     path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(SCRIPT_DIR, "sample.sgf")
@@ -180,66 +154,70 @@ def main():
         try:
             with open(json_path, "r") as f:
                 existing_log = json.load(f)
-            # Check if analysis is complete (last move number matches or exceeded)
             if len(existing_log.get("moves", [])) >= total + 1:
                 print(f"Analysis for {name} already exists and is complete. Skipping.", flush=True)
                 return
-        except:
-            pass # Continue to analysis if JSON is corrupt
-    # --- End Skip Check ---
+        except: pass
+    
+    # Check if API server is up
+    if not api_client.health_check():
+        print("Error: API Server is not running. Please start main.py first or start the API server manually.")
+        sys.exit(1)
 
-    engine = KataGoEngine(board_size)
+    orchestrator = AnalysisOrchestrator(board_size)
     renderer = BoardRenderer(board_size)
     node = game.get_root(); board = boards.Board(board_size); history = []; m_num = 0
     log = {"board_size": board_size, "moves": []}
     cols = "ABCDEFGHJKLMNOPQRST"
+
     while True:
         print(f"Analyzing Move {m_num}", flush=True)
-        ans = engine.analyze(history)
-        info = "No Data"; data = {"move_number": m_num, "winrate": 0.5, "score": 0.0, "candidates": []}
         
-        if ans and 'rootInfo' in ans:
-            raw_wr = ans['rootInfo'].get('winrate', 0.5)
-            raw_sc = ans['rootInfo'].get('scoreLead', 0.0)
-            
-            # Standardize to Black's perspective
-            # m_num 0: next is Black. m_num 1: next is White.
-            is_white_next = (m_num % 2 != 0)
-            if is_white_next:
-                wr_black = 1.0 - raw_wr
-                sc_black = -raw_sc
-            else:
-                wr_black = raw_wr
-                sc_black = raw_sc
-                
+        # Use AnalysisOrchestrator for high-quality fact detection
+        collector = orchestrator.analyze_full(history, board_size)
+        ans = collector.raw_analysis
+        
+        data = {"move_number": m_num, "winrate": 0.5, "score": 0.0, "candidates": []}
+        info = "No Data"
+        
+        if ans:
+            wr_black = ans.winrate_black
+            sc_black = ans.score_lead_black
             info = f"Winrate(B): {wr_black:.1%} | Score(B): {sc_black:.1f}"
-            data.update({"winrate": wr_black, "score": sc_black})
             
-            if 'moveInfos' in ans:
-                for c in ans['moveInfos'][:10]:
-                    c_wr = c.get('winrate', 0)
-                    c_sc = c.get('scoreLead', 0)
-                    if is_white_next:
-                        c_wr_black = 1.0 - c_wr
-                        c_sc_black = -c_sc
-                    else:
-                        c_wr_black = c_wr
-                        c_sc_black = c_sc
-                    data["candidates"].append({
-                        "move": c['move'], 
-                        "winrate": c_wr_black, 
-                        "scoreLead": c_sc_black, 
-                        "pv": c.get('pv', [])
-                    })
-        
+            data.update({
+                "winrate": wr_black, 
+                "score": sc_black,
+                "winrate_label": ans.winrate_label,
+                "score_lead": ans.score_lead,
+                "candidates": [
+                    {
+                        "move": c.move,
+                        "winrate": c.winrate_black,
+                        "scoreLead": c.score_lead_black,
+                        "pv": c.pv
+                    } for c in ans.candidates
+                ]
+            })
+
         log["moves"].append(data)
         with open(os.path.join(out, "analysis.json"), "w") as f: json.dump(log, f, indent=2)
+        
         last = None
         if m_num > 0:
             c, m = node.get_move()
             if m: last = (c, m)
-        img = renderer.render(board, last_move=last, analysis_text=f"Move {m_num} | {info}")
+            
+        # Draw image with stats and potential facts
+        fact_desc = ""
+        if collector.facts:
+            # Show the most severe fact if any
+            top_fact = sorted(collector.facts, key=lambda x: x.severity, reverse=True)[0]
+            fact_desc = f" | Fact: {top_fact.description}" if top_fact.severity >= 3 else ""
+
+        img = renderer.render(board, last_move=last, analysis_text=f"Move {m_num} | {info}{fact_desc}")
         img.save(os.path.join(out, f"move_{m_num:03d}.png"))
+        
         try:
             node = node[0]; m_num += 1; color, m = node.get_move()
             if color:
@@ -248,8 +226,8 @@ def main():
                     history.append(["B" if color == 'b' else "W", cols[m[1]] + str(m[0]+1)])
                 else: history.append(["B" if color == 'b' else "W", "pass"])
         except: break
-    engine.close()
-    print(f"Done. Images in {out}", flush=True)
+
+    print(f"Done. Images and JSON in {out}", flush=True)
 
 if __name__ == "__main__":
     main()

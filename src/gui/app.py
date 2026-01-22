@@ -41,6 +41,7 @@ class GoReplayApp(GoAppBase):
         # イベント購読
         event_bus.subscribe(AppEvents.STATUS_MSG_UPDATED, lambda msg: self.lbl_status.config(text=msg))
         event_bus.subscribe(AppEvents.PROGRESS_UPDATED, lambda val: self.progress_bar.config(value=val))
+        event_bus.subscribe("AI_DIAGRAMS_READY", self._on_ai_diagrams_ready)
 
         # 再生モード固有の初期化
         self.transformer = CoordinateTransformer()
@@ -309,66 +310,33 @@ class GoReplayApp(GoAppBase):
         self.board_view.update_board(img, self.info_view.review_mode.get(), cands)
 
     def generate_commentary(self):
-        """AI解説を非同期で生成する"""
+        """AI解説をサービス経由で非同期実行する"""
         if not self.gemini: return
 
         curr = self.controller.current_move
         h = self.game.get_history_up_to(curr)
         bs = self.game.board_size
 
-        def _task():
-            # 1. 解説生成
-            commentary_text = self.gemini.generate_commentary(curr, h, bs)
-            
-            # 2. 緊急度解析
-            urgency_data = self.controller.api_client.analyze_urgency(h, bs)
-            
-            rec_path = None
-            thr_path = None
-            
-            if urgency_data:
-                curr_ctx = self.simulator.reconstruct_to_context(h, bs)
-                
-                # 成功図（最善進行）
-                best_pv = urgency_data.get("best_pv", [])
-                if best_pv:
-                    rec_ctx = self.simulator.simulate_sequence(curr_ctx, best_pv)
-                    rec_path, _ = self.visualizer.visualize_context(rec_ctx, title="AI Recommended Success Plan")
-                
-                # 失敗図（放置被害）
-                if urgency_data.get("is_critical"):
-                    opp_pv = urgency_data.get("opponent_pv", [])
-                    if opp_pv:
-                        thr_seq = ["pass"] + opp_pv
-                        thr_ctx = self.simulator.simulate_sequence(curr_ctx, thr_seq, starting_color=urgency_data['next_player'])
-                        title = f"Future Threat Diagram (Potential Loss: {urgency_data['urgency']:.1f})"
-                        thr_path, _ = self.visualizer.visualize_context(thr_ctx, title=title)
-
-            return {
-                "text": commentary_text,
-                "rec_path": rec_path,
-                "thr_path": thr_path
-            }
-
-        def _on_success(res):
-            self._update_commentary_ui(res["text"])
-            if res["rec_path"]:
-                self._show_image_popup("AI Recommended Plan", res["rec_path"])
-            if res["thr_path"]:
-                self.root.after(200, lambda: self._show_image_popup("WARNING: Future Threat", res["thr_path"]))
-
-        def _pre_task():
-            self.info_view.btn_comment.config(state="disabled", text="Thinking...")
-
-        def _on_error(e):
-            self._update_commentary_ui(f"Error: {str(e)}")
-
-        self.task_manager.run_task(_task, on_success=_on_success, on_error=_on_error, pre_task=_pre_task)
+        self.info_view.btn_comment.config(state="disabled", text="Thinking...")
+        
+        # サービスに処理を譲渡
+        self.analysis_service.generate_full_context_analysis(
+            curr, h, bs, 
+            self.gemini, self.simulator, self.visualizer
+        )
 
     def _update_commentary_ui(self, text):
         """AI解説の表示を更新する (イベント経由)"""
         event_bus.publish(AppEvents.COMMENTARY_READY, text)
-        self.info_view.analysis_tab.btn_comment.config(state="normal", text="Ask AI Agent")
+        self.info_view.btn_comment.config(state="normal", text="Ask AI Agent")
+
+    def _on_ai_diagrams_ready(self, res):
+        """AIが生成した図を表示する"""
+        if res.get("rec_path"):
+            self._show_image_popup("AI Recommended Plan", res["rec_path"])
+        if res.get("thr_path"):
+            # 連続して出すと重なるため少し遅延
+            self.root.after(200, lambda: self._show_image_popup("WARNING: Future Threat", res["thr_path"]))
 
     def generate_full_report(self):
         """対局レポートを非同期で生成する"""
