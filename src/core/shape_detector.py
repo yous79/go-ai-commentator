@@ -57,9 +57,18 @@ class ShapeDetector:
                 try:
                     with open(path, "r", encoding="utf-8") as f:
                         pattern_def = json.load(f)
-                        # GenericPatternDetector internally might need update too, 
-                        # but for now we focus on the main interface.
                         detector = GenericPatternDetector(pattern_def, self.board_size)
+                        
+                        # 優先度の設定
+                        if pattern_def.get("category") == "bad":
+                            detector.priority = 80
+                        elif detector.key == "tsuke":
+                            detector.priority = 10
+                        elif detector.key in ["nobi", "narabi"]:
+                            detector.priority = 30
+                        else:
+                            detector.priority = 50
+                            
                         self.strategies.append(detector)
                 except Exception as e:
                     print(f"Failed to load pattern {path}: {e}")
@@ -68,12 +77,14 @@ class ShapeDetector:
         """動的解析が必要なレガシー（ハイブリッド）戦略を読み込む"""
         loaded_keys = {getattr(s, "key", "") for s in self.strategies}
         legacy_list = [
-            (PonnukiDetector, "ponnuki"),
-            (AtariDetector, "atari")
+            (PonnukiDetector, "ponnuki", 100), # 最優先
+            (AtariDetector, "atari", 95)
         ]
-        for cls, key in legacy_list:
+        for cls, key, priority in legacy_list:
             if key not in loaded_keys:
-                self.strategies.append(cls(self.board_size))
+                instance = cls(self.board_size)
+                instance.priority = priority
+                self.strategies.append(instance)
 
     def detect_facts(self, curr_board: GameBoard, prev_board: Optional[GameBoard] = None, analysis_result=None) -> list[InferenceFact]:
         """形状検知結果を InferenceFact のリストとして返す"""
@@ -81,8 +92,13 @@ class ShapeDetector:
         context = DetectionContext(curr_board, prev_board, actual_size, analysis_result)
         facts = []
         
-        # 1. 既存の戦略による検知
-        for strategy in self.strategies:
+        # 同一座標に対して複数のラベルがつくのを防ぐための記録
+        labeled_coords = set()
+
+        # 1. 戦略を優先度順にソート (高い順)
+        sorted_strategies = sorted(self.strategies, key=lambda s: getattr(s, "priority", 50), reverse=True)
+        
+        for strategy in sorted_strategies:
             orig_size = getattr(strategy, "board_size", 19)
             strategy.board_size = actual_size
             category, results = strategy.detect(context)
@@ -98,10 +114,19 @@ class ShapeDetector:
 
             for res in actual_results:
                 msg = res["message"] if isinstance(res, dict) else res
-                metadata = {"key": getattr(strategy, "key", "unknown")}
                 
+                # 座標の特定 (メッセージから抽出するか、あるいは個別に渡す)
+                # GenericPatternDetector はメッセージに座標を入れているため、
+                # context.last_move を代表座標として使用する（最新手のみが対象のため）
+                coord = context.last_move.to_gtp() if context.last_move else "unknown"
+                
+                if coord != "unknown" and coord in labeled_coords:
+                    continue # 既に高優先度のラベルがついている
+                
+                labeled_coords.add(coord)
+                
+                metadata = {"key": getattr(strategy, "key", "unknown")}
                 if isinstance(res, dict):
-                    # remedy_gtp などの追加情報をメタデータに統合
                     for k, v in res.items():
                         if k != "message":
                             metadata[k] = v

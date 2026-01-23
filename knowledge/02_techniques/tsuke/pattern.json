@@ -8,8 +8,21 @@
     "patterns": [
         {
             "elements": [
-                {"offset": [0, 0], "state": "last"},
-                {"offset": [1, 0], "state": "opponent"}
+                {
+                    "offset": [
+                        0,
+                        0
+                    ],
+                    "state": "last"
+                },
+                {
+                    "offset": [
+                        1,
+                        0
+                    ],
+                    "state": "opponent",
+                    "check_isolation": true
+                }
             ]
         }
     ]

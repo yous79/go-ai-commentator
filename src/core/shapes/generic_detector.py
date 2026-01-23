@@ -77,22 +77,27 @@ class GenericPatternDetector(BaseShape):
         if not context.last_move:
             return self.category, []
 
+        # アキ三角の検知除外条件: コウを解消（埋める）した手である場合
+        if self.key == "aki_sankaku":
+            if context.prev_board and context.prev_board.ko_point == context.last_move:
+                return self.category, []
+
         results = []
         matched_points = set()
 
         for variant in self.patterns:
+            # パターン内の "last" エレメントを探す
             for i, target_el in enumerate(variant["elements"]):
                 if target_el.get("state") != "last": 
                     continue
                 
+                # 'last' が context.last_move と一致するように原点を逆算
                 origin = context.last_move - tuple(target_el["offset"])
                 
                 if self._match_at(context, variant, origin):
                     coord = context.last_move.to_gtp()
                     if coord not in matched_points:
                         msg = self.message_template.format(coord)
-                        
-                        # 構造化データとして結果を構築
                         res_data = {"message": msg}
                         remedy_off = variant.get("remedy_offset")
                         if remedy_off:
@@ -110,15 +115,21 @@ class GenericPatternDetector(BaseShape):
         """特定の原点位置でパターンが一致するか判定する"""
         last_color_char = context.last_color.value if context.last_color else '.'
         opp_color_char = 'w' if last_color_char == 'b' else 'b'
+        opp_color_obj = context.last_color.opposite() if context.last_color else None
         
-        for el in pattern["elements"]:
+        matched_pts = {} # pattern_local_index -> abs_point
+        
+        # 1. 基本的な要素の一致確認
+        for el_idx, el in enumerate(pattern["elements"]):
             abs_pos = origin + tuple(el["offset"])
             state_needed = el["state"]
             
             # 盤外チェック
             if not abs_pos.is_valid(context.board_size):
-                if state_needed == "edge": continue
-                else: return False
+                if state_needed == "edge": 
+                    continue
+                else: 
+                    return False
             
             # 石の取得
             actual = context.curr_board.get(abs_pos)
@@ -132,18 +143,55 @@ class GenericPatternDetector(BaseShape):
             elif state_needed == "empty":
                 if actual_char == '.':
                     match = True
-                    # 【重要】取り（Capture）の判定
-                    if context.prev_board:
+                    # 取りの結果としての空点はアキとはみなさない(badのみ)
+                    if self.category == "bad" and context.prev_board:
                         prev_stone = context.prev_board.get(abs_pos)
                         if prev_stone and prev_stone.value == opp_color_char:
-                            if self.category == "bad":
-                                match = False # 取りの結果としての空点はアキとはみなさない
+                            match = False
                 else:
                     match = False
             elif state_needed == "any":
-                match = (actual_char != 'edge')
+                match = True
             
             if not match:
                 return False
             
+            # 孤立チェック
+            if el.get("check_isolation") and state_needed == "opponent":
+                if actual:
+                    group, _ = context.curr_board.get_group_and_liberties(abs_pos)
+                    if len(group) != 1:
+                        return False
+
+            matched_pts[el_idx] = abs_pos
+
+        # 2. 周囲8マスの清浄性チェック (purity)
+        if pattern.get("purity"):
+            all_pattern_pts = set(matched_pts.values())
+            for neighbor in context.last_move.all_neighbors(context.board_size):
+                if neighbor in all_pattern_pts:
+                    continue
+                if not context.curr_board.is_empty(neighbor):
+                    return False
+
+        # 3. 隣接条件制約 (constraints)
+        for const in pattern.get("constraints", []):
+            # target となる要素を特定
+            targets = []
+            target_label = const.get("target")
+            for idx, el in enumerate(pattern["elements"]):
+                if el.get("label") == target_label or (not target_label and el["state"] == "last"):
+                    if idx in matched_pts:
+                        targets.append(matched_pts[idx])
+            
+            for t_pt in targets:
+                # 相手の石の隣接数をカウント
+                opp_count = 0
+                for n in t_pt.neighbors(context.board_size):
+                    if context.curr_board.get(n) == opp_color_obj:
+                        opp_count += 1
+                
+                if "max" in const and opp_count > const["max"]: return False
+                if "min" in const and opp_count < const["min"]: return False
+
         return True

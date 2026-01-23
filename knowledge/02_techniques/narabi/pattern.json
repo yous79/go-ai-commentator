@@ -1,8 +1,8 @@
 {
-    "key": "nobi",
-    "name": "ノビ",
+    "key": "narabi",
+    "name": "ナラビ",
     "category": "normal",
-    "message": "力強く【ノビ】た一手です（{}）。",
+    "message": "どっしりと【ナラビ】た一手です（{}）。",
     "auto_rotate": true,
     "auto_reflect": true,
     "patterns": [
@@ -32,7 +32,7 @@
                 },
                 {
                     "target": "S",
-                    "min": 1
+                    "max": 0
                 }
             ]
         }

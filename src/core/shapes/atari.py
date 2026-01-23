@@ -10,28 +10,22 @@ class AtariDetector:
         self.board_size = board_size
 
     def detect(self, context):
-        """現在の盤面からアタリのグループを抽出する"""
+        """最新の着手によって相手がアタリになったか判定する"""
+        if not context.last_move:
+            return "normal", []
+            
         board = context.curr_board
-        size = board.side
-        visited = set()
-        atari_facts = []
+        opp_color = context.last_color.opposite()
+        atari_msgs = []
+        
+        # 最新手の隣接点にある相手石をチェック
+        for neighbor in context.last_move.neighbors(board.side):
+            if board.get(neighbor) == opp_color:
+                group, liberties = board.get_group_and_liberties(neighbor)
+                if len(liberties) == 1:
+                    lib_point = list(liberties)[0]
+                    msg = f"相手の石を【アタリ】にしました（{neighbor.to_gtp()}付近、逃げ道は{lib_point.to_gtp()}）。"
+                    if msg not in atari_msgs:
+                        atari_msgs.append(msg)
 
-        for r in range(size):
-            for c in range(size):
-                p = Point(r, c)
-                color_obj = board.get(p)
-                if color_obj and p not in visited:
-                    # グループとその呼吸点を取得 (GameBoardのメソッドを使用)
-                    group, liberties = board.get_group_and_liberties(p)
-                    visited.update(group)
-                    
-                    if len(liberties) == 1:
-                        # アタリ状態を検知
-                        lib_point = list(liberties)[0]
-                        stones_str = ",".join([s.to_gtp() for s in list(group)[:3]])
-                        if len(group) > 3: stones_str += "..."
-                        
-                        desc = f"{color_obj.label}の石 [{stones_str}] がアタリ（残り呼吸点: {lib_point.to_gtp()}）です。"
-                        atari_facts.append(desc)
-
-        return "info", atari_facts
+        return "info", atari_msgs
