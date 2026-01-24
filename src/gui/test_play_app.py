@@ -290,14 +290,30 @@ class TestPlayApp(GoAppBase):
 
     def save_image(self):
         from tkinter import filedialog
-        board = self.game.get_board_at(self.current_move)
         history = self.game.get_history_up_to(self.current_move)
-        img = self.renderer.render(board, last_move=None, analysis_text="", 
-                                   history=history, show_numbers=self.show_numbers.get(),
-                                   marks=self.game.get_marks_at(self.current_move),
-                                   review_stones=None)
-        file_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG files", "*.png")])
-        if file_path: img.save(file_path)
+        
+        # 履歴の統合（正規手順 + 検討用の石）を update_display と同様に行う
+        combined_h = list(history)
+        if self.info_view.analysis_tab.edit_mode.get():
+            for (r, c), color, n in self.review_stones:
+                combined_h.append([color, CoordinateTransformer.indices_to_gtp_static(r, c)])
+        
+        try:
+            # シミュレータで正確な盤面を復元
+            curr_ctx = self.simulator.reconstruct_to_context(combined_h, self.game.board_size)
+            turn_color = "Black" if (len(combined_h) % 2 == 0) else "White"
+            info_text = f"Move {len(combined_h)} | Turn: {turn_color} (Saved Image)"
+
+            img = self.renderer.render(curr_ctx.board, last_move=None, analysis_text=info_text, 
+                                       history=combined_h, show_numbers=self.show_numbers.get(),
+                                       marks=self.game.get_marks_at(self.current_move))
+            
+            file_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG files", "*.png")])
+            if file_path: 
+                img.save(file_path)
+                logger.info(f"Image saved to: {file_path}", layer="GUI")
+        except Exception as e:
+            messagebox.showerror("Save Error", f"Failed to save image: {e}")
 
     def update_display(self):
         """盤面と解析情報の表示を更新する"""
