@@ -13,6 +13,10 @@ class PonnukiDetector(BaseShape):
         if not context.prev_board or not context.last_move or not context.last_color:
             return "normal", []
 
+        # Ko(コウ)の状態が新しく発生した場合は、ポン抜きとして検知しない
+        if context.curr_board.ko_point:
+            return "normal", []
+
         # 1. 相手の石が消えた場所を特定する
         # (最新の着手によってアゲハマになった地点を探す)
         opp_color_char = self._get_opponent(context.last_color)
