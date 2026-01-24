@@ -3,7 +3,7 @@ from core.game_board import GameBoard, Color
 from core.inference_fact import InferenceFact, FactCategory
 from core.shapes.generic_detector import GenericPatternDetector
 from core.shapes.ponnuki import PonnukiDetector
-from core.shapes.atari import AtariDetector
+from core.shapes.atari import AtariDetector, RyoAtariDetector
 import os
 import json
 from typing import Optional
@@ -82,6 +82,7 @@ class ShapeDetector:
         loaded_keys = {getattr(s, "key", "") for s in self.strategies}
         legacy_list = [
             (PonnukiDetector, "ponnuki", 100), # 最優先
+            (RyoAtariDetector, "ryo_atari", 98),
             (AtariDetector, "atari", 95)
         ]
         for cls, key, priority in legacy_list:
@@ -108,6 +109,11 @@ class ShapeDetector:
             category, results = strategy.detect(context)
             strategy.board_size = orig_size
             
+            # DEBUG
+            if results and getattr(strategy, "key", "") in ["ryo_atari", "atari", "ikken_tobi"]:
+                # print(f"[DEBUG] Strategy {getattr(strategy, 'key', 'unknown')} matched with priority {getattr(strategy, 'priority', 50)}")
+                pass
+
             severity = 4 if category in ["bad", "mixed"] else 2
             
             actual_results = []

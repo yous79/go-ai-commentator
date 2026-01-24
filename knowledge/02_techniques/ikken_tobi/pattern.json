@@ -8,9 +8,34 @@
     "patterns": [
         {
             "elements": [
-                {"offset": [0, 0], "state": "last"},
-                {"offset": [2, 0], "state": "self"},
-                {"offset": [1, 0], "state": "empty"}
+                {
+                    "offset": [
+                        0,
+                        0
+                    ],
+                    "state": "last",
+                    "label": "L"
+                },
+                {
+                    "offset": [
+                        2,
+                        0
+                    ],
+                    "state": "self"
+                },
+                {
+                    "offset": [
+                        1,
+                        0
+                    ],
+                    "state": "empty"
+                }
+            ],
+            "constraints": [
+                {
+                    "target": "L",
+                    "max": 0
+                }
             ]
         }
     ]
