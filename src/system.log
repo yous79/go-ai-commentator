@@ -1824,3 +1824,44 @@
 [2026-01-24 21:22:52] [GUI] [INFO] EDIT MODE Attempt -> Move: 6, Color: W, Point: M10
 [2026-01-24 21:23:06] [GUI] [INFO] EDIT MODE Attempt -> Move: 2, Color: W, Point: M9
 [2026-01-24 21:23:07] [GUI] [INFO] EDIT MODE Attempt -> Move: 3, Color: B, Point: L9
+[2026-01-24 21:32:32] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-24 21:32:33] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-24 21:32:35] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-24 21:32:35] [STARTUP] [INFO] API Server is Ready.
+[2026-01-24 21:32:35] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-24 21:32:35] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-24 21:32:38] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-24 21:32:38] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-24 21:32:44] [GUI] [INFO] EDIT MODE Attempt -> Move: 1, Color: B, Point: K10
+[2026-01-24 21:32:46] [GUI] [INFO] EDIT MODE Attempt -> Move: 2, Color: W, Point: L10
+[2026-01-24 21:32:47] [GUI] [INFO] EDIT MODE Attempt -> Move: 3, Color: B, Point: L11
+[2026-01-24 21:32:48] [GUI] [INFO] EDIT MODE Attempt -> Move: 4, Color: W, Point: M11
+[2026-01-24 21:32:49] [GUI] [INFO] EDIT MODE Attempt -> Move: 5, Color: B, Point: M12
+[2026-01-24 21:32:50] [GUI] [INFO] EDIT MODE Attempt -> Move: 6, Color: W, Point: N12
+[2026-01-24 21:32:53] [GUI] [INFO] EDIT MODE Attempt -> Move: 7, Color: B, Point: M10
+[2026-01-24 21:37:58] [CORE] [INFO] New 9x9 game initialized.
+[2026-01-24 21:37:59] [GUI] [INFO] EDIT MODE Attempt -> Move: 1, Color: B, Point: E5
+[2026-01-24 21:38:03] [GUI] [INFO] EDIT MODE Attempt -> Move: 2, Color: W, Point: D5
+[2026-01-24 21:38:04] [GUI] [INFO] EDIT MODE Attempt -> Move: 3, Color: B, Point: D6
+[2026-01-24 21:38:05] [GUI] [INFO] EDIT MODE Attempt -> Move: 4, Color: W, Point: C5
+[2026-01-24 21:38:07] [GUI] [INFO] EDIT MODE Attempt -> Move: 5, Color: B, Point: E6
+[2026-01-24 21:39:01] [GUI] [INFO] EDIT MODE Attempt -> Move: 5, Color: B, Point: F6
+[2026-01-24 21:39:21] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-24 21:48:33] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-24 21:48:34] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-24 21:48:36] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-24 21:48:36] [STARTUP] [INFO] API Server is Ready.
+[2026-01-24 21:48:36] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-24 21:48:36] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-24 21:48:37] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-24 21:48:37] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-24 21:49:02] [CORE] [INFO] New 9x9 game initialized.
+[2026-01-24 21:49:05] [GUI] [INFO] EDIT MODE Attempt -> Move: 1, Color: B, Point: E5
+[2026-01-24 21:49:06] [GUI] [INFO] EDIT MODE Attempt -> Move: 2, Color: W, Point: D5
+[2026-01-24 21:49:08] [GUI] [INFO] EDIT MODE Attempt -> Move: 3, Color: B, Point: D6
+[2026-01-24 21:49:09] [GUI] [INFO] EDIT MODE Attempt -> Move: 4, Color: W, Point: C5
+[2026-01-24 21:49:10] [GUI] [INFO] EDIT MODE Attempt -> Move: 5, Color: B, Point: E6
+[2026-01-24 21:49:28] [GUI] [INFO] Image saved to: C:/Users/youst/go-ai-commentator/katatugi.png
+[2026-01-24 21:49:31] [GUI] [INFO] EDIT MODE Attempt -> Move: 5, Color: B, Point: F6
+[2026-01-24 21:49:49] [GUI] [INFO] Image saved to: C:/Users/youst/go-ai-commentator/kaketugi.png
+[2026-01-24 21:49:54] [GUI] [INFO] Closing application (Force Exit)...

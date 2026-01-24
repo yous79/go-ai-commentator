@@ -66,6 +66,8 @@ class ShapeDetector:
                             detector.priority = 90  # 非常に高い比重（ハネ等に優先）
                         elif detector.key == "butsukari":
                             detector.priority = 60
+                        elif detector.key in ["katatsugi", "kaketsugi"]:
+                            detector.priority = 75  # 接続手筋として高めの優先度
                         elif detector.key == "tsuke":
                             detector.priority = 10
                         elif detector.key in ["nobi", "narabi"]:
