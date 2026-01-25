@@ -1,38 +1,59 @@
-# Future Development Ideas (MCP & Beyond)
+# プロジェクトロードマップ & 将来のアイデア
 
-This document outlines high-level ideas to evolve the Go AI Commentator into a next-generation AI-native platform.
+このドキュメントは、「Go AI Commentator」を単体ツールから AI ネイティブなプラットフォームへと進化させるための道筋を記録するものです。
 
-## 1. MCP Integration (Model Context Protocol)
+## 1. 実装済みの機能 (検証完了)
 
-### 1.1 Go Engine as MCP Tool
-Expose KataGo analysis logic as an MCP server.
-- **Tools**: `get_best_moves(sgf)`, `check_life_and_death(position)`.
-- **Use Case**: Allows AI agents (like Claude/Gemini) to directly query the local Go engine to perform deep analysis during a conversation.
+### 1.1 MCPサーバーとしての囲碁エンジン (Go Engine as MCP Server)
+**ステータス**: ✅ 稼働中 (`src/mcp_server.py`)
+- **機能**:
+    - `katago_analyze`: 自律的なエンジン解析（勝率、目数差、候補手）。
+    - `detect_shapes`: 幾何学的なパターン認識（アキ三角、ポン抜きなど）。
+    - `simulate_scenario`: 仮定の手順に基づく「もしも」のシミュレーション解析。
+    - `visualize_urgency`: 脅威予測ロジック（相手の連打手順の図を生成）。
+- **アーキテクチャ**: 解析、知識、セッション管理を分離したモジュラー設計 (`mcp_modules/`)。
 
-### 1.2 Analysis Data as MCP Resources
-Expose structured analysis data (winrates, candidates) via URI templates.
-- **URI**: `sgf://current_game/analysis`.
-- **Use Case**: Enables agents to "read" the board state and AI findings as raw data instead of interpreting textual descriptions.
+### 1.2 解析アーキテクチャの統一 (Unified Analysis)
+**ステータス**: ✅ 稼働中 (`src/services/analysis_service.py`)
+- SGFの一括解析とインタラクティブ検討の両方で「唯一の真実（Single Source of Truth）」となるデータを管理。
+- `EventBus` を介したイベント駆動型のUI更新。
 
-### 1.3 Knowledge Base Tooling
-Turn the `knowledge/` JSON patterns into a searchable MCP tool.
-- **Tool**: `query_knowledge_base(pattern_name)`.
-- **Use Case**: Agents can proactively "look up" shape definitions to provide more accurate pedagogical explanations.
+### 1.3 レイヤー型レンダラー V2 (Layered Renderer)
+**ステータス**: ✅ 稼働中 (`src/utils/renderer/`)
+- グリッド、石、注釈などの描画レイヤーをモジュール化。
+- `ThemeManager` によるテーマ切り替え（クラシック/モダン）のサポート。
 
-### 1.4 Remote Annotation Protocol
-Allow agents to manipulate the UI rendering layers via MCP.
-- **Tool**: `draw_board_markup(shapes: List[Shape])`.
-- **Use Case**: The AI agent can literally "point" to locations or draw arrows on your screen while explaining a move.
+---
 
-## 2. Collaborative Features
+## 2. 将来のロードマップ (MCP & エージェント連携)
 
-### 2.1 Multi-Agent Replay
-Simulate a "TV Commentary" setup with two different AI personas (e.g., a "strict pro" and a "friendly teacher") discussing the same game.
+### 2.1 エージェント主導のUI操作 (Remote Annotation)
+- **コンセプト**: AIエージェントが盤面を「読む」だけでなく、そこに「描く」ことを可能にする。
+- **MCP Tool**: `draw_annotation(arrows=[("D4", "D5")], circles=["Q10"])`
+- **ゴール**: チャット中にエージェントがユーザーの画面上の特定の場所を指し示しながら教える「真のAI家庭教師」の実現。
 
-### 2.2 SGF Database Integration
-Connect with OGS (Online Go Server) or other databases via MCP clients to automatically fetch and analyze pro games that share similar joseki patterns with the current game.
+### 2.2 知識のセマンティック検索
+- **コンセプト**: 単純なIDベースの知識検索を、ベクトル検索を用いた意味論的検索へアップグレードする。
+- **ユースケース**: 「隅でのサバキの例を見せて」と聞くと、キーワードが完全に一致しなくとも、関連する `knowledge/*.json` のパターンをエージェントが見つけ出す。
 
-## 3. Visualization V3
-- **Influence Heatmaps**: Visual representation of territory ownership directly on the board.
-- **Mistake Heatmaps**: Color-coding sections of the history timeline based on the magnitude of winrate drops.
-- **AR View**: Rendering the AI analysis overlays on a physical board via smartphone camera (future mobile concept).
+### 2.3 自動「検討書記」エージェント (Automated Review Clerk)
+- **コンセプト**: `verify_mcp_client.py` のストリームを監視する専用のバックグラウンドエージェント。
+- **アクション**: 悪手（勝率低下 > 5%）が打たれた瞬間、ユーザーが操作しなくとも自動的にPDFレポートの断片を生成・保存し、「ミス集」を勝手に作成してくれる機能。
+
+---
+
+## 3. Visualization V3 (次世代UI)
+
+### 3.1 影響力ヒートマップ (Layer V3)
+- **コンセプト**: KataGoの `ownership`（地）や `influence`（勢力）の配列データを、半透明のヒートマップとして盤面に重ねて表示する。
+- **技術**: `src/utils/renderer/layers/` に `HeatmapLayer` を追加。
+
+### 3.2 ミスタイムライン (データ可視化)
+- **コンセプト**: 盤面の下に、時間経過に伴うミスの大きさを示す棒グラフを表示し、クリックするとその手へジャンプできるようにする。
+- **技術**: `InfoView` 内ですでに部分統合されている `matplotlib` を拡張し、インタラクティブにする。
+
+## 4. インフラストラクチャ
+
+### 4.1 クラウド同期解析
+- **コンセプト**: ローカルマシンのスペックが低い場合、重いKataGo解析をリモートのGPUサーバーへオフロードする。
+- **技術**: `KataGoDriver` を抽象化し、リモートgRPC呼び出しをサポートする。
