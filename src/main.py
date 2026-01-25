@@ -1,56 +1,52 @@
 import tkinter as tk
 import sys
 import os
-import subprocess
-import time
-import requests
+import argparse
 from services.bootstrap_service import BootstrapService
+from utils.logger import logger
 
 # Add src directory to sys.path to handle modular imports
 SRC_DIR = os.path.dirname(os.path.abspath(__file__))
 if SRC_DIR not in sys.path:
     sys.path.append(SRC_DIR)
 
-from gui.app import GoReplayApp
-from utils.logger import logger
+def main():
+    parser = argparse.ArgumentParser(description="Go AI Commentator Entry Point")
+    parser.add_argument("sgf_file", nargs="?", help="Path to an SGF file to load immediately")
+    parser.add_argument("-t", "--test-play", action="store_true", help="Launch in Test Play / Interactive Debug Mode")
+    parser.add_argument("--verify", action="store_true", help="Run auto-verification scenario")
+    
+    args = parser.parse_args()
 
-# start_api_server function removed, logic moved to BootstrapService
+    # Determine mode
+    mode_name = "Test Play" if (args.test_play or args.verify) else "Replay/Analysis"
+    logger.info(f"Launching application in {mode_name} Mode...", layer="STARTUP")
 
-if __name__ == "__main__":
+    # Start API Server
     api_proc = BootstrapService.start_api_server(SRC_DIR)
     
     root = tk.Tk()
-    app = GoReplayApp(root, api_proc=api_proc)
-
-
-
-    # 検証モードのチェック
-
-    is_verify = "--verify" in sys.argv
-
-
-
-    # コマンドライン引数があればSGFを自動ロード
-
-    sgf_to_load = None
-
-    if len(sys.argv) > 1 and not sys.argv[1].startswith("--"):
-
-        sgf_to_load = sys.argv[1]
-
     
-
-    if is_verify:
-        logger.info("Auto-verification mode enabled.", layer="STARTUP")
-        # サーバー起動を待ってから自動検証
-        root.after(4000, lambda: app.run_auto_verify("test.sgf"))
-
-    elif sgf_to_load and os.path.exists(sgf_to_load):
-
-        logger.info(f"Auto-loading SGF: {sgf_to_load}", layer="STARTUP")
-
-        root.after(3000, lambda: app.start_analysis(sgf_to_load))
-
-            
+    if args.test_play or args.verify:
+        from gui.test_play_app import TestPlayApp
+        app = TestPlayApp(root, api_proc=api_proc)
+        
+        if args.verify:
+            logger.info("Auto-verification mode enabled.", layer="STARTUP")
+            # Wait for server startup then verify
+            root.after(4000, lambda: app.run_auto_verify("test.sgf"))
+    elif args.sgf_file and os.path.exists(args.sgf_file):
+        # Direct file open (Drag & Drop support)
+        from gui.app import GoReplayApp
+        app = GoReplayApp(root, api_proc=api_proc)
+        logger.info(f"Auto-loading SGF: {args.sgf_file}", layer="STARTUP")
+        root.after(3000, lambda: app.start_analysis(args.sgf_file))
+    else:
+        # Default: Master Launcher
+        from gui.master import MasterApp
+        app = MasterApp(root, api_proc=api_proc)
 
     root.mainloop()
+
+if __name__ == "__main__":
+    main()

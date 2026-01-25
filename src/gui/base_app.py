@@ -12,10 +12,12 @@ from utils.logger import logger
 class GoAppBase(ABC):
     """すべての囲碁アプリ（メイン、デバッグ、練習用など）の共通基底クラス"""
     
-    def __init__(self, root: tk.Tk, api_proc=None):
+    def __init__(self, root: tk.Tk, api_proc=None, is_child=False):
         self.root = root
         self.api_proc = api_proc
-        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
+        self.is_child = is_child
+        if not self.is_child:
+            self.root.protocol("WM_DELETE_WINDOW", self.on_close)
         
         # 1. コア・サービスと状態の初期化
         self.game = GoGameState()
@@ -52,16 +54,26 @@ class GoAppBase(ABC):
         config.TARGET_LEVEL = new_level
         logger.info(f"Commentary Mode changed to: {new_level}", layer="GUI")
 
+    def cleanup(self):
+        """リソースの解放（スレッド停止など）。プロセスは終了しない"""
+        logger.info("Cleaning up app resources...", layer="GUI")
+        try:
+            self.task_manager.shutdown()
+        except: pass
+
     def on_close(self):
         """終了時のクリーンアップ処理（プロセスを強制終了して高速化）"""
         logger.info("Closing application (Force Exit)...", layer="GUI")
+        self.cleanup()
         
-        # 1. APIプロセスの強制終了
-        if self.api_proc:
-            try:
-                self.api_proc.kill()
-            except: pass
-            
-        # 2. 自分自身のプロセスを即座に終了 (スレッドのjoin待ちをスキップ)
-        import os
-        os._exit(0)
+        # 子画面モードでない場合のみ、プロセス全体を終了させる
+        if not self.is_child:
+            # 1. APIプロセスの強制終了
+            if self.api_proc:
+                try:
+                    self.api_proc.kill()
+                except: pass
+                
+            # 2. 自分自身のプロセスを即座に終了 (スレッドのjoin待ちをスキップ)
+            import os
+            os._exit(0)

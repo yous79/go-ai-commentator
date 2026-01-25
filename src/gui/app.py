@@ -33,8 +33,8 @@ from gui.controller import AppController
 from gui.base_app import GoAppBase
 
 class GoReplayApp(GoAppBase):
-    def __init__(self, root, api_proc=None):
-        super().__init__(root, api_proc=api_proc)
+    def __init__(self, root, api_proc=None, is_child=False):
+        super().__init__(root, api_proc=api_proc, is_child=is_child)
         self.root.title("Go AI Commentator (Rev 40.0 God-class decomposed)")
         self.root.geometry("1200x950")
 
@@ -84,12 +84,39 @@ class GoReplayApp(GoAppBase):
     def setup_layout(self, callbacks):
         self.root.rowconfigure(1, weight=1)
         self.root.columnconfigure(0, weight=1)
-        menubar = tk.Menu(self.root)
-        filemenu = tk.Menu(menubar, tearoff=0)
-        filemenu.add_command(label="Open SGF...", command=self.open_sgf)
-        filemenu.add_command(label="Exit", command=self.on_close)
-        menubar.add_cascade(label="File", menu=filemenu)
-        self.root.config(menu=menubar)
+        
+        # Menu Configuration
+        if self.is_child:
+            # MasterAppのメニューバーを取得して拡張
+            try:
+                # 既存のメニューバーを取得
+                menubar_Name = self.root.cget("menu")
+                if menubar_Name:
+                    menubar = self.root.nametowidget(menubar_Name)
+                    
+                    # Fileメニューがあるか確認、なければ作成
+                    file_menu = None
+                    try:
+                        # 既存のFileメニューを探す（ラベル名で特定は困難なので、新規作成して追加する方針で）
+                        # ただしSystemメニューの前に追加したいが、index指定は複雑。
+                        # ここではシンプルに末尾（Systemの次）に追加するか、Systemがあればその前に追加を試みる。
+                        
+                        filemenu = tk.Menu(menubar, tearoff=0)
+                        filemenu.add_command(label="Open SGF...", command=self.open_sgf)
+                        # ChildモードではExitは表示しない（MasterAppが管理）
+                        
+                        # Systemメニューの位置を探してその前に挿入したいが、簡単のため末尾に追加
+                        menubar.add_cascade(label="File", menu=filemenu)
+                    except: pass
+            except: pass
+        else:
+            # 独立起動モード
+            menubar = tk.Menu(self.root)
+            filemenu = tk.Menu(menubar, tearoff=0)
+            filemenu.add_command(label="Open SGF...", command=self.open_sgf)
+            filemenu.add_command(label="Exit", command=self.on_close)
+            menubar.add_cascade(label="File", menu=filemenu)
+            self.root.config(menu=menubar)
 
         top_frame = tk.Frame(self.root, bg="#ddd", pady=5)
         top_frame.grid(row=0, column=0, sticky="ew")
