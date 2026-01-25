@@ -1885,3 +1885,36 @@
 [2026-01-25 10:16:45] [GUI] [INFO] EDIT MODE Attempt -> Move: 6, Color: W, Point: H11
 [2026-01-25 10:16:46] [GUI] [INFO] EDIT MODE Attempt -> Move: 7, Color: B, Point: J12
 [2026-01-25 10:17:29] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-25 10:23:18] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-25 10:23:19] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-25 10:23:21] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-25 10:23:21] [STARTUP] [INFO] API Server is Ready.
+[2026-01-25 10:23:21] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-25 10:23:21] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-25 10:23:23] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-25 10:23:23] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-25 10:23:35] [GUI] [INFO] EDIT MODE Attempt -> Move: 1, Color: B, Point: K10
+[2026-01-25 10:23:36] [GUI] [INFO] EDIT MODE Attempt -> Move: 2, Color: W, Point: J10
+[2026-01-25 10:23:37] [GUI] [INFO] EDIT MODE Attempt -> Move: 3, Color: B, Point: J11
+[2026-01-25 10:23:38] [GUI] [INFO] EDIT MODE Attempt -> Move: 4, Color: W, Point: H10
+[2026-01-25 10:23:40] [GUI] [INFO] EDIT MODE Attempt -> Move: 5, Color: B, Point: L11
+[2026-01-25 10:23:41] [GUI] [INFO] EDIT MODE Attempt -> Move: 6, Color: W, Point: H11
+[2026-01-25 10:23:41] [GUI] [INFO] EDIT MODE Attempt -> Move: 7, Color: B, Point: J12
+[2026-01-25 10:23:43] [GUI] [INFO] EDIT MODE Attempt -> Move: 8, Color: W, Point: H12
+[2026-01-25 10:23:44] [GUI] [INFO] EDIT MODE Attempt -> Move: 9, Color: B, Point: J13
+[2026-01-25 10:23:54] [GUI] [INFO] EDIT MODE Attempt -> Move: 7, Color: B, Point: K9
+[2026-01-25 10:23:55] [GUI] [INFO] EDIT MODE Attempt -> Move: 8, Color: W, Point: J12
+[2026-01-25 10:23:57] [GUI] [INFO] EDIT MODE Attempt -> Move: 9, Color: B, Point: K12
+[2026-01-25 10:28:26] [GUI] [INFO] EDIT MODE Attempt -> Move: 9, Color: B, Point: K11
+[2026-01-25 10:28:36] [GUI] [INFO] EDIT MODE Attempt -> Move: 5, Color: B, Point: L12
+[2026-01-25 10:28:37] [GUI] [INFO] EDIT MODE Attempt -> Move: 6, Color: W, Point: H11
+[2026-01-25 10:28:40] [GUI] [INFO] EDIT MODE Attempt -> Move: 7, Color: B, Point: K11
+[2026-01-25 10:28:48] [GUI] [INFO] EDIT MODE Attempt -> Move: 7, Color: B, Point: J12
+[2026-01-25 10:29:05] [GUI] [INFO] EDIT MODE Attempt -> Move: 4, Color: W, Point: H11
+[2026-01-25 10:29:08] [GUI] [INFO] EDIT MODE Attempt -> Move: 5, Color: B, Point: H12
+[2026-01-25 10:30:19] [GUI] [INFO] EDIT MODE Attempt -> Move: 6, Color: W, Point: J12
+[2026-01-25 10:30:22] [GUI] [INFO] EDIT MODE Attempt -> Move: 7, Color: B, Point: K11
+[2026-01-25 10:30:43] [GUI] [INFO] EDIT MODE Attempt -> Move: 7, Color: B, Point: K12
+[2026-01-25 10:30:47] [GUI] [INFO] EDIT MODE Attempt -> Move: 7, Color: B, Point: K11
+[2026-01-25 10:30:50] [GUI] [INFO] EDIT MODE Attempt -> Move: 8, Color: W, Point: G11
+[2026-01-25 10:30:52] [GUI] [INFO] EDIT MODE Attempt -> Move: 9, Color: B, Point: J13
