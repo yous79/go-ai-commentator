@@ -31,7 +31,7 @@ class ShapeFactProvider(BaseFactProvider):
         self.detector = detector
 
     def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
-        shape_facts = self.detector.detect_facts(context.board, context.prev_board, analysis_result=analysis)
+        shape_facts = self.detector.detect_facts(context, analysis_result=analysis)
         for f in shape_facts:
             f.scope = TemporalScope.IMMEDIATE
             collector.facts.append(f)
@@ -150,7 +150,7 @@ class UrgencyFactProvider(BaseFactProvider):
             if thr_pv:
                 thr_seq = ["pass"] + thr_pv
                 future_ctx = self.simulator.simulate_sequence(context, thr_seq, starting_color=urgency_data['next_player'])
-                future_shape_facts = self.detector.detect_facts(future_ctx.board, future_ctx.prev_board)
+                future_shape_facts = self.detector.detect_facts(future_ctx)
                 for f in future_shape_facts:
                     if f.severity >= 4:
                         f.description = f"放置すると {f.description} という悪形が発生する恐れがあります。"

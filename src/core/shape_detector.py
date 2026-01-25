@@ -5,21 +5,28 @@ from core.point import Point
 from core.game_board import GameBoard, Color
 from core.inference_fact import InferenceFact, FactCategory, TemporalScope, ShapeMetadata, MistakeMetadata
 from core.shapes.generic_detector import GenericPatternDetector
+from core.board_simulator import SimulationContext
 from config import KNOWLEDGE_DIR
 
 class DetectionContext:
-    """検知に必要な盤面コンテキストを一元管理するクラス"""
-    def __init__(self, curr_board: GameBoard, prev_board: Optional[GameBoard], board_size: int, analysis_result=None):
-        self.curr_board = curr_board
-        self.prev_board = prev_board
-        self.board_size = board_size
+    """検知に必要な盤面コンテキストを一元管理するクラス（SimulationContextのラッパー）"""
+    def __init__(self, sim_ctx: SimulationContext, analysis_result=None):
+        self.sim_ctx = sim_ctx
+        self.curr_board = sim_ctx.board
+        self.prev_board = sim_ctx.prev_board
+        self.board_size = sim_ctx.board_size
+        self.last_move = sim_ctx.last_move
+        self.last_color = sim_ctx.last_color
+        
+        # フォールバック：SimulationContextに着手情報がない場合（単体テスト等）、盤面比較で特定する
+        if self.last_move is None and self.prev_board is not None:
+            self.last_move, self.last_color = self._find_last_move()
+            
+        self.captured_points = sim_ctx.captured_points
         self.analysis_result = analysis_result or {}
-        self.last_move, self.last_color = self._find_last_move()
 
     def _find_last_move(self):
-        """現在の盤面と直前の盤面を比較して最新の着手座標(Point)を特定する"""
-        if self.prev_board is None:
-            return None, None
+        """現在の盤面と直前の盤面を比較して最新の着手座標(Point)を特定する（単体テスト用のフォールバック）"""
         for r in range(self.board_size):
             for c in range(self.board_size):
                 p = Point(r, c)
@@ -30,12 +37,14 @@ class DetectionContext:
 
     def get_ownership(self, pt: Point):
         """指定座標のOwnershipを取得する (黒地: +1.0, 白地: -1.0)"""
-        if not hasattr(self.analysis_result, 'ownership') or not self.analysis_result.ownership:
+        # analysis_result が AnalysisResult オブジェクトか辞書かに対応
+        ownership = getattr(self.analysis_result, 'ownership', None)
+        if not ownership:
             return 0.0
         
         idx = pt.row * self.board_size + pt.col
-        if 0 <= idx < len(self.analysis_result.ownership):
-            return self.analysis_result.ownership[idx]
+        if 0 <= idx < len(ownership):
+            return ownership[idx]
         return 0.0
 
 class ShapeDetector:
@@ -75,10 +84,10 @@ class ShapeDetector:
                 except Exception as e:
                     print(f"Failed to load pattern {path}: {e}")
 
-    def detect_facts(self, curr_board: GameBoard, prev_board: Optional[GameBoard] = None, analysis_result=None) -> List[InferenceFact]:
+    def detect_facts(self, sim_ctx: SimulationContext, analysis_result=None) -> List[InferenceFact]:
         """形状検知結果を InferenceFact のリストとして返す"""
-        actual_size = curr_board.side
-        context = DetectionContext(curr_board, prev_board, actual_size, analysis_result)
+        actual_size = sim_ctx.board_size
+        context = DetectionContext(sim_ctx, analysis_result)
         facts = []
         labeled_coords = set()
 
@@ -141,12 +150,16 @@ class ShapeDetector:
 
     def detect_ids(self, curr_board: GameBoard, prev_board: Optional[GameBoard] = None):
         """(Legacy互換) 検知された形状IDのリストを返す"""
-        facts = self.detect_facts(curr_board, prev_board)
-        # metadata は BaseFactMetadata オブジェクトか辞書
-        keys = []
-        for f in facts:
-            if isinstance(f.metadata, ShapeMetadata):
-                keys.append(f.metadata.key)
-            elif isinstance(f.metadata, dict):
-                keys.append(f.metadata.get("key", "unknown"))
-        return list(set(keys))
+        # 互換性のための簡易SimulationContext作成
+        sim_ctx = SimulationContext(
+            board=curr_board,
+            prev_board=prev_board,
+            history=[],
+            last_move=None,
+            last_color=None,
+            board_size=curr_board.side
+        )
+        facts = self.detect_facts(sim_ctx)
+        
+        # metadata は ShapeMetadata オブジェクト
+        return list(set([f.metadata.key for f in facts if isinstance(f.metadata, ShapeMetadata)]))

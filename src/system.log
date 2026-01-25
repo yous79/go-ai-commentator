@@ -1972,3 +1972,5 @@
 [2026-01-25 11:22:37] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
 [2026-01-25 11:22:54] [ORCHESTRATOR] [WARNING] Analyzed move G5 is considered ILLEGAL by local rule engine.
 [2026-01-25 11:26:37] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-25 12:02:24] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-25 12:02:24] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
