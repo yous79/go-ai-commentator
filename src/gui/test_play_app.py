@@ -341,7 +341,7 @@ class TestPlayApp(GoAppBase):
             ana_data = self.analysis_service.get_by_index(self.current_move)
             
             # 5. 形状検知
-            facts = self.detector.detect_facts(curr_ctx.board, curr_ctx.prev_board, analysis_result=ana_data)
+            facts = self.detector.detect_facts(curr_ctx, analysis_result=ana_data)
             text = "\n".join([f.description for f in facts])
             
             # 6. イベント発行によるUI更新

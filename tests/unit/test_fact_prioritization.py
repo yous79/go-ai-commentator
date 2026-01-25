@@ -16,10 +16,10 @@ def test_fact_prioritization():
     
     # 局面シミュレーション: B D4, B D6, B E5 (アキ三角) かつ 低安定度を想定
     history = [["B", "D4"], ["W", "A1"], ["B", "D6"], ["W", "A2"], ["B", "E5"]]
-    curr_b, prev_b, _ = simulator.reconstruct(history)
+    ctx = simulator.reconstruct_to_context(history)
     
     # 1. 形状事実の収集 (Aki-sankaku should be severity 4)
-    shape_facts = detector.detect_facts(curr_b, prev_b)
+    shape_facts = detector.detect_facts(ctx)
     for f in shape_facts: collector.facts.append(f)
     
     # 2. 安定度事実の収集 (Low stability scenario)
@@ -28,7 +28,7 @@ def test_fact_prioritization():
     idx = 3 * 9 + 3 # D4
     fake_ownership[idx] = 0.1 # Very low stability for Black
     
-    stability_facts = stability_analyzer.analyze_to_facts(curr_b, fake_ownership)
+    stability_facts = stability_analyzer.analyze_to_facts(ctx.board, fake_ownership)
     for f in stability_facts: collector.facts.append(f)
     
     # 3. 緊急度事実の追加 (Manual high urgency)

@@ -111,7 +111,7 @@ async def analyze(req: AnalysisRequest):
                         future_ctx = simulator.simulate_sequence(curr_ctx, sub_pv)
                         
                         # 形状検知を実行
-                        facts = detector.detect_facts(future_ctx.board, future_ctx.prev_board)
+                        facts = detector.detect_facts(future_ctx)
                         if facts:
                             fact_text = "\n".join([f"    - {f.description}" for f in facts])
                             last_move = pv_list[i-1]
@@ -151,7 +151,7 @@ async def detect(req: AnalysisRequest):
     try:
         clean_history = sanitize_history(req.history)
         ctx = simulator.reconstruct_to_context(clean_history, req.board_size)
-        facts = detector.detect_facts(ctx.board, ctx.prev_board)
+        facts = detector.detect_facts(ctx)
         
         # 構造化データとして返す
         fact_list = []
@@ -161,7 +161,7 @@ async def detect(req: AnalysisRequest):
                 "severity": f.severity,
                 "category": f.category.name,
                 "scope": f.scope.value, # スコープを追加
-                "metadata": f.metadata
+                "metadata": f.metadata.to_dict() if hasattr(f.metadata, 'to_dict') else f.metadata
             })
             
         return {"facts": fact_list}
@@ -174,9 +174,10 @@ async def detect_ids(req: AnalysisRequest):
     try:
         clean_history = sanitize_history(req.history)
         ctx = simulator.reconstruct_to_context(clean_history, req.board_size)
-        facts = detector.detect_facts(ctx.board, ctx.prev_board)
-        # 属性からIDを抽出
-        ids = list(set([f.metadata.get("key", "unknown") for f in facts]))
+        facts = detector.detect_facts(ctx)
+        # 属性からIDを抽出 (BaseFactMetadataサブクラスであることを考慮)
+        from core.inference_fact import ShapeMetadata
+        ids = list(set([f.metadata.key for f in facts if isinstance(f.metadata, ShapeMetadata)]))
         return {"ids": ids}
     except Exception as e:
         traceback.print_exc()

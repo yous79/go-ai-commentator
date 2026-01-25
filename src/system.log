@@ -1974,3 +1974,23 @@
 [2026-01-25 11:26:37] [GUI] [INFO] Closing application (Force Exit)...
 [2026-01-25 12:02:24] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
 [2026-01-25 12:02:24] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-25 12:03:31] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-25 12:03:32] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-25 12:03:34] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-25 12:03:34] [STARTUP] [INFO] API Server is Ready.
+[2026-01-25 12:03:34] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-25 12:03:34] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-25 12:03:36] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-25 12:03:36] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-25 12:04:13] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-25 12:04:14] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-25 12:04:16] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-25 12:04:16] [STARTUP] [INFO] API Server is Ready.
+[2026-01-25 12:04:16] [STARTUP] [INFO] Launching Test Play App from src directory
+[2026-01-25 12:04:16] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-25 12:04:17] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-25 12:04:17] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-25 12:04:29] [GUI] [INFO] EDIT MODE Attempt -> Move: 1, Color: B, Point: K10
+[2026-01-25 12:04:30] [GUI] [INFO] EDIT MODE Attempt -> Move: 2, Color: W, Point: L10
+[2026-01-25 12:06:47] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-25 12:06:48] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
