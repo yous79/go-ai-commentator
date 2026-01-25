@@ -1,53 +1,38 @@
-# 囲碁AI解説システム アイデア・ストック (IDEAS.md)
+# Future Development Ideas (MCP & Beyond)
 
-このファイルは、システムのさらなる進化のための改善案や新機能のアイデアを蓄積・管理するバックログです。
+This document outlines high-level ideas to evolve the Go AI Commentator into a next-generation AI-native platform.
 
-## 1. 視覚的・分析的強化 (Visual & Analytical)
-- [ ] **地の勢力可視化 (Ownership Map)**: 盤上の黒地・白地の勢力圏を半透明で可視化し、大局観をサポート。
-- [x] **エリア別情勢分析 (Regional Analysis)**: 盤面を9分割し、地と影響力の対比を言語化。 (Rev 43.0 完了)
-- [x] **勝率推移グラフの動的表示**: メインUIにmatplotlib等のグラフを埋め込み、形勢の波を一目で把握可能に。
-- [x] **石の強弱スコアリング**: Ownershipデータから五段階の生存ステータスを定義。 (Rev 37.0 完了)
-- [x] **終盤認識ロジック**: 地の確定率に基づく自動フェーズ判定。 (Rev 46.0 完了)
-- [ ] **Teire (解消地点) のマーク描画**: 形状検知エンジンが返した `remedy_gtp` を盤上に視覚的に表示（例：青い×印）する機能。
+## 1. MCP Integration (Model Context Protocol)
 
-## 2. インタラクティブ・学習 (Interactive Learning)
-- [x] **AI推奨図の連番表示**: PVを表示する際、現在の検討モードの仕組みを流用して石に手順番号を振る。
-- [x] **成功・失敗図の同時ポップアップ**: 緊急局面において、最善進行と放置被害を並べて自動表示。 (Rev 33.0 完了)
-- [x] **Undo/Redo 機能**: 検討モードにおける手順の前後移動と、Redoバッファによる復元。 (Rev 44.0 完了)
-- [ ] **座標ハイライト連携**: Geminiの解説文内の座標をクリックすると、盤上の該当位置が点滅・プレビュー。
+### 1.1 Go Engine as MCP Tool
+Expose KataGo analysis logic as an MCP server.
+- **Tools**: `get_best_moves(sgf)`, `check_life_and_death(position)`.
+- **Use Case**: Allows AI agents (like Claude/Gemini) to directly query the local Go engine to perform deep analysis during a conversation.
 
-## 4. 知識ベース・アルゴリズム (Knowledge & Algorithms)
-- [x] **カス石取りの検知**: Ownership 0.8以上の死に石への干渉を捕捉。 (Rev 37.0 完了)
-- [x] **死に石の言語的定義**: LLMに「弱い石」と「死に石（カス石）」を明確に区別させる指示を追加。 (Rev 37.0 完了)
-- [x] **アタリ検知**: 呼吸点1の状態を客観的な事実として抽出。 (Rev 38.0 完了)
-- [x] **手順非依存の形状検知**: 構成する石のどれを最後に打ってもアキ三角等を検知できるロジック。 (Rev 44.0 完了)
-- [x] **最新手評価プロトコル**: 解説の冒頭で直前の着手を論理的に評価。 (Rev 48.0 完了)
+### 1.2 Analysis Data as MCP Resources
+Expose structured analysis data (winrates, candidates) via URI templates.
+- **URI**: `sgf://current_game/analysis`.
+- **Use Case**: Enables agents to "read" the board state and AI findings as raw data instead of interpreting textual descriptions.
 
-## 6. リファクタリング・堅牢化 (Refactoring & Robustness)
-- [x] **盤面座標・石色の正規化レイヤー**: `GameBoard` クラスと `Color` Enum の導入。 (Rev 38.0 完了)
-- [x] **解説人格 (Persona) のストラテジーパターン化**: 人格を独立したクラスへカプセル化。 (Rev 40.0 完了)
-- [x] **解析結果のデータ構造 (DTO) 化**: AnalysisResult DTO の導入。 (Rev 40.0 完了)
-- [x] **自動検証モード (Full Flow)**: test.sgf ロードから特定手目での解説生成までの自動テスト。 (Rev 44.0 完了)
-- [x] **イベント・バス (Pub/Sub) の導入**: コンポーネント間の疎結合な通知システムへ移行。 (Rev 41.0 完了)
-- [x] **巨大コントローラー (app.py) の機能分割**: AsyncTaskManager導入による非同期処理の分離。 (Rev 41.0 完了)
-- [x] **盤面描画のレイヤー化**: `LayeredBoardRenderer` の導入により、描画ロジックをモジュール化。 (Rev 42.0 完了)
-- [ ] **事実プロバイダ (Fact Provider) パターン**: `AnalysisOrchestrator` の各解析ロジックをクラス分割し拡張性を向上。
-- [ ] **コマンド・パターンによるセッション同期の自動化**: 操作と同時に MCP セッションへ差分通知。
-- [ ] **メタデータの型安全化**: `InferenceFact.metadata` を Pydantic 等で構造化。
-- [ ] **設定管理の永続化 (AppConfigManager)**: `user_config.json` への保存。
+### 1.3 Knowledge Base Tooling
+Turn the `knowledge/` JSON patterns into a searchable MCP tool.
+- **Tool**: `query_knowledge_base(pattern_name)`.
+- **Use Case**: Agents can proactively "look up" shape definitions to provide more accurate pedagogical explanations.
 
-## 9. 捨て石の極意 (Sacrifice Logic) [NEW]
-- [ ] **捨て石の意図判定 (Sacrifice Intent)**: 推奨手が「あえて石を死なせる」ことで利益を得ているのかを判定。
-- [ ] **局面に応じたカス石閾値の動的調整**: ヨセ（終盤）ではカス石判定を緩和。
+### 1.4 Remote Annotation Protocol
+Allow agents to manipulate the UI rendering layers via MCP.
+- **Tool**: `draw_board_markup(shapes: List[Shape])`.
+- **Use Case**: The AI agent can literally "point" to locations or draw arrows on your screen while explaining a move.
 
-## 10. MCPの進化 (MCP Evolution)
-- [x] **FastMCP への移行**: SDK の高レベルラッパーを採用。 (Rev 44.0 完了)
-- [x] **厳格なスキーマ検証 (Strict Schema)**: Pydantic モデルによる引数の型安全化。 (Rev 44.0 完了)
-- [x] **対話型シミュレーション (What-if Analysis)**: AI が自ら「もしここに打ったら？」を試行できる。 (Rev 45.0 完了)
-- [x] **構造化データの返却**: `detect_shapes` が詳細なメタデータを返すように強化。 (Rev 47.0 完了)
-- [x] **コンテキスト・オフローディング**: MCP サーバー側でセッションを維持。 (Rev 49.0 完了)
-- [x] **時間軸タグ (Temporal Tagging)**: 「即時・既存・予測」の事実を区別。 (Rev 49.0 完了)
-- [ ] **動的な指導人格の切り替え (Dynamic Profile)**: 局面フェーズに応じたトーン変化の自動化。
+## 2. Collaborative Features
 
----
-*最終更新: 2026-01-20 (Rev 49.0 Updated)*
+### 2.1 Multi-Agent Replay
+Simulate a "TV Commentary" setup with two different AI personas (e.g., a "strict pro" and a "friendly teacher") discussing the same game.
+
+### 2.2 SGF Database Integration
+Connect with OGS (Online Go Server) or other databases via MCP clients to automatically fetch and analyze pro games that share similar joseki patterns with the current game.
+
+## 3. Visualization V3
+- **Influence Heatmaps**: Visual representation of territory ownership directly on the board.
+- **Mistake Heatmaps**: Color-coding sections of the history timeline based on the magnitude of winrate drops.
+- **AR View**: Rendering the AI analysis overlays on a physical board via smartphone camera (future mobile concept).

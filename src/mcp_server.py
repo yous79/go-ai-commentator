@@ -3,10 +3,11 @@ import asyncio
 from mcp.server.fastmcp import FastMCP
 
 # 内部モジュールのインポート
-from mcp.analysis import AnalysisModule
-from mcp.knowledge import KnowledgeModule
-from mcp.system import SystemModule
-from mcp.session import SessionManager
+# 内部モジュールのインポート
+from mcp_modules.analysis import AnalysisModule
+from mcp_modules.knowledge import KnowledgeModule
+from mcp_modules.system import SystemModule
+from mcp_modules.session import SessionManager
 
 # 共通リポジトリの初期化
 from core.knowledge_repository import KnowledgeRepository

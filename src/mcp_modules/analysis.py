@@ -4,7 +4,7 @@ from mcp.server.fastmcp import FastMCP
 from services.api_client import api_client
 from services.analysis_orchestrator import AnalysisOrchestrator
 from core.mcp_types import Move
-from mcp.session import SessionManager
+from mcp_modules.session import SessionManager
 
 class AnalysisModule:
     """解析、シミュレーション、統計関連のツールとリソースを管理するモジュール。セッション（コンテキスト・オフローディング）に対応。"""

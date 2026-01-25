@@ -5,7 +5,7 @@ from services.api_client import api_client
 from core.knowledge_repository import KnowledgeRepository
 from services.term_visualizer import TermVisualizer
 from core.mcp_types import Move
-from mcp.session import SessionManager
+from mcp_modules.session import SessionManager
 from typing import List, Optional
 
 class KnowledgeModule:
@@ -74,9 +74,14 @@ class KnowledgeModule:
         for cat in ["01_bad_shapes", "02_techniques"]:
             for item in self.repo.get_items(cat):
                 uri = f"mcp://knowledge/{cat.replace('01_', '').replace('02_', '')}/{item.id}"
-                @mcp.resource(uri)
-                def _read(c=cat, i=item.id) -> str:
-                    return self.repo.get_item_content(c, i)
+                
+                # クロージャの遅延評価を防ぐためのファクトリ関数
+                def make_handler(c, i):
+                    def _read() -> str:
+                        return self.repo.get_item_content(c, i)
+                    return _read
+                
+                mcp.resource(uri)(make_handler(cat, item.id))
 
     def detect_shapes(self, history: Optional[List[Move]] = None, board_size: Optional[int] = None) -> str:
         """現在の盤面から、幾何学的な形状（アキ三角など）を抽出します。解消地点や局面フェーズ（終盤等）も含みます。"""
@@ -107,7 +112,7 @@ class KnowledgeModule:
             return f"Error: {str(e)}"
 
     def visualize_urgency(self, history: Optional[List[Move]] = None, board_size: Optional[int] = None) -> str:
-        ""『もし今パスをしたら相手にどこを打たれるか』の被害予測図を生成します。"""
+        """『もし今パスをしたら相手にどこを打たれるか』の被害予測図を生成します。"""
         try:
             target_h, target_s = self._get_context(history, board_size)
             urgency_data = api_client.analyze_urgency(target_h, target_s)

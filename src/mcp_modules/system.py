@@ -1,7 +1,7 @@
 import os
 from typing import List
 from mcp.server.fastmcp import FastMCP
-from mcp.session import SessionManager
+from mcp_modules.session import SessionManager
 from core.mcp_types import Move
 
 class SystemModule:
