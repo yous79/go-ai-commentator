@@ -13,7 +13,7 @@ class RenderContext:
     transformer: CoordinateTransformer
     image_size: int
     board_size: int
-    theme: RenderTheme = CLASSIC_THEME
+    theme: RenderTheme = field(default_factory=lambda: CLASSIC_THEME)
     
     # Optional Data
     history: List[List[str]] = field(default_factory=list)

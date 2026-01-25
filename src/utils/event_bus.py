@@ -21,11 +21,24 @@ class EventBus:
         self._subscribers[event_type].append(callback)
         logger.debug(f"Subscribed to event: {event_type}", layer="EVENT")
 
+    def unsubscribe(self, event_type: str, callback: Callable[[Any], None]):
+        """特定の購読を解除する"""
+        if event_type in self._subscribers:
+            if callback in self._subscribers[event_type]:
+                self._subscribers[event_type].remove(callback)
+                logger.debug(f"Unsubscribed from event: {event_type}", layer="EVENT")
+
+    def clear_all_subscribers(self):
+        """すべての購読をリセットする（アプリ全体の再初期化時用）"""
+        self._subscribers = {}
+        logger.warning("All event subscribers cleared.", layer="EVENT")
+
     def publish(self, event_type: str, data: Any = None):
         """イベントを発行し、登録されているすべての購読者に通知する"""
         if event_type in self._subscribers:
             logger.debug(f"Publishing event: {event_type}", layer="EVENT")
-            for callback in self._subscribers[event_type]:
+            # 実行中に購読解除される可能性を考慮してコピーを使用
+            for callback in list(self._subscribers[event_type]):
                 try:
                     callback(data)
                 except Exception as e:

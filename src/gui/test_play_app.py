@@ -71,6 +71,13 @@ class TestPlayApp(GoAppBase):
         self.root.bind_all("<Right>", self.next_move)
         self.root.focus_set()
 
+    def cleanup(self):
+        """リソースの解放（イベント購読の解除、タブのクリーンアップ）"""
+        logger.info("TestPlayApp cleaning up...", layer="GUI")
+        if hasattr(self, 'info_view') and self.info_view:
+            self.info_view.cleanup()
+        super().cleanup()
+
     def setup_layout(self, callbacks):
         # 1. Top Frame
         top_frame = tk.Frame(self.root, bg="#ddd", pady=10)

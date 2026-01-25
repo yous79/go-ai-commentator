@@ -15,7 +15,6 @@ from core.point import Point
 from core.coordinate_transformer import CoordinateTransformer
 from utils.board_renderer import GoBoardRenderer
 from services.ai_commentator import GeminiCommentator
-from services.analysis_manager import AnalysisManager
 from services.report_generator import ReportGenerator
 from services.term_visualizer import TermVisualizer
 from services.async_task_manager import AsyncTaskManager
@@ -458,6 +457,13 @@ class GoReplayApp(GoAppBase):
     def goto_mistake(self, color, idx):
         m = self.moves_m_b[idx] if color == "b" else self.moves_m_w[idx]
         if m is not None: self.show_image(m)
+
+    def cleanup(self):
+        """リソースの解放（イベント購読の解除、タブのクリーンアップ）"""
+        logger.info("GoReplayApp cleaning up...", layer="GUI")
+        if hasattr(self, 'info_view') and self.info_view:
+            self.info_view.cleanup()
+        super().cleanup()
 
     def on_close(self):
         self.analysis_service.stop_sgf_analysis()

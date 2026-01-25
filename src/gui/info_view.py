@@ -10,12 +10,27 @@ class AnalysisTab(tk.Frame):
     def __init__(self, master, callbacks):
         super().__init__(master, bg="#f0f0f0")
         self.callbacks = callbacks
+        self._subscriptions = []
         self._setup_ui()
         
-        # イベント購読の開始
-        event_bus.subscribe(AppEvents.STATE_UPDATED, self._on_state_updated)
-        event_bus.subscribe(AppEvents.MISTAKES_UPDATED, self._on_mistakes_updated)
-        event_bus.subscribe(AppEvents.COMMENTARY_READY, self.set_commentary)
+        # イベント購読の開始（追跡リストに追加）
+        self._subscribe_to(AppEvents.STATE_UPDATED, self._on_state_updated)
+        self._subscribe_to(AppEvents.MISTAKES_UPDATED, self._on_mistakes_updated)
+        self._subscribe_to(AppEvents.COMMENTARY_READY, self.set_commentary)
+
+    def _subscribe_to(self, event_type, callback):
+        event_bus.subscribe(event_type, callback)
+        self._subscriptions.append((event_type, callback))
+
+    def cleanup(self):
+        """タブ固有のリソース、イベント購読を解除する"""
+        logger.debug("Cleaning up AnalysisTab subscriptions...", layer="GUI")
+        for event_type, callback in self._subscriptions:
+            event_bus.unsubscribe(event_type, callback)
+        self._subscriptions = []
+        # matplotlibの図も解放
+        try: plt.close(self.fig)
+        except: pass
 
     def _on_state_updated(self, data):
         """解析データが更新された際の処理"""
@@ -216,6 +231,12 @@ class InfoView(tk.Frame):
         self.btn_report = self.analysis_tab.btn_report
         self.review_mode = self.analysis_tab.review_mode
         self.edit_mode = self.analysis_tab.edit_mode
+
+    def cleanup(self):
+        """内部のタブを含め、リソースを解放する"""
+        logger.debug("Cleaning up InfoView tabs...", layer="GUI")
+        self.analysis_tab.cleanup()
+        # dict_tab も将来的にイベントを使う場合はここで呼ぶ
 
     def update_stats(self, wr, score, commentary):
         self.analysis_tab.update_stats(wr, score)

@@ -16,6 +16,8 @@ class GoAppBase(ABC):
         self.root = root
         self.api_proc = api_proc
         self.is_child = is_child
+        self._subscriptions = [] # 購読履歴の追跡用
+        
         if not self.is_child:
             self.root.protocol("WM_DELETE_WINDOW", self.on_close)
         
@@ -27,10 +29,15 @@ class GoAppBase(ABC):
         self.gemini = None
         
         # 2. 共通のイベント購読
-        event_bus.subscribe(AppEvents.LEVEL_CHANGED, self.on_level_change)
+        self.subscribe_to(AppEvents.LEVEL_CHANGED, self.on_level_change)
         
         # 3. AIエンジンの初期化
         self._init_ai_base()
+
+    def subscribe_to(self, event_type: str, callback: callable):
+        """イベントを購読し、追跡リストに追加する"""
+        event_bus.subscribe(event_type, callback)
+        self._subscriptions.append((event_type, callback))
 
     def _init_ai_base(self):
         """AIエンジンの共通初期化ロジック"""
@@ -55,8 +62,15 @@ class GoAppBase(ABC):
         logger.info(f"Commentary Mode changed to: {new_level}", layer="GUI")
 
     def cleanup(self):
-        """リソースの解放（スレッド停止など）。プロセスは終了しない"""
-        logger.info("Cleaning up app resources...", layer="GUI")
+        """リソースの解放（スレッド停止、イベント解除など）。プロセスは終了しない"""
+        logger.info("Cleaning up app resources and subscriptions...", layer="GUI")
+        
+        # 1. イベント購読の解除
+        for event_type, callback in self._subscriptions:
+            event_bus.unsubscribe(event_type, callback)
+        self._subscriptions = []
+
+        # 2. スレッドの停止
         try:
             self.task_manager.shutdown()
         except: pass
