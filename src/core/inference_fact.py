@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 from enum import Enum
 
 class FactCategory(Enum):
@@ -15,12 +15,60 @@ class TemporalScope(Enum):
     PREDICTED = "predicted"   # 将来の予測図（PV）の中で発生すること
 
 @dataclass
+class BaseFactMetadata:
+    """事実の補足情報の基底クラス"""
+    def to_dict(self) -> Dict[str, Any]:
+        import dataclasses
+        return dataclasses.asdict(self)
+
+@dataclass
+class ShapeMetadata(BaseFactMetadata):
+    """形状（Shape）に関するメタデータ"""
+    key: str                    # 手筋のキー（aki_sankaku等）
+    remedy_gtp: Optional[str] = None # 解消地点（ある場合）
+    all_remedies: List[str] = field(default_factory=list) # 複数の解消地点
+
+@dataclass
+class StabilityMetadata(BaseFactMetadata):
+    """生存確率（Stability）に関するメタデータ"""
+    status: str                 # dead, critical, weak, stable, strong
+    stability: float            # 生存確率数値 (0.0 〜 1.0)
+    stones: List[str]          # 対象となる石の座標リスト
+    count: int                  # 石の数
+    color_label: str            # 黒 または 白
+    is_strategic: bool = False # 戦略的グループ（一塊）か
+
+@dataclass
+class UrgencyMetadata(BaseFactMetadata):
+    """緊急度（Urgency）に関するメタデータ"""
+    urgency: float              # 緊急度の値（目数）
+    is_critical: bool           # 急場判定フラグ
+    next_player: str           # 手順予測の開始プレイヤー
+
+@dataclass
+class GamePhaseMetadata(BaseFactMetadata):
+    """局面フェーズに関するメタデータ"""
+    phase: str                  # endgame, early, mid
+
+@dataclass
+class KoMetadata(BaseFactMetadata):
+    """コウに関するメタデータ"""
+    type: str                   # ko_initiation, ko_resolution
+    point: Optional[str] = None # コウの座標
+
+@dataclass
+class MistakeMetadata(BaseFactMetadata):
+    """失着に関するメタデータ"""
+    type: str                   # drop_winrate, drop_score, kasu_ishi_interference
+    value: Optional[float] = None # どれくらい悪くなったか
+
+@dataclass
 class InferenceFact:
     """解析によって得られた個別の『事実』を表すオブジェクト"""
     category: FactCategory
     description: str
     severity: int = 3 # 1 (低) 〜 5 (高)
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: Union[Dict[str, Any], BaseFactMetadata] = field(default_factory=dict)
     scope: TemporalScope = TemporalScope.EXISTING # デフォルトは既存の状態
     is_last_move: bool = False # (非推奨：scopeへの移行推奨)
     
@@ -36,7 +84,7 @@ class FactCollector:
     def __init__(self):
         self.facts: List[InferenceFact] = []
 
-    def add(self, category: FactCategory, description: str, severity: int = 3, metadata: Optional[Dict] = None, scope: TemporalScope = TemporalScope.EXISTING, is_last_move: bool = False):
+    def add(self, category: FactCategory, description: str, severity: int = 3, metadata: Optional[Union[Dict, BaseFactMetadata]] = None, scope: TemporalScope = TemporalScope.EXISTING, is_last_move: bool = False):
         # is_last_moveがTrueなら自動的にIMMEDIATEにマッピング（互換性）
         if is_last_move:
             scope = TemporalScope.IMMEDIATE
@@ -74,13 +122,6 @@ class FactCollector:
             output.append(f.format_for_ai())
             
         return "\n".join(output)
-        
-        # 制限数以内でサマリー作成
-        output = []
-        for f in sorted_facts[:limit]:
-            output.append(f.format_for_ai())
-            
-        return "\n".join(output)
 
     def clear(self):
         self.facts = []
@@ -88,6 +129,8 @@ class FactCollector:
     def get_game_phase(self) -> str:
         """事実セットの中から局面フェーズ（終盤等）を特定して返す"""
         for f in self.facts:
-            if "phase" in f.metadata:
+            if isinstance(f.metadata, GamePhaseMetadata):
+                return f.metadata.phase
+            if isinstance(f.metadata, dict) and "phase" in f.metadata:
                 return f.metadata["phase"]
         return "normal"

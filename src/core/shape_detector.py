@@ -1,12 +1,12 @@
+import os
+import json
+from typing import Optional, List
 from core.point import Point
 from core.game_board import GameBoard, Color
-from core.inference_fact import InferenceFact, FactCategory
+from core.inference_fact import InferenceFact, FactCategory, TemporalScope, ShapeMetadata, MistakeMetadata
 from core.shapes.generic_detector import GenericPatternDetector
 from core.shapes.ponnuki import PonnukiDetector
 from core.shapes.atari import AtariDetector, RyoAtariDetector
-import os
-import json
-from typing import Optional
 from config import KNOWLEDGE_DIR
 
 class DetectionContext:
@@ -32,13 +32,12 @@ class DetectionContext:
 
     def get_ownership(self, pt: Point):
         """指定座標のOwnershipを取得する (黒地: +1.0, 白地: -1.0)"""
-        ownership = self.analysis_result.ownership
-        if not ownership:
+        if not hasattr(self.analysis_result, 'ownership') or not self.analysis_result.ownership:
             return 0.0
         
         idx = pt.row * self.board_size + pt.col
-        if 0 <= idx < len(ownership):
-            return ownership[idx]
+        if 0 <= idx < len(self.analysis_result.ownership):
+            return self.analysis_result.ownership[idx]
         return 0.0
 
 class ShapeDetector:
@@ -59,9 +58,9 @@ class ShapeDetector:
                         pattern_def = json.load(f)
                         detector = GenericPatternDetector(pattern_def, self.board_size)
                         
-                        # 優先度の設定
+                        # 優先度の設定 (rules.md に準拠)
                         if pattern_def.get("category") == "bad":
-                            detector.priority = 100  # ポン抜きと同等の最優先
+                            detector.priority = 100
                         elif detector.key == "kirichigai":
                             detector.priority = 90
                         elif detector.key in ["katatsugi", "kaketsugi"]:
@@ -73,7 +72,7 @@ class ShapeDetector:
                         elif detector.key == "tsuke":
                             detector.priority = 10
                         else:
-                            detector.priority = 20  # ケイマ・一間トビ等はノビ・ナラビより下
+                            detector.priority = 20
                             
                         self.strategies.append(detector)
                 except Exception as e:
@@ -83,7 +82,7 @@ class ShapeDetector:
         """動的解析が必要なレガシー（ハイブリッド）戦略を読み込む"""
         loaded_keys = {getattr(s, "key", "") for s in self.strategies}
         legacy_list = [
-            (PonnukiDetector, "ponnuki", 100), # 最優先
+            (PonnukiDetector, "ponnuki", 100),
             (RyoAtariDetector, "ryo_atari", 98),
             (AtariDetector, "atari", 95)
         ]
@@ -93,16 +92,14 @@ class ShapeDetector:
                 instance.priority = priority
                 self.strategies.append(instance)
 
-    def detect_facts(self, curr_board: GameBoard, prev_board: Optional[GameBoard] = None, analysis_result=None) -> list[InferenceFact]:
+    def detect_facts(self, curr_board: GameBoard, prev_board: Optional[GameBoard] = None, analysis_result=None) -> List[InferenceFact]:
         """形状検知結果を InferenceFact のリストとして返す"""
         actual_size = curr_board.side
         context = DetectionContext(curr_board, prev_board, actual_size, analysis_result)
         facts = []
-        
-        # 同一座標に対して複数のラベルがつくのを防ぐための記録
         labeled_coords = set()
 
-        # 1. 戦略を優先度順にソート (高い順)
+        # 1. 戦略を優先度順にソート
         sorted_strategies = sorted(self.strategies, key=lambda s: getattr(s, "priority", 50), reverse=True)
         
         for strategy in sorted_strategies:
@@ -111,49 +108,26 @@ class ShapeDetector:
             category, results = strategy.detect(context)
             strategy.board_size = orig_size
             
-            # DEBUG
-            if results and getattr(strategy, "key", "") in ["ryo_atari", "atari", "ikken_tobi"]:
-                # print(f"[DEBUG] Strategy {getattr(strategy, 'key', 'unknown')} matched with priority {getattr(strategy, 'priority', 50)}")
-                pass
-
             severity = 4 if category in ["bad", "mixed"] else 2
-            
-            actual_results = []
-            if category == "mixed" and isinstance(results, tuple):
-                actual_results = results[0] + results[1]
-            else:
-                actual_results = results
 
-            for res in actual_results:
-                msg = res["message"] if isinstance(res, dict) else res
+            for res in results:
+                # res は {"message": str, "metadata": ShapeMetadata} の形式を想定
+                msg = res["message"]
+                meta = res["metadata"]
                 
-                # 座標の特定 (メッセージから抽出するか、あるいは個別に渡す)
-                # GenericPatternDetector はメッセージに座標を入れているため、
-                # context.last_move を代表座標として使用する（最新手のみが対象のため）
                 coord = context.last_move.to_gtp() if context.last_move else "unknown"
-                
                 if coord != "unknown" and coord in labeled_coords:
-                    continue # 既に高優先度のラベルがついている
+                    continue
                 
                 labeled_coords.add(coord)
-                
-                metadata = {"key": getattr(strategy, "key", "unknown")}
-                if isinstance(res, dict):
-                    for k, v in res.items():
-                        if k != "message":
-                            metadata[k] = v
-
-                from core.inference_fact import TemporalScope
-                facts.append(InferenceFact(FactCategory.SHAPE, msg, severity, metadata, scope=TemporalScope.IMMEDIATE))
+                facts.append(InferenceFact(FactCategory.SHAPE, msg, severity, meta, scope=TemporalScope.IMMEDIATE))
         
-        # 2. カス石・過剰干渉の検知 (新規)
-        inefficient_moves = self._detect_inefficient_moves(context)
-        facts.extend(inefficient_moves)
+        # 2. 過剰干渉の検知
+        facts.extend(self._detect_inefficient_moves(context))
             
         return facts
 
-    def _detect_inefficient_moves(self, context: DetectionContext) -> list[InferenceFact]:
-        """カス石への過剰干渉（死に石への手入れ等）を検知する"""
+    def _detect_inefficient_moves(self, context: DetectionContext) -> List[InferenceFact]:
         facts = []
         move_point = context.last_move
         move_color = context.last_color
@@ -161,49 +135,35 @@ class ShapeDetector:
         if not move_point or not move_color or not context.analysis_result:
             return []
 
-        # 相手の色
         opp_color = move_color.opposite()
-        
-        # 自分の地としての確信度閾値 (0.8以上ならほぼ確定地＝中の相手石は死に石)
         OWNERSHIP_THRESHOLD = 0.8
-        
-        kasu_ishi_detected = False
         
         for adj in move_point.neighbors(context.board_size):
             stone = context.curr_board.get(adj)
-            
-            target_is_dead = False
-            
-            # ケースA: 隣に相手の石があるが、それは死んでいる
             if stone == opp_color:
                 owner_val = context.get_ownership(adj)
-                # 自分が黒なら、Ownershipが +1.0 に近ければ黒地＝白石は死んでいる
-                if move_color == Color.BLACK and owner_val > OWNERSHIP_THRESHOLD:
-                    target_is_dead = True
-                # 自分が白なら、Ownershipが -1.0 に近ければ白地＝黒石は死んでいる
-                elif move_color == Color.WHITE and owner_val < -OWNERSHIP_THRESHOLD:
-                    target_is_dead = True
-            
-            if target_is_dead:
-                kasu_ishi_detected = True
-                break
-
-        if kasu_ishi_detected:
-            from core.inference_fact import TemporalScope
-            facts.append(InferenceFact(
-                FactCategory.MISTAKE, 
-                "すでに死んでいる石（カス石）に対して手入れが行われました。",
-                severity=4,
-                metadata={"type": "kasu_ishi_interference"},
-                scope=TemporalScope.IMMEDIATE
-            ))
-
+                is_dead = (move_color == Color.BLACK and owner_val > OWNERSHIP_THRESHOLD) or \
+                          (move_color == Color.WHITE and owner_val < -OWNERSHIP_THRESHOLD)
+                
+                if is_dead:
+                    facts.append(InferenceFact(
+                        FactCategory.MISTAKE, 
+                        "すでに死んでいる石（カス石）に対して手入れが行われました。",
+                        severity=4,
+                        metadata=MistakeMetadata(type="kasu_ishi_interference"),
+                        scope=TemporalScope.IMMEDIATE
+                    ))
+                    break
         return facts
 
     def detect_ids(self, curr_board: GameBoard, prev_board: Optional[GameBoard] = None):
         """(Legacy互換) 検知された形状IDのリストを返す"""
         facts = self.detect_facts(curr_board, prev_board)
-        return list(set([f.metadata.get("key", "unknown") for f in facts]))
-        """(Legacy互換) 検知された形状IDのリストを返す"""
-        facts = self.detect_facts(curr_board, prev_board)
-        return list(set([f.metadata.get("key", "unknown") for f in facts]))
+        # metadata は BaseFactMetadata オブジェクトか辞書
+        keys = []
+        for f in facts:
+            if isinstance(f.metadata, ShapeMetadata):
+                keys.append(f.metadata.key)
+            elif isinstance(f.metadata, dict):
+                keys.append(f.metadata.get("key", "unknown"))
+        return list(set(keys))

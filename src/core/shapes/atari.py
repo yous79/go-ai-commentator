@@ -1,6 +1,6 @@
 from core.point import Point
 from core.game_board import GameBoard, Color
-from core.inference_fact import InferenceFact, FactCategory
+from core.inference_fact import InferenceFact, FactCategory, ShapeMetadata
 
 class AtariDetector:
     """アタリ（呼吸点1）の状態を検知するディテクター"""
@@ -16,7 +16,7 @@ class AtariDetector:
             
         board = context.curr_board
         opp_color = context.last_color.opposite()
-        atari_msgs = []
+        results = []
         
         # 最新手の隣接点にある相手石をチェック
         for neighbor in context.last_move.neighbors(board.side):
@@ -24,11 +24,15 @@ class AtariDetector:
                 group, liberties = board.get_group_and_liberties(neighbor)
                 if len(liberties) == 1:
                     lib_point = list(liberties)[0]
+                    # 重複チェック（メッセージ単位でも良いが、より構造的に）
                     msg = f"相手の石を【アタリ】にしました（{neighbor.to_gtp()}付近、逃げ道は{lib_point.to_gtp()}）。"
-                    if msg not in atari_msgs:
-                        atari_msgs.append(msg)
+                    if not any(r["message"] == msg for r in results):
+                        results.append({
+                            "message": msg,
+                            "metadata": ShapeMetadata(key=self.key, remedy_gtp=lib_point.to_gtp())
+                        })
 
-        return "info", atari_msgs
+        return "info", results
 
 class RyoAtariDetector:
     """両アタリ（2つ以上のグループを同時にアタリにする）を検知するディテクター"""
@@ -51,7 +55,6 @@ class RyoAtariDetector:
         for neighbor in context.last_move.neighbors(board.side):
             if board.get(neighbor) == opp_color:
                 group, liberties = board.get_group_and_liberties(neighbor)
-                # print(f"[DEBUG RyoAtari] Neighbor {neighbor.to_gtp()} group={len(group)} liberties={len(liberties)}")
                 if len(liberties) == 1:
                     # グループの代表座標（最小座標など）で重複を避ける
                     representative = min(group)
@@ -60,12 +63,12 @@ class RyoAtariDetector:
                         atari_groups.append((representative, lib_point))
                         liberty_coords.append(lib_point.to_gtp())
 
-        # print(f"[DEBUG RyoAtari] Final count: {len(atari_groups)}")
         if len(atari_groups) >= 2:
             # 重複を除去した逃げ道のリストを作成
             unique_libs = sorted(list(set(liberty_coords)))
             msg = f"相手の2つの群を同時に【両アタリ】にしました（逃げ道は {' と '.join(unique_libs)}）。"
-            res = {"message": msg, "remedy_gtp": unique_libs[0], "all_remedies": unique_libs}
-            return "info", [res]
+            
+            meta = ShapeMetadata(key=self.key, remedy_gtp=unique_libs[0], all_remedies=unique_libs)
+            return "info", [{"message": msg, "metadata": meta}]
 
         return "normal", []

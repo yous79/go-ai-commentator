@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Dict, Any
-from core.inference_fact import InferenceFact, FactCategory, FactCollector, TemporalScope
+from typing import List, Optional, Dict, Any, Union
+from core.inference_fact import (
+    InferenceFact, FactCategory, FactCollector, TemporalScope, 
+    BaseFactMetadata, GamePhaseMetadata, KoMetadata, UrgencyMetadata, ShapeMetadata
+)
 from core.board_simulator import SimulationContext, BoardSimulator
 from core.shape_detector import ShapeDetector
 from core.stability_analyzer import StabilityAnalyzer
@@ -63,7 +66,7 @@ class EndgameFactProvider(BaseFactProvider):
                 FactCategory.STRATEGY, 
                 "【局面ステータス】終盤（ヨセ）に入りました。細かな得失と正確な計算が重要です。", 
                 severity=2, 
-                metadata={"phase": "endgame"}, 
+                metadata=GamePhaseMetadata(phase="endgame"), 
                 scope=TemporalScope.EXISTING
             )
 
@@ -119,7 +122,7 @@ class InfluenceFactProvider(BaseFactProvider):
         return ""
 
 class UrgencyFactProvider(BaseFactProvider):
-    """着手の緊急度および将来の悪形予測を行うプロバイダ（特殊：追加解析が必要）"""
+    """着手の緊急度および将来の悪形予測を行うプロバイダ"""
     
     def __init__(self, board_size: int, simulator: BoardSimulator, detector: ShapeDetector):
         super().__init__(board_size)
@@ -134,7 +137,13 @@ class UrgencyFactProvider(BaseFactProvider):
         if urgency_data:
             u_severity = 5 if urgency_data['is_critical'] else 2
             u_desc = f"この局面の緊急度は {urgency_data['urgency']:.1f}目 です。{'一手の緩みも許されない急場です。' if urgency_data['is_critical'] else '比較的平穏な局面です。'}"
-            collector.add(FactCategory.URGENCY, u_desc, u_severity, urgency_data, scope=TemporalScope.EXISTING)
+            
+            meta = UrgencyMetadata(
+                urgency=urgency_data['urgency'],
+                is_critical=urgency_data['is_critical'],
+                next_player=urgency_data['next_player']
+            )
+            collector.add(FactCategory.URGENCY, u_desc, u_severity, meta, scope=TemporalScope.EXISTING)
             
             # 未来の悪形警告
             thr_pv = urgency_data.get('opponent_pv')
@@ -148,7 +157,6 @@ class UrgencyFactProvider(BaseFactProvider):
                         f.scope = TemporalScope.PREDICTED
                         collector.facts.append(f)
 
-
 class KoFactProvider(BaseFactProvider):
     """コウの発生や解消を検知するプロバイダ"""
     
@@ -157,10 +165,10 @@ class KoFactProvider(BaseFactProvider):
         if context.captured_points and len(context.captured_points) == 1:
             cap_pt = context.captured_points[0]
             msg = f"最新の着手によって {cap_pt.to_gtp()} の石が取られました。コウの争いが始まる可能性があります。"
-            collector.add(FactCategory.STRATEGY, msg, severity=4, metadata={"type": "ko_initiation", "point": cap_pt.to_gtp()}, scope=TemporalScope.IMMEDIATE)
+            collector.add(FactCategory.STRATEGY, msg, severity=4, metadata=KoMetadata(type="ko_initiation", point=cap_pt.to_gtp()), scope=TemporalScope.IMMEDIATE)
 
 class BasicStatsFactProvider(BaseFactProvider):
-    """勝率や目数差などの基本統計情報を事実として提供するプロバイダ"""
+    """勝率や目数差などの基本統計情報を提供"""
     
     def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
         sl = analysis.score_lead

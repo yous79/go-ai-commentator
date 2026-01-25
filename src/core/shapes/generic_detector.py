@@ -1,7 +1,8 @@
+import copy
 from core.shapes.base_shape import BaseShape
 from core.point import Point
 from core.game_board import Color
-import copy
+from core.inference_fact import ShapeMetadata
 
 class GenericPatternDetector(BaseShape):
     """
@@ -102,14 +103,15 @@ class GenericPatternDetector(BaseShape):
                     coord = context.last_move.to_gtp()
                     if coord not in matched_points:
                         msg = self.message_template.format(coord)
-                        res_data = {"message": msg}
+                        
+                        meta = ShapeMetadata(key=self.key)
                         remedy_off = variant.get("remedy_offset")
                         if remedy_off:
                             abs_remedy = origin + tuple(remedy_off)
                             if abs_remedy.is_valid(context.board_size):
-                                res_data["remedy_gtp"] = abs_remedy.to_gtp()
+                                meta.remedy_gtp = abs_remedy.to_gtp()
                         
-                        results.append(res_data)
+                        results.append({"message": msg, "metadata": meta})
                         matched_points.add(coord)
                     break 
 

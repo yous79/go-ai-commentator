@@ -1,6 +1,7 @@
+from typing import List
 from core.point import Point
 from core.game_board import GameBoard, Color
-from core.inference_fact import InferenceFact, FactCategory
+from core.inference_fact import InferenceFact, FactCategory, StabilityMetadata
 
 class StabilityAnalyzer:
     """Ownershipデータを元に、盤上の石の『安定度（生存確率）』を分析する"""
@@ -8,7 +9,7 @@ class StabilityAnalyzer:
     def __init__(self, board_size=19):
         self.board_size = board_size
 
-    def analyze_to_facts(self, board: GameBoard, ownership_map) -> list[InferenceFact]:
+    def analyze_to_facts(self, board: GameBoard, ownership_map) -> List[InferenceFact]:
         """解析結果を InferenceFact のリストとして返す"""
         results = self.analyze(board, ownership_map)
         facts = []
@@ -19,32 +20,32 @@ class StabilityAnalyzer:
             category = FactCategory.STABILITY
             
             # 石の数による重要度の調整
-            is_large = r['count'] >= 3
-            color_label = r['color_obj'].label
+            is_large = r.count >= 3
+            # color_label は StabilityMetadata に直接保持されている
             
-            if r['status'] == 'dead':
+            if r.status == 'dead':
                 severity = 5 if is_large else 4
                 status_msg = "は、AIの認識上すでに戦略的役割を終えた『カス石』です。これ以上手をかけず、捨て石として活用するか、放置して大場に先行すべき局面です。"
-            elif r['status'] == 'critical':
+            elif r.status == 'critical':
                 severity = 5
                 status_msg = "は生存確率が極めて低く、死に体に近い状態です。強引に助け出すよりも、周囲への響きを考慮して軽く扱う判断が求められます。"
-            elif r['status'] == 'weak':
+            elif r.status == 'weak':
                 severity = 4
                 status_msg = "は根拠が不十分な『弱い石』であり、盤上の急場（きゅうば）です。この石の補強、あるいは逆襲が局面の焦点となります。"
-            elif r['status'] == 'strong':
+            elif r.status == 'strong':
                 severity = 1
                 status_msg = "は完全に安定しており、当面の手入れは不要です。"
             
             if status_msg:
-                stones_str = ",".join(r['stones'][:3]) + ("..." if len(r['stones']) > 3 else "")
-                group_type = "戦略的グループ (Move Group)" if r['is_strategic'] else "グループ"
-                desc = f"{color_label}の{group_type} [{stones_str}] {status_msg}"
+                stones_str = ",".join(r.stones[:3]) + ("..." if len(r.stones) > 3 else "")
+                group_type = "戦略的グループ (Move Group)" if r.is_strategic else "グループ"
+                desc = f"{r.color_label}の{group_type} [{stones_str}] {status_msg}"
                 
                 facts.append(InferenceFact(category, desc, severity, r))
                 
         return facts
 
-    def analyze(self, board: GameBoard, ownership_map):
+    def analyze(self, board: GameBoard, ownership_map) -> List[StabilityMetadata]:
         if not ownership_map:
             return []
 
@@ -59,18 +60,19 @@ class StabilityAnalyzer:
             elif avg_stability < 0.8:  status = "stable"
             else:                      status = "strong"
             
-            analysis_results.append({
-                "color_obj": color_obj,
-                "stones": [p.to_gtp() for p in stones],
-                "stability": avg_stability,
-                "status": status,
-                "count": len(stones),
-                "is_strategic": is_strategic
-            })
+            analysis_results.append(StabilityMetadata(
+                color_label=color_obj.label,
+                stones=[p.to_gtp() for p in stones],
+                stability=avg_stability,
+                status=status,
+                count=len(stones),
+                is_strategic=is_strategic
+            ))
             
         return analysis_results
 
     def _find_strategic_groups(self, board: GameBoard, ownership_map):
+        visited = set()
         physical_groups = self._find_physical_groups(board)
         
         group_data = []
