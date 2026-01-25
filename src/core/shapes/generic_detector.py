@@ -23,9 +23,13 @@ class GenericPatternDetector(BaseShape):
         auto_rotate = self.pattern_def.get("auto_rotate", True)
         auto_reflect = self.pattern_def.get("auto_reflect", True)
         base_remedy = self.pattern_def.get("remedy_offset")
+        root_purity = self.pattern_def.get("purity", False)
+        root_self_purity = self.pattern_def.get("self_purity", False)
 
         for bp in base_patterns:
             bp["remedy_offset"] = base_remedy
+            if "purity" not in bp: bp["purity"] = root_purity
+            if "self_purity" not in bp: bp["self_purity"] = root_self_purity
             variants = [bp]
             
             if auto_reflect:
@@ -172,6 +176,15 @@ class GenericPatternDetector(BaseShape):
                 if neighbor in all_pattern_pts:
                     continue
                 if not context.curr_board.is_empty(neighbor):
+                    return False
+
+        # 2.5 自分の石の清浄性チェック (self_purity)
+        if pattern.get("self_purity"):
+            all_pattern_pts = set(matched_pts.values())
+            for neighbor in context.last_move.all_neighbors(context.board_size):
+                if neighbor in all_pattern_pts:
+                    continue
+                if context.curr_board.get(neighbor) == context.last_color:
                     return False
 
         # 3. 隣接条件制約 (constraints)

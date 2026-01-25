@@ -2,6 +2,7 @@
     "key": "kaketsugi",
     "name": "カケツギ",
     "category": "normal",
+    "self_purity": true,
     "message": "効率よく繋いだ【カケツギ】です（{}）。",
     "auto_rotate": true,
     "auto_reflect": true,

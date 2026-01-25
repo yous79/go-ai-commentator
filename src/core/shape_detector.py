@@ -61,19 +61,19 @@ class ShapeDetector:
                         
                         # 優先度の設定
                         if pattern_def.get("category") == "bad":
-                            detector.priority = 80
+                            detector.priority = 100  # ポン抜きと同等の最優先
                         elif detector.key == "kirichigai":
-                            detector.priority = 90  # 非常に高い比重（ハネ等に優先）
+                            detector.priority = 90
+                        elif detector.key in ["katatsugi", "kaketsugi"]:
+                            detector.priority = 75
                         elif detector.key == "butsukari":
                             detector.priority = 60
-                        elif detector.key in ["katatsugi", "kaketsugi"]:
-                            detector.priority = 75  # 接続手筋として高めの優先度
-                        elif detector.key == "tsuke":
-                            detector.priority = 10
                         elif detector.key in ["nobi", "narabi"]:
                             detector.priority = 30
+                        elif detector.key == "tsuke":
+                            detector.priority = 10
                         else:
-                            detector.priority = 50
+                            detector.priority = 20  # ケイマ・一間トビ等はノビ・ナラビより下
                             
                         self.strategies.append(detector)
                 except Exception as e:
