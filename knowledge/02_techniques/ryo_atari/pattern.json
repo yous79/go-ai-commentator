@@ -1,0 +1,86 @@
+{
+    "key": "ryo_atari",
+    "name": "両アタリ",
+    "category": "info",
+    "message": "相手の2つの群を同時に【両アタリ】にしました（{}）。",
+    "auto_rotate": true,
+    "auto_reflect": true,
+    "patterns": [
+        {
+            "elements": [
+                {
+                    "offset": [
+                        0,
+                        0
+                    ],
+                    "state": "last"
+                },
+                {
+                    "offset": [
+                        1,
+                        0
+                    ],
+                    "state": "opponent",
+                    "liberties": 1,
+                    "label": "grp1"
+                },
+                {
+                    "offset": [
+                        0,
+                        1
+                    ],
+                    "state": "opponent",
+                    "liberties": 1,
+                    "label": "grp2"
+                }
+            ],
+            "constraints": [
+                {
+                    "type": "different_group",
+                    "targets": [
+                        "grp1",
+                        "grp2"
+                    ]
+                }
+            ]
+        },
+        {
+            "elements": [
+                {
+                    "offset": [
+                        0,
+                        0
+                    ],
+                    "state": "last"
+                },
+                {
+                    "offset": [
+                        1,
+                        0
+                    ],
+                    "state": "opponent",
+                    "liberties": 1,
+                    "label": "grp1"
+                },
+                {
+                    "offset": [
+                        -1,
+                        0
+                    ],
+                    "state": "opponent",
+                    "liberties": 1,
+                    "label": "grp2"
+                }
+            ],
+            "constraints": [
+                {
+                    "type": "different_group",
+                    "targets": [
+                        "grp1",
+                        "grp2"
+                    ]
+                }
+            ]
+        }
+    ]
+}

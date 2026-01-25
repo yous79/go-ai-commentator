@@ -156,13 +156,32 @@ class GenericPatternDetector(BaseShape):
                             match = False
                 else:
                     match = False
+            elif state_needed == "captured":
+                # prev_boardで相手の石があり、curr_boardで空点であること
+                if context.prev_board and actual_char == '.':
+                    prev_stone = context.prev_board.get(abs_pos)
+                    match = (prev_stone and prev_stone.value == opp_color_char)
+                else:
+                    match = False
             elif state_needed == "any":
                 match = True
             
             if not match:
                 return False
             
-            # 孤立チェック
+            # --- 動的プロパティ（呼吸点・石数）のチェック ---
+            if actual and (actual_char in [last_color_char, opp_color_char]):
+                # liberties, min_liberties, max_liberties, min_stones, max_stones
+                group, liberties = context.curr_board.get_group_and_liberties(abs_pos)
+                
+                if "liberties" in el and len(liberties) != el["liberties"]: return False
+                if "min_liberties" in el and len(liberties) < el["min_liberties"]: return False
+                if "max_liberties" in el and len(liberties) > el["max_liberties"]: return False
+                
+                if "min_stones" in el and len(group) < el["min_stones"]: return False
+                if "max_stones" in el and len(group) > el["max_stones"]: return False
+
+            # 孤立チェック（互換性のために残すが、min_stones: 1, max_stones: 1 でも代用可能）
             if el.get("check_isolation") and state_needed == "opponent":
                 if actual:
                     group, _ = context.curr_board.get_group_and_liberties(abs_pos)
@@ -208,5 +227,22 @@ class GenericPatternDetector(BaseShape):
                 
                 if "max" in const and opp_count > const["max"]: return False
                 if "min" in const and opp_count < const["min"]: return False
+
+            # 3.2 異なるグループであることの制約 (different_group)
+            if const.get("type") == "different_group":
+                target_labels = const.get("targets", [])
+                groups_seen = []
+                for label in target_labels:
+                    found_group = False
+                    for idx, el in enumerate(pattern["elements"]):
+                        if el.get("label") == label and idx in matched_pts:
+                            pt = matched_pts[idx]
+                            group, _ = context.curr_board.get_group_and_liberties(pt)
+                            if group in groups_seen:
+                                return False
+                            groups_seen.append(group)
+                            found_group = True
+                            break
+                    if not found_group: return False
 
         return True

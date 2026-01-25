@@ -5,8 +5,6 @@ from core.point import Point
 from core.game_board import GameBoard, Color
 from core.inference_fact import InferenceFact, FactCategory, TemporalScope, ShapeMetadata, MistakeMetadata
 from core.shapes.generic_detector import GenericPatternDetector
-from core.shapes.ponnuki import PonnukiDetector
-from core.shapes.atari import AtariDetector, RyoAtariDetector
 from config import KNOWLEDGE_DIR
 
 class DetectionContext:
@@ -45,7 +43,6 @@ class ShapeDetector:
         self.board_size = board_size
         self.strategies = []
         self._load_generic_patterns()
-        self._init_legacy_strategies()
 
     def _load_generic_patterns(self):
         """KNOWLEDGE_DIR から pattern.json を検索して GenericPatternDetector を初期化する"""
@@ -77,20 +74,6 @@ class ShapeDetector:
                         self.strategies.append(detector)
                 except Exception as e:
                     print(f"Failed to load pattern {path}: {e}")
-
-    def _init_legacy_strategies(self):
-        """動的解析が必要なレガシー（ハイブリッド）戦略を読み込む"""
-        loaded_keys = {getattr(s, "key", "") for s in self.strategies}
-        legacy_list = [
-            (PonnukiDetector, "ponnuki", 100),
-            (RyoAtariDetector, "ryo_atari", 98),
-            (AtariDetector, "atari", 95)
-        ]
-        for cls, key, priority in legacy_list:
-            if key not in loaded_keys:
-                instance = cls(self.board_size)
-                instance.priority = priority
-                self.strategies.append(instance)
 
     def detect_facts(self, curr_board: GameBoard, prev_board: Optional[GameBoard] = None, analysis_result=None) -> List[InferenceFact]:
         """形状検知結果を InferenceFact のリストとして返す"""

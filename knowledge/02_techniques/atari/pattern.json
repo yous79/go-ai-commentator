@@ -1,0 +1,29 @@
+{
+    "key": "atari",
+    "name": "アタリ",
+    "category": "info",
+    "message": "相手の石を【アタリ】にしました（{}）。",
+    "auto_rotate": true,
+    "auto_reflect": false,
+    "patterns": [
+        {
+            "elements": [
+                {
+                    "offset": [
+                        0,
+                        0
+                    ],
+                    "state": "last"
+                },
+                {
+                    "offset": [
+                        1,
+                        0
+                    ],
+                    "state": "opponent",
+                    "liberties": 1
+                }
+            ]
+        }
+    ]
+}

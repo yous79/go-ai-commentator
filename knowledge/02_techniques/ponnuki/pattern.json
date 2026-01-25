@@ -1,0 +1,49 @@
+{
+    "key": "ponnuki",
+    "name": "ポン抜き",
+    "category": "bad",
+    "message": "相手に【ポン抜き】を許しました（{}の地点）。強力な厚みを与えてしまった失着です。",
+    "auto_rotate": true,
+    "auto_reflect": false,
+    "patterns": [
+        {
+            "elements": [
+                {
+                    "offset": [
+                        0,
+                        0
+                    ],
+                    "state": "last"
+                },
+                {
+                    "offset": [
+                        1,
+                        0
+                    ],
+                    "state": "captured"
+                },
+                {
+                    "offset": [
+                        2,
+                        0
+                    ],
+                    "state": "self"
+                },
+                {
+                    "offset": [
+                        1,
+                        1
+                    ],
+                    "state": "self"
+                },
+                {
+                    "offset": [
+                        1,
+                        -1
+                    ],
+                    "state": "self"
+                }
+            ]
+        }
+    ]
+}
