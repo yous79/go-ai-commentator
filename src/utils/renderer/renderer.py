@@ -1,10 +1,11 @@
 from PIL import Image, ImageDraw, ImageFont
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Any
 from core.game_board import GameBoard, Color
 from core.coordinate_transformer import CoordinateTransformer
 from utils.renderer.base import RenderLayer, RenderContext
+from utils.renderer.theme import ThemeManager
 from utils.renderer.layers import (
-    GridLayer, CoordinateLayer, StoneLayer, MarkLayer, AnalysisLayer, InfoLayer, COLOR_BG
+    GridLayer, CoordinateLayer, StoneLayer, MarkupLayer, AnalysisLayer, InfoLayer
 )
 
 class LayeredBoardRenderer:
@@ -14,13 +15,14 @@ class LayeredBoardRenderer:
         self.board_size = board_size
         self.image_size = image_size
         self.transformer = CoordinateTransformer(board_size, image_size)
+        self.theme_manager = ThemeManager()
         
         # デフォルトレイヤーの構成
         self.layers: List[RenderLayer] = [
             GridLayer(),
             CoordinateLayer(),
             StoneLayer(),
-            MarkLayer(),
+            MarkupLayer(),
             AnalysisLayer(),
             InfoLayer()
         ]
@@ -38,6 +40,10 @@ class LayeredBoardRenderer:
             self.font_small = ImageFont.load_default()
             self.font_number = ImageFont.load_default()
 
+    def set_theme(self, theme_name: str):
+        """テーマを切り替える"""
+        self.theme_manager.set_theme(theme_name)
+
     def render(self, board: GameBoard, **kwargs) -> Image.Image:
         """全レイヤーを重ねてレンダリングを実行する"""
         # レンダラーの設定を最新に同期
@@ -49,6 +55,7 @@ class LayeredBoardRenderer:
             transformer=self.transformer,
             image_size=self.image_size,
             board_size=self.board_size,
+            theme=self.theme_manager.get_theme(),
             font=self.font,
             font_small=self.font_small,
             font_number=self.font_number,
@@ -57,7 +64,7 @@ class LayeredBoardRenderer:
         
         # 下部エリアがある場合は高さを調整
         extra_height = 100 if ctx.analysis_text else 0
-        img = Image.new("RGB", (self.image_size, self.image_size + extra_height), COLOR_BG)
+        img = Image.new("RGB", (self.image_size, self.image_size + extra_height), ctx.theme.board_color)
         draw = ImageDraw.Draw(img)
         
         # 各レイヤーの描画
@@ -69,17 +76,13 @@ class LayeredBoardRenderer:
 
     def render_pv(self, board: GameBoard, pv_list: List[str], starting_color: str, title: str = "") -> Image.Image:
         """PV（参考図）をレンダリングする便利なラッパー"""
-        # 簡易的に candidates 形式に変換して AnalysisLayer に描画させることも可能だが、
-        # 既存のロジックとの互換性を重視する場合は、ここに直接書くか、専用レイヤーを作る
-        # 今回は互換性重視で、現在の render メソッドをベースに一時的な設定で描画
-        
         # PVを candidates 形式に変換
         mock_candidates = []
         curr_c = Color.from_str(starting_color)
         for i, m in enumerate(pv_list[:10]):
             mock_candidates.append({
                 "move": m,
-                "winrate": 0.0, # PV表示では勝率は重要でない
+                "winrate": 0.0,
                 "color": curr_c
             })
             curr_c = curr_c.opposite()

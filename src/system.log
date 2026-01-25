@@ -2095,3 +2095,13 @@
 [2026-01-25 15:29:44] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: invalid command name ".!panedwindow.!infoview.!notebook.!analysistab.!label"
 [2026-01-25 15:30:00] [GUI] [INFO] Cleaning up app resources...
 [2026-01-25 15:30:00] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-25 15:53:12] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-25 15:53:12] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-25 15:53:13] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-25 15:53:15] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-25 15:53:15] [STARTUP] [INFO] API Server is Ready.
+[2026-01-25 16:02:08] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-25 16:02:08] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-25 16:02:09] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-25 16:02:11] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-25 16:02:11] [STARTUP] [INFO] API Server is Ready.

@@ -4,6 +4,7 @@ from typing import List, Optional, Any, Tuple
 from PIL import ImageDraw, ImageFont
 from core.game_board import GameBoard
 from core.coordinate_transformer import CoordinateTransformer
+from utils.renderer.theme import RenderTheme, CLASSIC_THEME
 
 @dataclass
 class RenderContext:
@@ -12,6 +13,7 @@ class RenderContext:
     transformer: CoordinateTransformer
     image_size: int
     board_size: int
+    theme: RenderTheme = CLASSIC_THEME
     
     # Optional Data
     history: List[List[str]] = field(default_factory=list)

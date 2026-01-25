@@ -1,11 +1,19 @@
-from typing import List, Dict, Optional, Any
+import os
 import hashlib
 import dataclasses
+import json
+import time
+import concurrent.futures
+from typing import List, Dict, Optional, Any, Tuple
+from sgfmill import sgf
+
 from core.analysis_dto import AnalysisResult
+from core.game_board import GameBoard, Color
+from core.point import Point
 from services.api_client import api_client
 from utils.event_bus import event_bus, AppEvents
 from utils.logger import logger
-from core.point import Point
+from config import OUTPUT_BASE_DIR
 
 class AnalysisService:
     """
@@ -16,8 +24,13 @@ class AnalysisService:
         self.task_manager = task_manager
         # キャッシュ: {history_hash: AnalysisResult}
         self._cache: Dict[str, AnalysisResult] = {}
+        # インデックスベースのキャッシュ（SGF一括解析用）
+        self._index_cache: List[Optional[AnalysisResult]] = []
         # 全体の勝率履歴（グラフ用）
         self._winrate_history: List[float] = []
+        
+        self.analyzing_sgf = False
+        self._stop_requested = False
 
     def _get_history_hash(self, history: List[List[str]]) -> str:
         """着手履歴からユニークなハッシュ値を生成する"""
@@ -57,29 +70,140 @@ class AnalysisService:
             "result": result,
             "winrate_text": result.winrate_label,
             "score_text": f"{result.score_lead:.1f}",
-            "winrate_history": self._winrate_history, # TODO: 履歴の動的生成
+            "winrate_history": self._winrate_history,
             "current_move": move_idx,
             "candidates": [dataclasses.asdict(c) for c in result.candidates]
         })
 
-    def inject_results(self, moves_data: List[Any], board_size: int = 19):
-        """バッチ解析結果（リスト）を一括でキャッシュに注入する"""
-        logger.info(f"Injecting {len(moves_data)} results into AnalysisService cache.", layer="ANALYSIS_SERVICE")
-        self._index_cache = moves_data 
-
     def get_by_index(self, idx: int) -> Optional[AnalysisResult]:
-        """
-        指定された手数（インデックス）の解析結果を取得する。
-        """
-        if not hasattr(self, '_index_cache') or idx >= len(self._index_cache):
-            return None
-            
-        data = self._index_cache[idx]
-        if not data: return None
+        """指定された手数（インデックス）の解析結果を取得する"""
+        if idx < len(self._index_cache):
+            return self._index_cache[idx]
+        return None
+
+    def start_sgf_analysis(self, sgf_path: str, renderer: Any):
+        """SGFファイルの一括解析を開始する"""
+        if self.analyzing_sgf:
+            self.stop_sgf_analysis()
         
-        if isinstance(data, AnalysisResult):
-            return data
-        return AnalysisResult.from_dict(data)
+        self.analyzing_sgf = True
+        self._stop_requested = False
+        
+        def _task():
+            self._run_bulk_analysis(sgf_path, renderer)
+            return True
+
+        self.task_manager.run_task(_task)
+
+    def stop_sgf_analysis(self):
+        """一括解析を停止する"""
+        self._stop_requested = True
+        self.analyzing_sgf = False
+
+    def _run_bulk_analysis(self, path: str, renderer: Any):
+        """バックグラウンドスレッドで実行される一括解析の実体"""
+        try:
+            name = os.path.splitext(os.path.basename(path))[0]
+            out_dir = os.path.join(OUTPUT_BASE_DIR, name)
+            os.makedirs(out_dir, exist_ok=True)
+
+            with open(path, "rb") as f:
+                game = sgf.Sgf_game.from_bytes(f.read())
+            board_size = game.get_size()
+            
+            nodes = []
+            curr_node = game.get_root()
+            while True:
+                nodes.append(curr_node)
+                try: curr_node = curr_node[0]
+                except: break
+            
+            total_moves = len(nodes)
+            event_bus.publish(AppEvents.STATUS_MSG_UPDATED, f"Loading SGF: {total_moves} moves")
+            event_bus.publish("set_max", total_moves) # TODO: Move to AppEvents
+            
+            history = []
+            temp_board = GameBoard(board_size)
+            self._index_cache = [None] * total_moves
+            self._winrate_history = [0.5] * total_moves
+            
+            # 1. 局面の事前構築
+            all_moves_info = []
+            for m_num, node in enumerate(nodes):
+                color, move = node.get_move()
+                if color and move:
+                    c_obj = Color.from_str(color)
+                    temp_board.play(Point(move[0], move[1]), c_obj)
+                    cols = "ABCDEFGHJKLMNOPQRST"
+                    history.append([c_obj.key.upper()[:1], cols[move[1]] + str(move[0]+1)])
+                elif color: # pass
+                    history.append(["B" if color == 'b' else "W", "pass"])
+                
+                all_moves_info.append({
+                    "m_num": m_num,
+                    "history": list(history),
+                    "board_copy": temp_board.copy()
+                })
+
+            completed_count = 0
+            
+            # 2. 並列解析
+            # 注: api_client.analyze_move は内部でリトライ等を行う
+            with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+                futures = {
+                    executor.submit(api_client.analyze_move, m["history"], board_size, include_pv=True): m 
+                    for m in all_moves_info
+                }
+                
+                for future in concurrent.futures.as_completed(futures):
+                    if self._stop_requested: break
+                    
+                    move_info = futures[future]
+                    m_num = move_info["m_num"]
+                    
+                    try:
+                        result = future.result()
+                        if result:
+                            # キャッシュへの保存
+                            self._index_cache[m_num] = result
+                            h_hash = self._get_history_hash(move_info["history"])
+                            self._cache[h_hash] = result
+                            self._winrate_history[m_num] = result.winrate
+                            
+                            # 画像の保存（レンダラーを使用）
+                            img_text = f"Move {m_num} | WR(B): {result.winrate_label} | Score(B): {result.score_lead:.1f}"
+                            img = renderer.render(move_info["board_copy"], analysis_text=img_text, history=move_info["history"])
+                            img.save(os.path.join(out_dir, f"move_{m_num:03d}.png"))
+                            
+                            completed_count += 1
+                            event_bus.publish(AppEvents.PROGRESS_UPDATED, completed_count)
+                            event_bus.publish(AppEvents.STATUS_MSG_UPDATED, f"Analyzing: {completed_count}/{total_moves}")
+                    except Exception as e:
+                        logger.error(f"Bulk Analysis Error at move {m_num}: {e}")
+
+            # 解析データの永続化
+            self._save_analysis_json(out_dir, board_size)
+            
+            self.analyzing_sgf = False
+            event_bus.publish(AppEvents.STATUS_MSG_UPDATED, "Analysis Ready")
+            event_bus.publish(AppEvents.ANALYSIS_COMPLETED)
+
+        except Exception as e:
+            logger.error(f"Critical error in bulk analysis: {e}")
+            self.analyzing_sgf = False
+
+    def _save_analysis_json(self, out_dir: str, board_size: int):
+        """解析結果をJSONファイルとして保存する"""
+        try:
+            log_data = {
+                "board_size": board_size,
+                "moves": [dataclasses.asdict(r) if r else None for r in self._index_cache]
+            }
+            json_path = os.path.join(out_dir, "analysis.json")
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(log_data, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            logger.error(f"Failed to save analysis.json: {e}")
 
     def generate_full_context_analysis(self, move_idx, history, board_size, gemini, simulator, visualizer):
         """
@@ -120,9 +244,8 @@ class AnalysisService:
             }
 
         def _on_success(res):
-            # 結果をイベントバスに通知 (UI側でポップアップ等を行う)
+            # 結果をイベントバスに通知
             event_bus.publish(AppEvents.COMMENTARY_READY, res["text"])
-            # 特殊な結果（画像パス）は追加データとして送るか、別のイベントにする
             if res["rec_path"] or res["thr_path"]:
                 event_bus.publish("AI_DIAGRAMS_READY", res)
 

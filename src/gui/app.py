@@ -51,7 +51,6 @@ class GoReplayApp(GoAppBase):
         self.knowledge_manager = KnowledgeManager(KNOWLEDGE_DIR)
         self.command_invoker = CommandInvoker()
         
-        self.analysis_manager = AnalysisManager(queue.Queue(), self.renderer)
         self.report_generator = None
         if self.gemini:
             self.report_generator = ReportGenerator(self.game, self.renderer, self.gemini)
@@ -75,7 +74,7 @@ class GoReplayApp(GoAppBase):
 
         self.setup_layout(callbacks)
         self._load_dictionary_terms()
-        self._start_queue_monitor()
+        # self._start_queue_monitor() <-- REMOVED (Handled by events)
         
         self.root.bind("<Left>", lambda e: self.prev_move())
         self.root.bind("<Right>", lambda e: self.next_move())
@@ -216,7 +215,6 @@ class GoReplayApp(GoAppBase):
             self.transformer = CoordinateTransformer(board_size=self.game.board_size)
             self.board_view.transformer = self.transformer
             self.renderer = GoBoardRenderer(board_size=self.game.board_size)
-            self.analysis_manager.renderer = self.renderer
             
             # Controller setup
             name = os.path.splitext(os.path.basename(path))[0]
@@ -228,26 +226,20 @@ class GoReplayApp(GoAppBase):
                 self.report_generator.renderer = self.renderer
                 
             self.lbl_status.config(text="Starting Analysis...")
-            self.analysis_manager.start_analysis(path)
+            # AnalysisServiceに委譲
+            self.analysis_service.start_sgf_analysis(path, self.renderer)
             self._monitor_images_on_disk()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start analysis: {e}")
 
-    def _start_queue_monitor(self):
-        try:
-            while True:
-                msg, d = self.analysis_manager.app_queue.get_nowait()
-                if msg == "set_max": self.progress_bar.config(maximum=d)
-                elif msg == "progress":
-                    cur_max = int(self.progress_bar['maximum'])
-                    event_bus.publish(AppEvents.STATUS_MSG_UPDATED, f"Progress: {d} / {cur_max}")
-                    event_bus.publish(AppEvents.PROGRESS_UPDATED, d)
-                elif msg == "done" or msg == "skip":
-                    event_bus.publish(AppEvents.STATUS_MSG_UPDATED, "Analysis Ready")
-                    event_bus.publish(AppEvents.ANALYSIS_COMPLETED)
-                    self._sync_analysis_data()
-        except queue.Empty: pass
-        self.root.after(100, self._start_queue_monitor)
+    def _monitor_images_on_disk(self):
+        if not self.controller.image_dir: return
+        import glob
+        files = glob.glob(os.path.join(self.controller.image_dir, "move_*.png"))
+        if len(files) > 0 and not self.controller.image_cache: self.show_image(0)
+        if self.analysis_service.analyzing_sgf:
+            self._sync_analysis_data()
+            self.root.after(2000, self._monitor_images_on_disk)
 
     def _sync_analysis_data(self):
         if not self.controller.image_dir: return
@@ -280,7 +272,7 @@ class GoReplayApp(GoAppBase):
         import glob
         files = glob.glob(os.path.join(self.controller.image_dir, "move_*.png"))
         if len(files) > 0 and not self.controller.image_cache: self.show_image(0)
-        if self.analysis_manager.analyzing:
+        if self.analysis_service.analyzing_sgf:
             self._sync_analysis_data()
             self.root.after(2000, self._monitor_images_on_disk)
 
@@ -468,7 +460,7 @@ class GoReplayApp(GoAppBase):
         if m is not None: self.show_image(m)
 
     def on_close(self):
-        self.analysis_manager.stop_analysis()
+        self.analysis_service.stop_sgf_analysis()
         super().on_close()
 
     def run_auto_verify(self, sgf_path: str):
@@ -488,7 +480,7 @@ class GoReplayApp(GoAppBase):
 
         def _wait_for_analysis():
             if self.verification_completed: return
-            if self.analysis_manager.analyzing:
+            if self.analysis_service.analyzing_sgf:
                 logger.debug("Waiting for analysis to complete...", layer="GUI")
                 self.root.after(2000, _wait_for_analysis)
             else:
