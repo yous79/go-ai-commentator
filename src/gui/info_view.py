@@ -16,7 +16,7 @@ class AnalysisTab(tk.Frame):
         # イベント購読の開始（追跡リストに追加）
         self._subscribe_to(AppEvents.STATE_UPDATED, self._on_state_updated)
         self._subscribe_to(AppEvents.MISTAKES_UPDATED, self._on_mistakes_updated)
-        self._subscribe_to(AppEvents.COMMENTARY_READY, self.set_commentary)
+        self._subscribe_to(AppEvents.COMMENTARY_READY, self._on_commentary_ready)
 
     def _subscribe_to(self, event_type, callback):
         event_bus.subscribe(event_type, callback)
@@ -129,6 +129,11 @@ class AnalysisTab(tk.Frame):
         self.txt_commentary.delete("1.0", tk.END)
         self.txt_commentary.insert(tk.END, text)
         self.txt_commentary.config(state="disabled")
+
+    def _on_commentary_ready(self, text):
+        """解説完了時にボタンをリセットし、テキストを表示"""
+        self.set_commentary(text)
+        self.btn_comment.config(state="normal", text="Ask AI Agent")
 
     def update_graph(self, wr_history, current_idx):
         self.ax.clear()
