@@ -77,7 +77,7 @@ class ReportGenerator:
                 commentary = resp_gemini.text if resp_gemini.text else "(解説生成失敗)"
                 
                 # Markdown追加
-                r_md += f"### 手数 {m_idx} (黒番のミス)\n- **勝率下落**: -{wr_drop:.1%}\n- **目数下落**: -{sc_drop:.1f}目\n- **AI推奨**: {best.get('move', 'なし')}\n\n![参考図]({f_name})\n\n**解説**: {commentary}\n\n---\n\n"
+                r_md += f"### 手数 {m_idx} (黒番のミス)\n- **勝率下落**: -{wr_drop:.1%}\n- **目数下落**: -{sc_drop:.1f}目\n- **AI推奨**: {best.move}\n\n![参考図]({f_name})\n\n**解説**: {commentary}\n\n---\n\n"
                 
                 # PDFアイテム追加
                 pdf_items.append({

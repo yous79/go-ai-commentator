@@ -56,7 +56,7 @@ class AsyncTaskManager:
                 logger.error(f"Async task failed: {e}", layer="ASYNC")
                 # 4. エラー時コールバック（メインスレッドに戻す）
                 if on_error:
-                    self.root.after(0, lambda: on_error(e))
+                    self.root.after(0, lambda err=e: on_error(err))
                 else:
                     # デフォルトのエラー表示（もし必要なら）
                     import traceback

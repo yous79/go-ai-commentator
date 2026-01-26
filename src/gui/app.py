@@ -383,9 +383,24 @@ class GoReplayApp(GoAppBase):
         if curr < len(self.game.moves):
             d = self.game.moves[curr]
             if d:
-                cands = d.get('candidates', []) or d.get('top_candidates', [])
-                if cands and 'pv' in cands[0]:
-                    self._show_pv_window("Variation", cands[0]['pv'])
+                # AnalysisResultオブジェクトか辞書かを判別
+                if hasattr(d, 'candidates'):
+                    cands = d.candidates
+                else:
+                    cands = d.get('candidates', []) or d.get('top_candidates', [])
+                
+                if cands:
+                    # 候補手がMoveCandidate オブジェクトか辞書かを判別
+                    first_cand = cands[0]
+                    if hasattr(first_cand, 'pv'):
+                        pv_list = first_cand.pv
+                    elif isinstance(first_cand, dict) and 'pv' in first_cand:
+                        pv_list = first_cand['pv']
+                    else:
+                        return
+                    
+                    if pv_list:
+                        self._show_pv_window("Variation", pv_list)
 
     def _show_pv_window(self, title, pv_list):
         top = tk.Toplevel(self.root); top.title(title)
