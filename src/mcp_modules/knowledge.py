@@ -8,13 +8,15 @@ from core.mcp_types import Move
 from mcp_modules.session import SessionManager
 from typing import List, Optional
 
-class KnowledgeModule:
+from mcp_modules.base import McpModuleBase
+
+class KnowledgeModule(McpModuleBase):
     """ゲーム状態、知識ベース、可視化ツールを管理するモジュール。セッション（コンテキスト・オフローディング）に対応。"""
     
     def __init__(self, mcp: FastMCP, knowledge_repo: KnowledgeRepository, term_visualizer: TermVisualizer, session_manager: SessionManager):
+        super().__init__(session_manager)
         self.repo = knowledge_repo
         self.visualizer = term_visualizer
-        self.session = session_manager
         
         # 1. Resources
         mcp.resource("mcp://game/current/sgf")(self.get_current_sgf)
@@ -25,18 +27,10 @@ class KnowledgeModule:
         mcp.tool()(self.detect_shapes)
         mcp.tool()(self.visualize_urgency)
 
-    def _get_context(self, history: Optional[List[Move]], board_size: Optional[int]) -> tuple:
-        """解析用コンテキストの共通取得ロジック"""
-        if history is None:
-            if not self.session.is_initialized:
-                raise ValueError("No active session. Call sync_session first or provide history.")
-            return self.session.history, board_size or self.session.board_size
-        return [m.to_list() for m in history], board_size or 19
-
     def get_current_sgf(self) -> str:
         """現在の対局セッションの要約を取得します。"""
         try:
-            hist, size = self._get_context(None, None)
+            hist, size = self.resolve_context(None, None)
             summary = [
                 "### Current Session Context (Offloaded)",
                 f"- Board Size: {size}",
@@ -53,7 +47,7 @@ class KnowledgeModule:
     def get_relevant_knowledge(self) -> str:
         """現在の局面の形状に関連する知識ベース定義を抽出します。"""
         try:
-            hist, size = self._get_context(None, None)
+            hist, size = self.resolve_context(None, None)
             detected_ids = api_client.detect_shape_ids(hist, size)
             if not detected_ids: return "特に関連する知識は見つかりませんでした。"
             
@@ -86,7 +80,7 @@ class KnowledgeModule:
     def detect_shapes(self, history: Optional[List[Move]] = None, board_size: Optional[int] = None) -> str:
         """現在の盤面から、幾何学的な形状（アキ三角など）を抽出します。解消地点や局面フェーズ（終盤等）も含みます。"""
         try:
-            target_h, target_s = self._get_context(history, board_size)
+            target_h, target_s = self.resolve_context(history, board_size)
             
             # 詳細な解析（Orchestrator）を実行してフェーズ情報を得る
             from services.analysis_orchestrator import AnalysisOrchestrator
@@ -114,7 +108,7 @@ class KnowledgeModule:
     def visualize_urgency(self, history: Optional[List[Move]] = None, board_size: Optional[int] = None) -> str:
         """『もし今パスをしたら相手にどこを打たれるか』の被害予測図を生成します。"""
         try:
-            target_h, target_s = self._get_context(history, board_size)
+            target_h, target_s = self.resolve_context(history, board_size)
             urgency_data = api_client.analyze_urgency(target_h, target_s)
             if not urgency_data or not urgency_data.get("opponent_pv"):
                 return "被害手順が見つかりませんでした。"

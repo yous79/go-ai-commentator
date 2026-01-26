@@ -45,7 +45,9 @@ class StabilityFactProvider(BaseFactProvider):
 
     def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
         if analysis.ownership:
-            stability_facts = self.analyzer.analyze_to_facts(context.board, analysis.ownership)
+            # uncertainty map might be None if engine doesn't support it
+            uncertainty_map = getattr(analysis, 'uncertainty', None)
+            stability_facts = self.analyzer.analyze_to_facts(context.board, analysis.ownership, uncertainty_map)
             for f in stability_facts:
                 f.scope = TemporalScope.EXISTING
                 collector.facts.append(f)

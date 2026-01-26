@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from core.point import Point
 from core.game_board import GameBoard, Color
 from core.inference_fact import InferenceFact, FactCategory, StabilityMetadata
@@ -9,9 +9,9 @@ class StabilityAnalyzer:
     def __init__(self, board_size=19):
         self.board_size = board_size
 
-    def analyze_to_facts(self, board: GameBoard, ownership_map) -> List[InferenceFact]:
+    def analyze_to_facts(self, board: GameBoard, ownership_map, uncertainty_map=None) -> List[InferenceFact]:
         """解析結果を InferenceFact のリストとして返す"""
-        results = self.analyze(board, ownership_map)
+        results = self.analyze(board, ownership_map, uncertainty_map)
         facts = []
         
         for r in results:
@@ -21,9 +21,15 @@ class StabilityAnalyzer:
             
             # 石の数による重要度の調整
             is_large = r.count >= 3
-            # color_label は StabilityMetadata に直接保持されている
             
-            if r.status == 'dead':
+            # --- AJI (味) Logic ---
+            if r.uncertainty > 0.2: # Threshold for "Bad Aji"
+                category = FactCategory.STABILITY # AJI category could be added later
+                severity = 4
+                status_msg = f"は生存が確定しておらず、味が悪い（不安定な）状態です。コウや手が生じる余地があります (不確実性: {r.uncertainty:.2f})。"
+            # --- End AJI Logic ---
+            
+            elif r.status == 'dead':
                 severity = 5 if is_large else 4
                 status_msg = "は、AIの認識上すでに戦略的役割を終えた『カス石』です。これ以上手をかけず、捨て石として活用するか、放置して大場に先行すべき局面です。"
             elif r.status == 'critical':
@@ -45,7 +51,8 @@ class StabilityAnalyzer:
                 
         return facts
 
-    def analyze(self, board: GameBoard, ownership_map) -> List[StabilityMetadata]:
+    def analyze(self, board: GameBoard, ownership_map, uncertainty_map=None) -> List[StabilityMetadata]:
+        """グループごとの安定度と不確実性を分析する"""
         if not ownership_map:
             return []
 
@@ -60,13 +67,24 @@ class StabilityAnalyzer:
             elif avg_stability < 0.8:  status = "stable"
             else:                      status = "strong"
             
+            # 不確実性の計算（uncertainty_mapがあれば使用、なければ0）
+            avg_uncertainty = 0.0
+            if uncertainty_map:
+                total_unc = 0.0
+                for p in stones:
+                    idx = p.row * self.board_size + p.col
+                    if idx < len(uncertainty_map):
+                        total_unc += uncertainty_map[idx]
+                avg_uncertainty = total_unc / len(stones) if stones else 0.0
+            
             analysis_results.append(StabilityMetadata(
                 color_label=color_obj.label,
                 stones=[p.to_gtp() for p in stones],
                 stability=avg_stability,
                 status=status,
                 count=len(stones),
-                is_strategic=is_strategic
+                is_strategic=is_strategic,
+                uncertainty=avg_uncertainty
             ))
             
         return analysis_results

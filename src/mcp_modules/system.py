@@ -2,14 +2,15 @@ import os
 from typing import List
 from mcp.server.fastmcp import FastMCP
 from mcp_modules.session import SessionManager
+from mcp_modules.base import McpModuleBase
 from core.mcp_types import Move
 
-class SystemModule:
+class SystemModule(McpModuleBase):
     """人格定義、プロンプトテンプレート、システムメタデータ、セッション管理を担当するモジュール"""
     
     def __init__(self, mcp: FastMCP, prompt_root: str, session_manager: SessionManager):
+        super().__init__(session_manager)
         self.prompt_root = prompt_root
-        self.session = session_manager
         
         # 1. Resources
         mcp.resource("mcp://prompts/system/instructor-guidelines")(self.get_instructor_guidelines)
@@ -51,6 +52,7 @@ class SystemModule:
         self.session.update(clean_history, board_size)
         
         # フェーズ判定を実行
+        # TODO: 将来的にはDIされたOrchestratorを使用する
         from services.analysis_orchestrator import AnalysisOrchestrator
         orch = AnalysisOrchestrator(board_size=board_size)
         collector = orch.analyze_full(clean_history)

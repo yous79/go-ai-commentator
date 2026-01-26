@@ -136,7 +136,8 @@ class GoAPIClient:
             "visits": visits,
             "include_pv_shapes": include_pv,
             "include_ownership": True,
-            "include_influence": True
+            "include_influence": True,
+            "include_uncertainty": True # Request variance/std_dev from engine
         }
         logger.debug(f"Requesting analysis: history_len={len(history)}, visits={visits}", layer="API_CLIENT")
         resp, err = self._safe_request("POST", "analyze", json=payload, timeout=60)

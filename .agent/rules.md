@@ -12,6 +12,8 @@
     1. Run `python src/utils/check_startup.py` after changes.
     2. Run `python tests/unit/run_all_logic_tests.py` for logic changes.
     3. Perform syntax checks with `python -m py_compile`.
+    4. **Pre-Implementation Check**: Before any new feature, YOU MUST run the `/pre-implementation` workflow to check `PROJECT_STRUCTURE.md` and existing modules.
+    5. **Recursive Proposal Check**: When proposing new ideas, verify if they already exist to avoid redundancy loops.
 
 ## Shape Detection Priorities
 Use the following priority values in `ShapeDetector`:

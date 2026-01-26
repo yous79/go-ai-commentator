@@ -37,6 +37,7 @@ class StabilityMetadata(BaseFactMetadata):
     count: int                  # 石の数
     color_label: str            # 黒 または 白
     is_strategic: bool = False # 戦略的グループ（一塊）か
+    uncertainty: float = 0.0   # 不確実性（味の悪さ）。高いほど未解決
 
 @dataclass
 class UrgencyMetadata(BaseFactMetadata):
