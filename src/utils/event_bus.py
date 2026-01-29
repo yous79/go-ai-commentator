@@ -60,3 +60,4 @@ class AppEvents:
     COMMENTARY_READY = "COMMENTARY_READY"             # 解説テキストの準備完了 (data: str)
     STATUS_MSG_UPDATED = "STATUS_MSG_UPDATED"         # ステータスバーのメッセージ (data: str)
     PROGRESS_UPDATED = "PROGRESS_UPDATED"             # 進捗バーの更新 (data: int)
+    FACT_DISCOVERED = "FACT_DISCOVERED"               # 解析エンジンが新しい事実を発見した (data: InferenceFact)

@@ -323,6 +323,11 @@ class GoReplayApp(GoAppBase):
             "winrate_history": wrs,
             "current_move": curr
         })
+        
+        # 前回の通知手数と異なる場合のみ発行
+        if getattr(self, '_last_notified_move', -1) != curr:
+            event_bus.publish(AppEvents.MOVE_CHANGED, curr)
+            self._last_notified_move = curr
 
         # board_viewはまだイベント対応していないため直接呼ぶ（移行期）
         self.board_view.update_board(img, self.info_view.review_mode.get(), cands)

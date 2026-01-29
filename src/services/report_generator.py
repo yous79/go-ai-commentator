@@ -12,8 +12,9 @@ class ReportGenerator:
         self.renderer = renderer
         self.commentator = commentator # GeminiCommentator instance
 
-    def generate(self, sgf_name, image_dir):
-        """最新の知識ベースと形状検知事実を用いた対局レポート(Markdown & PDF)生成"""
+    async def generate(self, sgf_name, image_dir):
+        """最新の知識ベースと形状検知事実を用いた対局レポート(Markdown & PDF)生成 (非同期版)"""
+        import asyncio
         mb, _ = self.game.calculate_mistakes()
         if not mb: return None, "黒番に顕著な悪手が見つかりませんでした。"
 
@@ -36,10 +37,10 @@ class ReportGenerator:
             
             try:
                 # 1. 前局面の解析 (AI推奨手を得るため)
-                res_prev = api_client.analyze_move(history_prev, self.game.board_size)
+                res_prev = await asyncio.to_thread(api_client.analyze_move, history_prev, self.game.board_size)
                 
                 # 2. 現局面のフル解析 (形状・安定度・緊急度などの『事実』を得るため)
-                collector_curr = self.commentator.orchestrator.analyze_full(history_curr, self.game.board_size)
+                collector_curr = await self.commentator.orchestrator.analyze_full(history_curr, self.game.board_size)
                 det_facts = collector_curr.get_prioritized_text(limit=10)
                 
             except Exception as e:
@@ -69,11 +70,13 @@ class ReportGenerator:
                 
                 
                 
-                resp_gemini = self.commentator.client.models.generate_content(
-                    model=GEMINI_MODEL_NAME, 
-                    contents=prompt,
-                    config=types.GenerateContentConfig(system_instruction="プロの囲碁インストラクターとして解説せよ。" )
-                )
+                def _call_gemini():
+                    return self.commentator.client.models.generate_content(
+                        model=GEMINI_MODEL_NAME, 
+                        contents=prompt,
+                        config=types.GenerateContentConfig(system_instruction="プロの囲碁インストラクターとして解説せよ。" )
+                    )
+                resp_gemini = await asyncio.to_thread(_call_gemini)
                 commentary = resp_gemini.text if resp_gemini.text else "(解説生成失敗)"
                 
                 # Markdown追加
@@ -90,7 +93,9 @@ class ReportGenerator:
 
         # 3. 総評
         sum_p = self.commentator._load_prompt("report_summary", knowledge=kn, mistakes_data=str(all_m))
-        sum_resp = self.commentator.client.models.generate_content(model=GEMINI_MODEL_NAME, contents=sum_p)
+        def _call_summary():
+            return self.commentator.client.models.generate_content(model=GEMINI_MODEL_NAME, contents=sum_p)
+        sum_resp = await asyncio.to_thread(_call_summary)
         total_summary = sum_resp.text if sum_resp.text else "対局お疲れ様でした。"
         r_md += f"## 黒番への総評\n\n{total_summary}\n"
         

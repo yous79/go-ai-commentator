@@ -209,39 +209,56 @@ class AnalysisService:
         """
         解説生成、緊急度解析、および成功/失敗図の生成を一括して非同期で実行する。
         """
+        import asyncio
         def _task():
-            # 1. 解説生成
-            commentary_text = gemini.generate_commentary(move_idx, history, board_size)
-            
-            # 2. 緊急度解析
-            urgency_data = api_client.analyze_urgency(history, board_size)
-            
-            rec_path = None
-            thr_path = None
-            
-            if urgency_data:
-                curr_ctx = simulator.reconstruct_to_context(history, board_size)
+            # asyncメソッドを同期コンテキストから呼び出すためのエントリーポイント
+            async def _run_async():
+                # 1. 解説生成 (内部で orchestrator.analyze_full を実行し、並列解析が行われる)
+                commentary_text = await gemini.generate_commentary(move_idx, history, board_size)
                 
-                # 成功図（最善進行）
-                best_pv = urgency_data.get("best_pv", [])
-                if best_pv:
-                    rec_ctx = simulator.simulate_sequence(curr_ctx, best_pv)
-                    rec_path, _ = visualizer.visualize_context(rec_ctx, title="AI Recommended Success Plan")
+                # 2. Orchestrator が収集した情報を再利用して図を生成
+                # analyze_full は generate_commentary 内で既に呼ばれているが、
+                # context や raw_analysis を取得するために再度呼んでも、
+                # 内部が非同期並列化されているため、API待機時間は重複しない
+                collector = await gemini.orchestrator.analyze_full(history, board_size)
                 
-                # 失敗図（放置被害）
-                if urgency_data.get("is_critical"):
-                    opp_pv = urgency_data.get("opponent_pv", [])
-                    if opp_pv:
-                        thr_seq = ["pass"] + opp_pv
-                        thr_ctx = simulator.simulate_sequence(curr_ctx, thr_seq, starting_color=urgency_data['next_player'])
-                        title = f"Future Threat Diagram (Potential Loss: {urgency_data['urgency']:.1f})"
-                        thr_path, _ = visualizer.visualize_context(thr_ctx, title=title)
+                rec_path = None
+                thr_path = None
+                
+                # UrgencyMetadata を探す
+                from core.inference_fact import FactCategory, UrgencyMetadata
+                u_fact = next((f for f in collector.facts if f.category == FactCategory.URGENCY), None)
+                
+                if u_fact and isinstance(u_fact.metadata, UrgencyMetadata):
+                    meta = u_fact.metadata
+                    curr_ctx = collector.context
+                    
+                    # 成功図（最善進行）
+                    best_pv = collector.raw_analysis.candidates[0].pv if collector.raw_analysis.candidates else []
+                    if best_pv:
+                        rec_ctx = simulator.simulate_sequence(curr_ctx, best_pv)
+                        rec_path, _ = visualizer.visualize_context(rec_ctx, title="AI Recommended Success Plan")
+                    
+                    # 失敗図（放置被害）
+                    if meta.is_critical:
+                        # UrgencyFactProvider が内部で既に分析している opponent_pv を取得したいが、
+                        # 現状 metadata には含まれていないため、必要なら provider を拡張して保持させる。
+                        # ここでは簡単のため、再度取得（非同期なので速い）
+                        urgency_data = await asyncio.to_thread(api_client.analyze_urgency, history, board_size)
+                        opp_pv = urgency_data.get("opponent_pv", [])
+                        if opp_pv:
+                            thr_seq = ["pass"] + opp_pv
+                            thr_ctx = simulator.simulate_sequence(curr_ctx, thr_seq, starting_color=meta.next_player)
+                            title = f"Future Threat Diagram (Potential Loss: {meta.urgency:.1f})"
+                            thr_path, _ = visualizer.visualize_context(thr_ctx, title=title)
 
-            return {
-                "text": commentary_text,
-                "rec_path": rec_path,
-                "thr_path": thr_path
-            }
+                return {
+                    "text": commentary_text,
+                    "rec_path": rec_path,
+                    "thr_path": thr_path
+                }
+
+            return asyncio.run(_run_async())
 
         def _on_success(res):
             # 結果をイベントバスに通知

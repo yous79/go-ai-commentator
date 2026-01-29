@@ -25,14 +25,15 @@ class GeminiCommentator:
             template = f.read()
             return template.format(**kwargs)
 
-    def generate_commentary(self, move_idx, history, board_size=19):
-        """【事実先行型】Orchestratorから得た構造化データに基づき、AIによる解説を生成する"""
+    async def generate_commentary(self, move_idx, history, board_size=19):
+        """【事実先行型】Orchestratorから得た構造化データに基づき、AIによる解説を生成する (非同期版)"""
         try:
             from utils.logger import logger
+            import asyncio
             logger.info(f"AI Commentary Generation Start (Move {move_idx})", layer="AI_COMMENTATOR")
             
-            # 1. Orchestratorによる一括解析
-            collector = self.orchestrator.analyze_full(history, board_size)
+            # 1. Orchestratorによる一括並列解析
+            collector = await self.orchestrator.analyze_full(history, board_size)
             ana_result = getattr(collector, 'raw_analysis', None)
             if not ana_result:
                 return "【エラー】解析データの取得に失敗しました。"
@@ -82,21 +83,24 @@ class GeminiCommentator:
             user_prompt = self._load_prompt("analysis_request", move_idx=move_idx, history=history)
             user_prompt = f"【最新の解析事実】\n{fact_summary}\n\n{user_prompt}"
 
-            # 5. 生成リクエスト
+            # 5. 生成リクエスト (Gemini API はネットワークIOを伴うため別スレッドで実行)
             safety = [types.SafetySetting(category=c, threshold='BLOCK_NONE') for c in [
                 'HARM_CATEGORY_HATE_SPEECH', 'HARM_CATEGORY_HARASSMENT', 
                 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'HARM_CATEGORY_DANGEROUS_CONTENT',
                 'HARM_CATEGORY_CIVIC_INTEGRITY'
             ]]
 
-            response = self.client.models.generate_content(
-                model=GEMINI_MODEL_NAME,
-                config=types.GenerateContentConfig(
-                    system_instruction=sys_inst,
-                    safety_settings=safety
-                ),
-                contents=[types.Content(role="user", parts=[types.Part(text=user_prompt)])]
-            )
+            def _call_gemini():
+                return self.client.models.generate_content(
+                    model=GEMINI_MODEL_NAME,
+                    config=types.GenerateContentConfig(
+                        system_instruction=sys_inst,
+                        safety_settings=safety
+                    ),
+                    contents=[types.Content(role="user", parts=[types.Part(text=user_prompt)])]
+                )
+            
+            response = await asyncio.to_thread(_call_gemini)
 
             # 堅牢なテキスト抽出
             final_text = ""

@@ -39,32 +39,31 @@ class AnalysisOrchestrator:
             KoFactProvider(board_size)
         ]
 
-    def analyze_full(self, history, board_size=None) -> FactCollector:
-        """全ての解析事実を収集し、トリアージ済みの FactCollector を返す"""
+    async def analyze_full(self, history, board_size=None) -> FactCollector:
+        """全ての解析事実を収集し、トリアージ済みの FactCollector を返す (非同期並列版)"""
+        import asyncio
         bs = board_size or self.board_size
         collector = FactCollector()
         
         logger.info(f"Full Analysis Orchestration Start (History len: {len(history)})", layer="ORCHESTRATOR")
 
-        # 1. KataGo 基本解析（全プロバイダの共通入力）
-        ana_data = api_client.analyze_move(history, bs, include_pv=True)
+        # 1. KataGo 基本解析
+        # ネットワークIOを含むため、別スレッドで実行
+        ana_data = await asyncio.to_thread(api_client.analyze_move, history, bs, include_pv=True)
         if not ana_data:
             collector.add(FactCategory.STRATEGY, "APIサーバーから解析データを取得できませんでした。", severity=5)
             return collector
 
-        # 2. 盤面コンテキストの復元
-        curr_ctx = self.simulator.reconstruct_to_context(history, bs)
+        # 2. 盤面コンテキストの復元 (CPU負荷あり)
+        curr_ctx = await asyncio.to_thread(self.simulator.reconstruct_to_context, history, bs)
 
-        # 3. 各プロバイダによる事実生成の実行
+        # 3. 各プロバイダによる事実生成の並列実行
+        tasks = []
         for provider in self.providers:
-            try:
-                # 盤面サイズが動的に変わる可能性（9路/19路）に対応
-                provider.board_size = bs
-                provider.provide_facts(collector, curr_ctx, ana_data)
-            except Exception as e:
-                logger.error(f"Provider {provider.__class__.__name__} failed: {e}", layer="ORCHESTRATOR")
-
-        # 4. (Basic stats now handled by BasicStatsFactProvider)
+            provider.board_size = bs
+            tasks.append(provider.provide_facts(collector, curr_ctx, ana_data))
+        
+        await asyncio.gather(*tasks)
 
         # 5. ルール適合性チェック (デバッグ用)
         if curr_ctx.last_move:

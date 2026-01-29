@@ -89,7 +89,14 @@ class FactCollector:
         # is_last_moveがTrueなら自動的にIMMEDIATEにマッピング（互換性）
         if is_last_move:
             scope = TemporalScope.IMMEDIATE
-        self.facts.append(InferenceFact(category, description, severity, metadata or {}, scope, is_last_move))
+        fact = InferenceFact(category, description, severity, metadata or {}, scope, is_last_move)
+        self.facts.append(fact)
+        
+        # リアルタイム表示用にイベントを発行
+        from utils.event_bus import event_bus, AppEvents
+        from utils.logger import logger
+        logger.debug(f"Fact Discovered: [{category.value}] {description[:30]}...", layer="CORE")
+        event_bus.publish(AppEvents.FACT_DISCOVERED, fact)
 
     def get_by_scope(self, scope: TemporalScope) -> List[InferenceFact]:
         """指定された時間軸の事実のみを抽出する"""

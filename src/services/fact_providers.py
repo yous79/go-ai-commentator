@@ -19,7 +19,7 @@ class BaseFactProvider(ABC):
         self.board_size = board_size
 
     @abstractmethod
-    def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
+    async def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
         """解析事実を生成してコレクターに追加する"""
         pass
 
@@ -30,8 +30,10 @@ class ShapeFactProvider(BaseFactProvider):
         super().__init__(board_size)
         self.detector = detector
 
-    def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
-        shape_facts = self.detector.detect_facts(context, analysis_result=analysis)
+    async def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
+        # 形状検知はCPU負荷が高いため、必要に応じて thread で実行
+        import asyncio
+        shape_facts = await asyncio.to_thread(self.detector.detect_facts, context, analysis_result=analysis)
         for f in shape_facts:
             f.scope = TemporalScope.IMMEDIATE
             collector.facts.append(f)
@@ -43,11 +45,12 @@ class StabilityFactProvider(BaseFactProvider):
         super().__init__(board_size)
         self.analyzer = stability_analyzer
 
-    def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
+    async def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
         if analysis.ownership:
+            import asyncio
             # uncertainty map might be None if engine doesn't support it
             uncertainty_map = getattr(analysis, 'uncertainty', None)
-            stability_facts = self.analyzer.analyze_to_facts(context.board, analysis.ownership, uncertainty_map)
+            stability_facts = await asyncio.to_thread(self.analyzer.analyze_to_facts, context.board, analysis.ownership, uncertainty_map)
             for f in stability_facts:
                 f.scope = TemporalScope.EXISTING
                 collector.facts.append(f)
@@ -55,7 +58,7 @@ class StabilityFactProvider(BaseFactProvider):
 class EndgameFactProvider(BaseFactProvider):
     """局面が終盤（ヨセ）に入ったかを判定するプロバイダ"""
     
-    def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
+    async def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
         if not analysis.ownership:
             return
             
@@ -79,7 +82,7 @@ class InfluenceFactProvider(BaseFactProvider):
         super().__init__(board_size)
         self.board_region = board_region
 
-    def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
+    async def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
         if not analysis.influence:
             return
             
@@ -131,11 +134,13 @@ class UrgencyFactProvider(BaseFactProvider):
         self.simulator = simulator
         self.detector = detector
 
-    def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
+    async def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
         history = context.history
         bs = self.board_size
         
-        urgency_data = api_client.analyze_urgency(history, bs)
+        # Urgency解析は API (ネットワーク) を呼ぶため、特に並列化のメリットが大きい
+        import asyncio
+        urgency_data = await asyncio.to_thread(api_client.analyze_urgency, history, bs)
         if urgency_data:
             u_severity = 5 if urgency_data['is_critical'] else 2
             u_desc = f"この局面の緊急度は {urgency_data['urgency']:.1f}目 です。{'一手の緩みも許されない急場です。' if urgency_data['is_critical'] else '比較的平穏な局面です。'}"
@@ -162,7 +167,7 @@ class UrgencyFactProvider(BaseFactProvider):
 class KoFactProvider(BaseFactProvider):
     """コウの発生や解消を検知するプロバイダ"""
     
-    def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
+    async def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
         # 1. コウの発生（今打たれた手によって石が1つ取られた）
         if context.captured_points and len(context.captured_points) == 1:
             cap_pt = context.captured_points[0]
@@ -172,7 +177,7 @@ class KoFactProvider(BaseFactProvider):
 class BasicStatsFactProvider(BaseFactProvider):
     """勝率や目数差などの基本統計情報を提供"""
     
-    def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
+    async def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
         sl = analysis.score_lead
         collector.add(
             FactCategory.STRATEGY, 

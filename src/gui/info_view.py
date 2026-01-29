@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from config import TARGET_LEVEL
 from utils.event_bus import event_bus, AppEvents
+from utils.logger import logger
 
 class AnalysisTab(tk.Frame):
     """解析データ、グラフ、AI解説、悪手一覧を表示するタブ"""
@@ -17,6 +18,8 @@ class AnalysisTab(tk.Frame):
         self._subscribe_to(AppEvents.STATE_UPDATED, self._on_state_updated)
         self._subscribe_to(AppEvents.MISTAKES_UPDATED, self._on_mistakes_updated)
         self._subscribe_to(AppEvents.COMMENTARY_READY, self._on_commentary_ready)
+        self._subscribe_to(AppEvents.FACT_DISCOVERED, self._on_fact_discovered)
+        self._subscribe_to(AppEvents.MOVE_CHANGED, lambda _: self._clear_facts())
 
     def _subscribe_to(self, event_type, callback):
         event_bus.subscribe(event_type, callback)
@@ -67,45 +70,93 @@ class AnalysisTab(tk.Frame):
         self.combo_level.bind("<<ComboboxSelected>>", self._on_level_changed)
 
     def _setup_ui(self):
-        # Stats Area
-        self.lbl_winrate = tk.Label(self, text="Winrate (B): --%", font=("Arial", 14), bg="#f0f0f0")
-        self.lbl_winrate.pack(pady=5)
-        self.lbl_score = tk.Label(self, text="Score Lead: --", font=("Arial", 12), bg="#f0f0f0")
-        self.lbl_score.pack(pady=5)
-        
-        # Graph Area
-        self.fig, self.ax = plt.subplots(figsize=(4, 2), dpi=100)
-        self.fig.patch.set_facecolor('#f0f0f0')
-        self.canvas_graph = FigureCanvasTkAgg(self.fig, master=self)
-        self.canvas_graph.get_tk_widget().pack(fill=tk.X, padx=10)
-        
-        # Skill Level Selector
-        self._setup_level_selector(self)
+        # --- Top Area: Stats & Controls (2 Rows) ---
+        top_frame = tk.Frame(self, bg="#f0f0f0", pady=2)
+        top_frame.pack(fill=tk.X)
 
-        # Action Buttons
-        btn_frame = tk.Frame(self, bg="#f0f0f0")
-        btn_frame.pack(pady=10)
-        self.btn_comment = tk.Button(btn_frame, text="Ask AI Agent", command=self.callbacks['comment'], width=20)
+        # Row 1: Stats & Level
+        row1 = tk.Frame(top_frame, bg="#f0f0f0")
+        row1.pack(fill=tk.X, pady=1)
+        
+        self.lbl_winrate = tk.Label(row1, text="WR: --%", font=("Arial", 11, "bold"), bg="#f0f0f0", width=10, anchor="w")
+        self.lbl_winrate.pack(side=tk.LEFT, padx=5)
+        
+        self.lbl_score = tk.Label(row1, text="Lead: --", font=("Arial", 10), bg="#f0f0f0", width=8, anchor="w")
+        self.lbl_score.pack(side=tk.LEFT, padx=5)
+        
+        self.combo_level = ttk.Combobox(row1, values=["1桁級（中級）", "2桁級（初級）"], state="readonly", width=12)
+        val = "1桁級（中級）" if TARGET_LEVEL == "intermediate" else "2桁級（初級）"
+        self.combo_level.set(val)
+        self.combo_level.pack(side=tk.RIGHT, padx=5)
+
+        # Row 2: Action Buttons & Toggles
+        row2 = tk.Frame(top_frame, bg="#f0f0f0")
+        row2.pack(fill=tk.X, pady=2)
+        
+        self.btn_comment = tk.Button(row2, text="Ask AI Agent", command=self.callbacks['comment'], 
+                                   font=("Arial", 9, "bold"), bg="#3498db", fg="white", width=12)
         self.btn_comment.pack(side=tk.LEFT, padx=5)
-        self.btn_report = tk.Button(btn_frame, text="対局レポートを生成", command=self.callbacks['report'])
-        self.btn_report.pack(side=tk.LEFT, padx=5)
         
-        # Modes
-        mode_frame = tk.Frame(self, bg="#f0f0f0")
-        mode_frame.pack(pady=5)
+        self.btn_report = tk.Button(row2, text="Report", command=self.callbacks['report'], font=("Arial", 9), width=6)
+        self.btn_report.pack(side=tk.LEFT, padx=2)
+
+        tk.Frame(row2, width=10, bg="#f0f0f0").pack(side=tk.LEFT) # Spacer
+
         self.review_mode = tk.BooleanVar(value=True)
-        tk.Checkbutton(mode_frame, text="Show AI Candidates", variable=self.review_mode, 
+        tk.Checkbutton(row2, text="Show Candidates", variable=self.review_mode, font=("Arial", 8),
                        command=self.callbacks['update_display'], bg="#f0f0f0").pack(side=tk.LEFT)
+        
         self.edit_mode = tk.BooleanVar(value=True)
-        tk.Checkbutton(mode_frame, text="Review Mode (Play Stone)", variable=self.edit_mode, bg="#f0f0f0").pack(side=tk.LEFT)
-        tk.Button(mode_frame, text="PASS", command=self.callbacks['pass']).pack(side=tk.LEFT, padx=10)
+        tk.Checkbutton(row2, text="Play Mode", variable=self.edit_mode, font=("Arial", 8), bg="#f0f0f0").pack(side=tk.LEFT, padx=5)
+        
+        tk.Button(row2, text="Pass", command=self.callbacks['pass'], font=("Arial", 8), width=4).pack(side=tk.LEFT)
 
-        # Commentary Area
-        self.txt_commentary = tk.Text(self, height=15, width=40, font=("Meiryo", 10))
-        self.txt_commentary.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-
+        # Graph Area (Compact but Visible)
+        self.fig, self.ax = plt.subplots(figsize=(4, 0.6), dpi=100)
+        self.fig.patch.set_facecolor('#f0f0f0')
+        self.ax.axis('off')
+        self.canvas_graph = FigureCanvasTkAgg(self.fig, master=self)
+        self.canvas_graph.get_tk_widget().pack(fill=tk.X, padx=10, pady=(0, 5))
+        
         # Mistakes Area
         self._setup_mistakes_ui()
+
+        # --- Lower Area (Facts 1/3 & Commentary 2/3) using PanedWindow ---
+        self.lower_pane = tk.PanedWindow(self, orient=tk.VERTICAL, bg="#bdc3c7", sashrelief=tk.RAISED, sashwidth=4, sashpad=0)
+        self.lower_pane.pack(fill=tk.BOTH, expand=True, padx=0, pady=0) # 余白なしで広げる
+
+        # 1. Live Facts Section (Upper Pane)
+        fact_outer_frame = tk.Frame(self.lower_pane, bg="#ecf0f1")
+        
+        fact_header = tk.Frame(fact_outer_frame, bg="#34495e", pady=2)
+        fact_header.pack(fill=tk.X)
+        tk.Label(fact_header, text="⚡ LIVE ANALYSIS FACTS", font=("Arial", 8, "bold"), fg="white", bg="#34495e").pack(side=tk.LEFT, padx=5)
+        
+        self.fact_container = tk.Canvas(fact_outer_frame, bg="#ecf0f1", highlightthickness=0)
+        self.fact_scroll = ttk.Scrollbar(fact_outer_frame, orient="vertical", command=self.fact_container.yview)
+        self.fact_list_inner = tk.Frame(self.fact_container, bg="#ecf0f1")
+        
+        self.fact_container.create_window((0, 0), window=self.fact_list_inner, anchor="nw", tags="inner")
+        self.fact_container.configure(yscrollcommand=self.fact_scroll.set)
+        
+        self.fact_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+        self.fact_container.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+        self.fact_list_inner.bind("<Configure>", lambda e: self.fact_container.configure(scrollregion=self.fact_container.bbox("all")))
+        self.fact_container.bind("<Configure>", lambda e: self.fact_container.itemconfig("inner", width=e.width))
+
+        self.lower_pane.add(fact_outer_frame, height=130, minsize=80) 
+
+        # 2. Commentary Section (Lower Pane, Default Larger)
+        comm_outer_frame = tk.Frame(self.lower_pane, bg="white")
+        comm_header = tk.Frame(comm_outer_frame, bg="#f0f0f0", pady=2)
+        comm_header.pack(fill=tk.X)
+        tk.Label(comm_header, text="AI Commentary", bg="#f0f0f0", font=("Arial", 9, "bold")).pack(side=tk.LEFT, padx=5)
+        
+        self.txt_commentary = tk.Text(comm_outer_frame, font=("Meiryo", 10), wrap=tk.WORD, bg="white", bd=0, padx=5, pady=5)
+        self.txt_commentary.pack(fill=tk.BOTH, expand=True)
+        
+        self.lower_pane.add(comm_outer_frame, height=300, minsize=100, stretch="always")
 
     def _setup_mistakes_ui(self):
         self.mistake_buttons = {"b": [], "w": []}
@@ -133,21 +184,82 @@ class AnalysisTab(tk.Frame):
     def _on_commentary_ready(self, text):
         """解説完了時にボタンをリセットし、テキストを表示"""
         self.set_commentary(text)
-        self.btn_comment.config(state="normal", text="Ask AI Agent")
+        self.btn_comment.config(state="normal", text="Ask AI")
+
+    def _clear_facts(self):
+        """新しい手が打たれた際に事実リストをクリアする（解析開始時のみ呼ぶように調整可能）"""
+        logger.debug("GUI: Clearing Facts List due to MOVE_CHANGED", layer="GUI")
+        self.after(0, self._do_clear_facts)
+
+    def _do_clear_facts(self):
+        if not self.fact_list_inner.winfo_exists(): return
+        for child in self.fact_list_inner.winfo_children():
+            child.destroy()
+        self.fact_container.yview_moveto(0)
+
+    def _on_fact_discovered(self, fact):
+        """新しい事実が検知された際の処理"""
+        # 最初の事実が来たら、古い事実（前の手番のもの）をクリアする
+        # （Orchestrator が一括解析を開始した直後の最初の事実のみで行うのが理想）
+        logger.debug(f"GUI: Fact Event Received: {fact.description[:30]}", layer="GUI")
+        self.after(0, lambda: self._add_fact_card(fact))
+
+    def _add_fact_card(self, fact):
+        """実際のUI追加処理（メインスレッドで動作）"""
+        logger.debug(f"GUI: Drawing Fact Card: {fact.category.value}", layer="GUI")
+        from core.inference_fact import FactCategory, TemporalScope
+        
+        # 色とアイコンの設定
+        bg_color = "#ffffff"
+        fg_color = "#333333"
+        icon = "•"
+        
+        if fact.severity >= 5: 
+            bg_color = "#fadbd8" 
+            icon = "🚨"
+        elif fact.severity >= 4:
+            bg_color = "#fef9e7" 
+            icon = "⚠️"
+            
+        if fact.scope == TemporalScope.PREDICTED:
+            icon = "🔮"
+            bg_color = "#ebf5fb" 
+        
+        # カードの作成
+        card = tk.Frame(self.fact_list_inner, bg=bg_color, bd=1, relief="ridge", pady=4, padx=8)
+        card.pack(fill=tk.X, pady=2, padx=2)
+        
+        lbl_icon = tk.Label(card, text=icon, font=("Arial", 12), bg=bg_color, fg=fg_color)
+        lbl_icon.pack(side=tk.LEFT)
+        
+        # カテゴリラベル
+        cat_name = fact.category.value.upper()
+        lbl_cat = tk.Label(card, text=f"[{cat_name}]", font=("Arial", 8, "bold"), bg=bg_color, fg="#7f8c8d")
+        lbl_cat.pack(side=tk.TOP, anchor="w", padx=5)
+        
+        # 内容
+        lbl_desc = tk.Label(card, text=fact.description, font=("Meiryo", 9), bg=bg_color, fg=fg_color, wraplength=350, justify=tk.LEFT)
+        lbl_desc.pack(side=tk.TOP, anchor="w", padx=5)
+        
+        # 自動スクロール
+        self.fact_container.update_idletasks()
+        self.fact_container.yview_moveto(1.0)
 
     def update_graph(self, wr_history, current_idx):
+        if not self.winfo_exists(): return
         self.ax.clear()
-        self.ax.plot(wr_history, color='#2c3e50', linewidth=2)
+        self.ax.plot(wr_history, color='#2c3e50', linewidth=1.5)
         self.ax.axvline(x=current_idx, color='red', linestyle='--', alpha=0.5)
         self.ax.set_ylim(0, 1)
-        self.ax.set_title("Winrate Trend (Black)", fontsize=10)
-        self.ax.grid(True, linestyle=':', alpha=0.6)
-        self.fig.tight_layout()
+        self.ax.axis('off')
+        self.fig.tight_layout(pad=0)
         self.canvas_graph.draw()
 
     def update_mistake_button(self, color, idx, text, state):
+        if not hasattr(self, 'mistake_buttons'): return
         btn = self.mistake_buttons[color][idx]
-        btn.config(text=text, state=state)
+        if btn.winfo_exists():
+            btn.config(text=text, state=state)
 
     def _on_level_changed(self, event):
         val = self.combo_level.get()
