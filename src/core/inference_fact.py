@@ -90,13 +90,18 @@ class FactCollector:
         if is_last_move:
             scope = TemporalScope.IMMEDIATE
         fact = InferenceFact(category, description, severity, metadata or {}, scope, is_last_move)
+        self.add_fact(fact)
+
+    def add_fact(self, fact: InferenceFact):
+        """既存の事実オブジェクトを追加し、更新イベントを発行する"""
         self.facts.append(fact)
         
         # リアルタイム表示用にイベントを発行
         from utils.event_bus import event_bus, AppEvents
         from utils.logger import logger
-        logger.debug(f"Fact Discovered: [{category.value}] {description[:30]}...", layer="CORE")
+        logger.debug(f"Fact Discovered: [{fact.category.value}] {fact.description[:30]}...", layer="CORE")
         event_bus.publish(AppEvents.FACT_DISCOVERED, fact)
+
 
     def get_by_scope(self, scope: TemporalScope) -> List[InferenceFact]:
         """指定された時間軸の事実のみを抽出する"""

@@ -17,13 +17,16 @@ class GeminiCommentator:
         self.prompt_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "prompts", "templates"))
 
     def _load_prompt(self, name, **kwargs):
-        """外部のテンプレートファイルを読み込んで引数を適用する"""
+        """外部のテンプレートファイルを読み込んで引数を適用する（{}が含まれる文字列でも安全なように手動置換）"""
         filepath = os.path.join(self.prompt_dir, f"{name}.md")
         if not os.path.exists(filepath):
             return f"Error: Prompt template {name} not found."
         with open(filepath, "r", encoding="utf-8") as f:
-            template = f.read()
-            return template.format(**kwargs)
+            content = f.read()
+            # str.format() は {} を解釈してしまうため、手動で置換
+            for k, v in kwargs.items():
+                content = content.replace("{" + k + "}", str(v))
+            return content
 
     async def generate_commentary(self, move_idx, history, board_size=19):
         """【事実先行型】Orchestratorから得た構造化データに基づき、AIによる解説を生成する (非同期版)"""
@@ -83,37 +86,64 @@ class GeminiCommentator:
             user_prompt = self._load_prompt("analysis_request", move_idx=move_idx, history=history)
             user_prompt = f"【最新の解析事実】\n{fact_summary}\n\n{user_prompt}"
 
-            # 5. 生成リクエスト (Gemini API はネットワークIOを伴うため別スレッドで実行)
+            # 5. 生成リクエスト (Gemini API)
             safety = [types.SafetySetting(category=c, threshold='BLOCK_NONE') for c in [
                 'HARM_CATEGORY_HATE_SPEECH', 'HARM_CATEGORY_HARASSMENT', 
                 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'HARM_CATEGORY_DANGEROUS_CONTENT',
                 'HARM_CATEGORY_CIVIC_INTEGRITY'
             ]]
 
-            def _call_gemini():
-                return self.client.models.generate_content(
+            async def _call_gemini_async(sys, usr):
+                return await asyncio.to_thread(
+                    self.client.models.generate_content,
                     model=GEMINI_MODEL_NAME,
-                    config=types.GenerateContentConfig(
-                        system_instruction=sys_inst,
-                        safety_settings=safety
-                    ),
-                    contents=[types.Content(role="user", parts=[types.Part(text=user_prompt)])]
+                    config=types.GenerateContentConfig(system_instruction=sys, safety_settings=safety),
+                    contents=[types.Content(role="user", parts=[types.Part(text=usr)])]
                 )
-            
-            response = await asyncio.to_thread(_call_gemini)
 
-            # 堅牢なテキスト抽出
+            # 初回生成
+            logger.info("Calling Gemini for initial commentary...", layer="AI")
+            response = await _call_gemini_async(sys_inst, user_prompt)
             final_text = ""
             if response.candidates and response.candidates[0].content.parts:
                 final_text = "".join([p.text for p in response.candidates[0].content.parts if p.text])
             
             if not final_text:
+                logger.error("Empty response from Gemini", layer="AI")
                 return f"【解析事実】\n{fact_summary}\n\n(AIがテキスト解説を生成できませんでした。)"
+
+            # --- Self-Correction (Double Check) ---
+            try:
+                logger.info("Starting Self-Correction (Double Check)...", layer="AI")
+                verify_prompt = self._load_prompt("commentary_verification", facts=fact_summary, generated_text=final_text)
+                
+                logger.info("Calling Gemini for verification...", layer="AI")
+                check_res = await _call_gemini_async("You are a strict logic checker.", verify_prompt)
+                
+                if not check_res.candidates or not check_res.candidates[0].content.parts:
+                    logger.warning("Verification response was empty, skipping self-correction.", layer="AI")
+                else:
+                    check_text = check_res.candidates[0].content.parts[0].text.strip()
+                    logger.info(f"Verification Result: {check_text[:100]}...", layer="AI")
+                    
+                    if check_text.startswith("NG"):
+                        logger.warning(f"AI Logic Error Detected: {check_text}", layer="AI")
+                        # 指摘事項を含めてリトライ
+                        retry_prompt = f"{user_prompt}\n\n=== 前回の生成に対する修正指示 ===\nあなたの前回の回答には以下の論理矛盾がありました：\n{check_text}\n\nこの指摘を修正し、正しい解説を再生成してください。"
+                        
+                        logger.info("Calling Gemini for RE-GENERATION (Retry)...", layer="AI")
+                        retry_res = await _call_gemini_async(sys_inst, retry_prompt)
+                        if retry_res.candidates and retry_res.candidates[0].content.parts:
+                            final_text = "".join([p.text for p in retry_res.candidates[0].content.parts if p.text])
+                            logger.info("AI Commentary Corrected and Regenerated.", layer="AI")
+            except Exception as e:
+                logger.error(f"Verification Process Error: {e}", layer="AI")
+                # 検証失敗時は初回のテキストをそのまま使う
+                pass
 
             # --- 品質ガード (数値情報の欠落チェック) ---
             has_wr = any(x in final_text for x in ["%", "％", "勝率", "リード"])
             if not has_wr:
-                # 重要な数値が含まれていない場合は事実を添える
                 return f"【解析事実】\n{fact_summary}\n\n---\n{final_text}"
 
             return final_text

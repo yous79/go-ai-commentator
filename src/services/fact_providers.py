@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 from typing import List, Optional, Dict, Any, Union
 from core.inference_fact import (
     InferenceFact, FactCategory, FactCollector, TemporalScope, 
-    BaseFactMetadata, GamePhaseMetadata, KoMetadata, UrgencyMetadata, ShapeMetadata
+    BaseFactMetadata, GamePhaseMetadata, KoMetadata, UrgencyMetadata, 
+    ShapeMetadata, MistakeMetadata, StabilityMetadata
 )
 from core.board_simulator import SimulationContext, BoardSimulator
 from core.shape_detector import ShapeDetector
@@ -36,7 +37,7 @@ class ShapeFactProvider(BaseFactProvider):
         shape_facts = await asyncio.to_thread(self.detector.detect_facts, context, analysis_result=analysis)
         for f in shape_facts:
             f.scope = TemporalScope.IMMEDIATE
-            collector.facts.append(f)
+            collector.add_fact(f)
 
 class StabilityFactProvider(BaseFactProvider):
     """石の安定度（生存確率）を解析するプロバイダ"""
@@ -53,7 +54,7 @@ class StabilityFactProvider(BaseFactProvider):
             stability_facts = await asyncio.to_thread(self.analyzer.analyze_to_facts, context.board, analysis.ownership, uncertainty_map)
             for f in stability_facts:
                 f.scope = TemporalScope.EXISTING
-                collector.facts.append(f)
+                collector.add_fact(f)
 
 class EndgameFactProvider(BaseFactProvider):
     """局面が終盤（ヨセ）に入ったかを判定するプロバイダ"""
@@ -162,7 +163,7 @@ class UrgencyFactProvider(BaseFactProvider):
                     if f.severity >= 4:
                         f.description = f"放置すると {f.description} という悪形が発生する恐れがあります。"
                         f.scope = TemporalScope.PREDICTED
-                        collector.facts.append(f)
+                        collector.add_fact(f)
 
 class KoFactProvider(BaseFactProvider):
     """コウの発生や解消を検知するプロバイダ"""
@@ -173,6 +174,144 @@ class KoFactProvider(BaseFactProvider):
             cap_pt = context.captured_points[0]
             msg = f"最新の着手によって {cap_pt.to_gtp()} の石が取られました。コウの争いが始まる可能性があります。"
             collector.add(FactCategory.STRATEGY, msg, severity=4, metadata=KoMetadata(type="ko_initiation", point=cap_pt.to_gtp()), scope=TemporalScope.IMMEDIATE)
+
+class MoveQualityFactProvider(BaseFactProvider):
+    """
+    着手の評価値下落を検知し、失着の事実を生成するプロバイダ。
+    """
+    async def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
+        if not context.history or len(context.history) < 2:
+            return
+
+        # 1. 1手前の局面（相手が打った直後）の解析値を取得し、その「最善手」のスコアを確認する
+        # ※本来は AnalysisService のキャッシュから渡されるのが理想だが、ここでは並列に取得
+        import asyncio
+        prev_history = context.history[:-1]
+        prev_analysis = await asyncio.to_thread(api_client.analyze_move, prev_history, self.board_size)
+        
+        if not prev_analysis or not prev_analysis.candidates:
+            return
+
+        # 前の局面での最善の期待スコア（黒視点）
+        prev_best_score = prev_analysis.candidates[0].score_lead
+        # 現在の着手後のスコア（黒視点）
+        curr_score = analysis.score_lead
+        # 前の局面の勝率
+        prev_winrate = prev_analysis.winrate
+
+        # 下落幅の計算（手番によって符号を調整）
+        # len(history) が偶数なら白の手番、奇数なら黒の手番（sgfmill等の仕様に依存）
+        # ここでは直前の着手（history[-1]）を下したプレイヤーが損をしたかを判定
+        was_black = (len(context.history) % 2 != 0)
+        
+        score_drop = (prev_best_score - curr_score) if was_black else (curr_score - prev_best_score)
+        wr_drop = (prev_winrate - analysis.winrate) if was_black else (analysis.winrate - prev_winrate)
+
+        # 閾値判定（目数で 2.0目以上、または勝率 5%以上損した場合を「失着」とする）
+        if score_drop > 2.0 or wr_drop > 0.05:
+            severity = 3
+            if score_drop > 10.0: severity = 5
+            elif score_drop > 5.0: severity = 4
+            
+            player = "黒" if was_black else "白"
+            mistake_type = "drop_score"
+            
+            # --- 追加：自分の死に石を助けようとしたかの判定 ---
+            is_saving_junk = False
+            is_capturing_junk = False
+            
+            last_move = context.last_move
+            if last_move and prev_analysis.ownership:
+                from core.point import Point
+                # 着手地点の隣接する石を確認
+                for neighbor in last_move.neighbors(self.board_size):
+                    prev_stone = context.prev_board.get(neighbor)
+                    if not prev_stone: continue
+                    
+                    # 前の局面でのOwnershipを取得
+                    idx = neighbor.row * self.board_size + neighbor.col
+                    own = prev_analysis.ownership[idx] # 黒地+, 白地-
+                    
+                    # 1. 自分の石の救済判定
+                    if prev_stone == context.last_color:
+                        stability = own if was_black else -own # 自分の地なら正
+                        if stability < -0.5: # 強く相手側＝死んでいる
+                            is_saving_junk = True
+                            
+                    # 2. 相手の石の徴収判定
+                    elif prev_stone != context.last_color:
+                        # 相手の石が、すでに自分（手番側）の地になっているか
+                        # 手番が黒なら own > 0.5, 手番が白なら own < -0.5
+                        opponent_stability = own if not was_black else -own # 相手視点の安定度
+                        if opponent_stability < -0.5: # 相手にとって死んでいる＝自分にとって確保済み
+                            is_capturing_junk = True
+
+            if is_saving_junk:
+                mistake_type = "kasu_ishi_salvage"
+                msg = f"【警告：救済】{player}の手は、すでに死んでいる石（カス石）を助けようとして評価値を損ねました（下落幅: {score_drop:.1f}目）。これは『沈没船に荷物を積む』ような行為です。"
+            elif is_capturing_junk:
+                mistake_type = "kasu_ishi_capture"
+                msg = f"【警告：空回り】{player}の手は、すでに死んでいる相手の石に追い打ちをかけて評価値を損ねました（下落幅: {score_drop:.1f}目）。これは『レシート拾い』のような非効率な手です。"
+            else:
+                msg = f"{player}の最新手は評価値を損ねました（下落幅: {score_drop:.1f}目 / 勝率: {wr_drop:.1%})。より価値の高い場所があった可能性があります。"
+            
+            collector.add(
+                FactCategory.MISTAKE, 
+                msg, 
+                severity=severity, 
+                metadata=MistakeMetadata(type=mistake_type, value=score_drop),
+                scope=TemporalScope.IMMEDIATE
+            )
+
+class StrategicFactProvider(BaseFactProvider):
+    """
+    「厚みに近づくな」「強い石の近くは価値が低い」などの大局的な戦略原則をチェックするプロバイダ。
+    """
+    def __init__(self, board_size: int, stability_analyzer: StabilityAnalyzer):
+        super().__init__(board_size)
+        self.analyzer = stability_analyzer
+
+    async def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
+        last_move = context.last_move
+        if not last_move or not analysis.ownership:
+            return
+
+        # 1. 安定度分析を実行して強い石（厚み）を特定
+        stability_results = self.analyzer.analyze(context.board, analysis.ownership, getattr(analysis, 'uncertainty', None))
+        
+        for group in stability_results:
+            if group.status != 'strong':
+                continue
+            
+            # 2. 最新手と「強い石」との距離をチェック
+            is_near = False
+            for stone_gtp in group.stones:
+                # GTP座標をPointに変換
+                row = int(stone_gtp[1:]) - 1
+                col = ord(stone_gtp[0].upper()) - ord('A')
+                if col >= 9: col -= 1 # 'I'を飛ばす処理
+                
+                dist = abs(last_move.row - row) + abs(last_move.col - col)
+                if dist <= 2:
+                    is_near = True
+                    break
+            
+            if is_near:
+                msg = ""
+                # group.color_label は "黒" か "白" の文字列
+                # context.last_color.label も "黒" か "白" の文字列
+                if group.color_label == context.last_color.label:
+                    msg = f"【警告：重複】{context.last_color.label}の手は、{group.color_label}自身の厚み（{group.stones[0]}周辺）に近すぎます。これは『コリ形（Overconcentration）』です。"
+                else:
+                    msg = f"【警告：危険】{context.last_color.label}の手は、{group.color_label}の厚み（{group.stones[0]}周辺）に近すぎます。これは『自爆』のリスクが高い手です。"
+                
+                collector.add(
+                    FactCategory.STRATEGY, 
+                    msg, 
+                    severity=4, 
+                    metadata=group, # StabilityMetadata
+                    scope=TemporalScope.IMMEDIATE
+                )
 
 class BasicStatsFactProvider(BaseFactProvider):
     """勝率や目数差などの基本統計情報を提供"""

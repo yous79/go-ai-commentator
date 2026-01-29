@@ -15,7 +15,9 @@ from services.fact_providers import (
     KoFactProvider,
     UrgencyFactProvider,
     BaseFactProvider,
-    BasicStatsFactProvider
+    BasicStatsFactProvider,
+    StrategicFactProvider,
+    MoveQualityFactProvider
 )
 
 class AnalysisOrchestrator:
@@ -34,6 +36,8 @@ class AnalysisOrchestrator:
             ShapeFactProvider(board_size, self.detector),
             UrgencyFactProvider(board_size, self.simulator, self.detector),
             StabilityFactProvider(board_size, self.stability_analyzer),
+            StrategicFactProvider(board_size, self.stability_analyzer),
+            MoveQualityFactProvider(board_size),
             EndgameFactProvider(board_size),
             InfluenceFactProvider(board_size, self.board_region),
             KoFactProvider(board_size)
@@ -48,22 +52,38 @@ class AnalysisOrchestrator:
         logger.info(f"Full Analysis Orchestration Start (History len: {len(history)})", layer="ORCHESTRATOR")
 
         # 1. KataGo 基本解析
-        # ネットワークIOを含むため、別スレッドで実行
+        logger.info("Step 1: KataGo Base Analysis started...", layer="ORCHESTRATOR")
+        import time
+        t0 = time.time()
         ana_data = await asyncio.to_thread(api_client.analyze_move, history, bs, include_pv=True)
+        logger.info(f"Step 1 finished in {time.time()-t0:.2f}s", layer="ORCHESTRATOR")
+        
         if not ana_data:
             collector.add(FactCategory.STRATEGY, "APIサーバーから解析データを取得できませんでした。", severity=5)
             return collector
 
-        # 2. 盤面コンテキストの復元 (CPU負荷あり)
+        # 2. 盤面コンテキストの復元
+        logger.info("Step 2: Reconstructing Board Context...", layer="ORCHESTRATOR")
+        t0 = time.time()
         curr_ctx = await asyncio.to_thread(self.simulator.reconstruct_to_context, history, bs)
+        logger.info(f"Step 2 finished in {time.time()-t0:.2f}s", layer="ORCHESTRATOR")
 
         # 3. 各プロバイダによる事実生成の並列実行
+        logger.info("Step 3: Fact Generation (Parallel) started...", layer="ORCHESTRATOR")
+        t0 = time.time()
         tasks = []
         for provider in self.providers:
             provider.board_size = bs
             tasks.append(provider.provide_facts(collector, curr_ctx, ana_data))
         
-        await asyncio.gather(*tasks)
+        # タイムアウトを設定して実行 (個別のプロバイダの遅延が全体を止めないようにする)
+        try:
+            await asyncio.wait_for(asyncio.gather(*tasks), timeout=45.0)
+        except asyncio.TimeoutError:
+            logger.error("Fact generation timed out!", layer="ORCHESTRATOR")
+            collector.add(FactCategory.STRATEGY, "一部の解析（緊急度など）が制限時間内に完了しませんでした。", severity=3)
+        
+        logger.info(f"Step 3 finished in {time.time()-t0:.2f}s", layer="ORCHESTRATOR")
 
         # 5. ルール適合性チェック (デバッグ用)
         if curr_ctx.last_move:
