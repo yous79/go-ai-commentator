@@ -153,15 +153,44 @@ class UrgencyFactProvider(BaseFactProvider):
             )
             collector.add(FactCategory.URGENCY, u_desc, u_severity, meta, scope=TemporalScope.EXISTING)
             
-            # 未来の悪形警告
+            # 未来の悪形警告（被害予想図における形の崩れを検知）
             thr_pv = urgency_data.get('opponent_pv')
             if thr_pv:
                 thr_seq = ["pass"] + thr_pv
                 future_ctx = self.simulator.simulate_sequence(context, thr_seq, starting_color=urgency_data['next_player'])
-                future_shape_facts = self.detector.detect_facts(future_ctx)
-                for f in future_shape_facts:
-                    if f.severity >= 4:
+                
+                # 1. 現在の盤面での悪形を把握（重複検知を防ぐため）
+                p_color_str = urgency_data['next_player']
+                from core.game_board import Color
+                p_color = Color.from_str(p_color_str)
+                
+                current_shapes = self.detector.detect_all_facts(context, p_color)
+                current_shape_ids = set()
+                for fs in current_shapes:
+                    s_key = getattr(fs.metadata, 'key', 'unknown')
+                    current_shape_ids.add((s_key, fs.description))
+                
+                # 2. 未来の盤面での悪形をリストアップ
+                future_shapes = self.detector.detect_all_facts(future_ctx, p_color)
+                for f in future_shapes:
+                    s_key = getattr(f.metadata, 'key', 'unknown')
+                    if (s_key, f.description) not in current_shape_ids and f.severity >= 4:
                         f.description = f"放置すると {f.description} という悪形が発生する恐れがあります。"
+                        f.scope = TemporalScope.PREDICTED
+                        collector.add_fact(f)
+
+                # 3. 相手からの攻撃（サカレ形など）を検知
+                opp_color = p_color.opposite()
+                current_opp_shapes = self.detector.detect_all_facts(context, opp_color)
+                current_opp_shape_ids = {(getattr(fs.metadata, 'key', 'unknown'), fs.description) for fs in current_opp_shapes}
+
+                future_opp_shapes = self.detector.detect_all_facts(future_ctx, opp_color)
+                for f in future_opp_shapes:
+                    s_key = getattr(f.metadata, 'key', 'unknown')
+                    # 相対的な形状（相手が自分を割る、など）が新しく発生した場合
+                    if s_key in ["sakare_gata", "nimoku_atama", "ryo_atari", "kirichigai"] and \
+                       (s_key, f.description) not in current_opp_shape_ids:
+                        f.description = f"放置すると {f.description} という急所に打たれる恐れがあります。"
                         f.scope = TemporalScope.PREDICTED
                         collector.add_fact(f)
 

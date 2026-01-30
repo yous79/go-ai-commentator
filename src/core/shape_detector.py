@@ -61,63 +61,94 @@ class ShapeDetector:
                 path = os.path.join(root, "pattern.json")
                 try:
                     with open(path, "r", encoding="utf-8") as f:
-                        pattern_def = json.load(f)
-                        detector = GenericPatternDetector(pattern_def, self.board_size)
-                        
-                        # 優先度の設定 (rules.md に準拠)
-                        if pattern_def.get("category") == "bad":
-                            detector.priority = 100
-                        elif detector.key == "kirichigai":
-                            detector.priority = 90
-                        elif detector.key in ["katatsugi", "kaketsugi"]:
-                            detector.priority = 75
-                        elif detector.key == "butsukari":
-                            detector.priority = 60
-                        elif detector.key in ["nobi", "narabi"]:
-                            detector.priority = 30
-                        elif detector.key == "tsuke":
-                            detector.priority = 10
-                        else:
-                            detector.priority = 20
-                            
-                        self.strategies.append(detector)
+                         pattern_def = json.load(f)
+                         detector = GenericPatternDetector(pattern_def, self.board_size)
+                         
+                         # 優先度の設定 (rules.md に準拠)
+                         if pattern_def.get("category") == "bad":
+                             detector.priority = 100
+                         elif detector.key == "kirichigai":
+                             detector.priority = 90
+                         elif detector.key in ["katatsugi", "kaketsugi"]:
+                             detector.priority = 75
+                         elif detector.key == "butsukari":
+                             detector.priority = 60
+                         elif detector.key in ["nobi", "narabi"]:
+                             detector.priority = 30
+                         elif detector.key == "tsuke":
+                             detector.priority = 10
+                         else:
+                             detector.priority = 20
+                             
+                         self.strategies.append(detector)
                 except Exception as e:
                     print(f"Failed to load pattern {path}: {e}")
 
     def detect_facts(self, sim_ctx: SimulationContext, analysis_result=None) -> List[InferenceFact]:
-        """形状検知結果を InferenceFact のリストとして返す"""
+        """最新の着手に関連する形状検知結果を返す"""
+        if not sim_ctx.last_move:
+            return []
+        
+        # 1. 形状検知（着手地点基準）
+        facts = self.detect_facts_at(sim_ctx, sim_ctx.last_move, analysis_result)
+        
+        # 2. 過剰干渉の検知
+        context = DetectionContext(sim_ctx, analysis_result)
+        facts.extend(self._detect_inefficient_moves(context))
+        return facts
+
+    def detect_facts_at(self, sim_ctx: SimulationContext, point: Point, analysis_result=None) -> List[InferenceFact]:
+        """指定された座標に関連する形状検知結果を返す"""
         actual_size = sim_ctx.board_size
         context = DetectionContext(sim_ctx, analysis_result)
         facts = []
-        labeled_coords = set()
-
-        # 1. 戦略を優先度順にソート
+        labeled_keys = set()
+        
+        # ソート済みの戦略を使用
         sorted_strategies = sorted(self.strategies, key=lambda s: getattr(s, "priority", 50), reverse=True)
         
         for strategy in sorted_strategies:
             orig_size = getattr(strategy, "board_size", 19)
             strategy.board_size = actual_size
-            category, results = strategy.detect(context)
+            category, results = strategy.detect(context, center_point=point)
             strategy.board_size = orig_size
             
             severity = 4 if category in ["bad", "mixed"] else 2
 
             for res in results:
-                # res は {"message": str, "metadata": ShapeMetadata} の形式を想定
                 msg = res["message"]
                 meta = res["metadata"]
                 
-                coord = context.last_move.to_gtp() if context.last_move else "unknown"
-                if coord != "unknown" and coord in labeled_coords:
+                # 同一地点で複数の同一カテゴリ形状が出るのを防ぐ（優先度順なので最初が勝つ）
+                if meta.key in labeled_keys:
                     continue
                 
-                labeled_coords.add(coord)
+                labeled_keys.add(meta.key)
                 facts.append(InferenceFact(FactCategory.SHAPE, msg, severity, meta, scope=TemporalScope.IMMEDIATE))
         
-        # 2. 過剰干渉の検知
-        facts.extend(self._detect_inefficient_moves(context))
-            
         return facts
+
+    def detect_all_facts(self, sim_ctx: SimulationContext, color: Color, analysis_result=None) -> List[InferenceFact]:
+        """盤面上の指定された色のすべての石について形状検知を行う"""
+        all_facts = []
+        seen_shapes = set() # (key, gtp_coord)
+
+        for r in range(sim_ctx.board_size):
+            for c in range(sim_ctx.board_size):
+                p = Point(r, c)
+                if sim_ctx.board.get(p) == color:
+                    point_facts = self.detect_facts_at(sim_ctx, p, analysis_result)
+                    for f in point_facts:
+                        # 既存の ShapeMetadata からキーを取得
+                        shape_key = getattr(f.metadata, 'key', None)
+                        if shape_key:
+                            shape_id = (shape_key, p.to_gtp())
+                            if shape_id not in seen_shapes:
+                                seen_shapes.add(shape_id)
+                                f.scope = TemporalScope.EXISTING
+                                all_facts.append(f)
+        
+        return all_facts
 
     def _detect_inefficient_moves(self, context: DetectionContext) -> List[InferenceFact]:
         facts = []
@@ -150,7 +181,6 @@ class ShapeDetector:
 
     def detect_ids(self, curr_board: GameBoard, prev_board: Optional[GameBoard] = None):
         """(Legacy互換) 検知された形状IDのリストを返す"""
-        # 互換性のための簡易SimulationContext作成
         sim_ctx = SimulationContext(
             board=curr_board,
             prev_board=prev_board,
@@ -159,7 +189,6 @@ class ShapeDetector:
             last_color=None,
             board_size=curr_board.side
         )
-        facts = self.detect_facts(sim_ctx)
-        
-        # metadata は ShapeMetadata オブジェクト
+        # detect_all_facts を試用（黒・白両方）
+        facts = self.detect_all_facts(sim_ctx, Color.BLACK) + self.detect_all_facts(sim_ctx, Color.WHITE)
         return list(set([f.metadata.key for f in facts if isinstance(f.metadata, ShapeMetadata)]))

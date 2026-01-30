@@ -1,28 +1,30 @@
-# Project Rules (go-ai-commentator)
+# プロジェクトルール (go-ai-commentator)
 
-## Model Identification Protocol
-- **Identity**: The latest strategic intelligence model in use is **Gemini 3 Flash Preview**.
-- **Constraint**: Do not append or cite other model names (API names, specific versions, etc.) in specifications, comments, or generated commentary.
+## AIモデル識別・命名プロトコル
+- **厳格な禁止事項**: 古い、廃止された、または実験的なモデル名（例: `Gemini 2nd Gen Flash/Pro`, `Imagen 3rd Gen`, `-exp` 接尾辞付きのもの）には絶対に言及・引用してはならない。
+- **最新名称のみ使用**: 常にその時点での最新鋭のモデル名のみを使用すること（2026年現在: **Gemini 3 Pro**, **Gemini 3 Flash**, **Imagen 4** シリーズ）。
+- **検索による検証義務**: いかなるAIモデル名（テキストまたは画像）に言及する前にも、必ず検索ツールを使用して、最新の公式名称と廃止日を確認すること。静的な知識に依存してはならない。
+- **アイデンティティ**: 私の現在の戦略的基盤は **Gemini 3** アーキテクチャに基づいている。
 
-## Implementation Protocols
-- **Approval Requirement**: Always present a plan and obtain explicit user approval before executing code changes or refactoring.
-- **No Self-starting**: Do not start implementation in the same turn you ask for permission; wait for the user's response.
-- **Branching Rule**: Use `feat/` branches for new feature development.
-- **Verification Obligation**: 
-    1. Run `python src/utils/check_startup.py` after changes.
-    2. Run `python tests/unit/run_all_logic_tests.py` for logic changes.
-    3. Perform syntax checks with `python -m py_compile`.
-    4. **Pre-Implementation Check**: Before any new feature, YOU MUST run the `/pre-implementation` workflow to check `PROJECT_STRUCTURE.md` and existing modules.
-    5. **Recursive Proposal Check**: When proposing new ideas, verify if they already exist to avoid redundancy loops.
+## 実装プロトコル
+- **承認要件**: コードの変更やリファクタリングを実行する前に、必ず計画を提示し、ユーザーからの明示的な承認を得ること。
+- **独断専行の禁止**: 許可を求めるターンで勝手に実装を開始しないこと。ユーザーの応答を待つこと。
+- **ブランチルール**: 新機能の開発には `feat/` ブランチを使用すること。
+- **検証義務**:
+    1. 変更後は `python src/utils/check_startup.py` を実行すること。
+    2. ロジック変更時は `python tests/unit/run_all_logic_tests.py` を実行すること。
+    3. `python -m py_compile` で構文チェックを行うこと。
+    4. **実装前チェック**: 新機能着手前に `/pre-implementation` ワークフローを実行し、`PROJECT_STRUCTURE.md` と既存モジュールを確認すること。
+    5. **再帰的提案チェック**: 新しいアイデアを提案する際は、冗長なループを避けるため、それらが既に存在しないか確認すること。
 
-## Shape Detection Priorities
-Use the following priority values in `ShapeDetector`:
-- **100**: Bad Shapes (Aki-sankaku, etc.) and Ponnuki.
-- **98**: Ryo-Atari (Double Atari).
-- **95**: Atari.
-- **90**: Kirichigai (Cross-cut).
-- **75**: Connection techniques (Kata-tsugi, Kake-tsugi).
-- **60**: Butsukari (Collision).
-- **30**: Nobi and Narabi.
-- **20**: General techniques (Keima, Ikken-tobi, Hane, Kosumi).
-- **10**: Tsuke.
+## 形状検出の優先度 (ShapeDetector)
+以下の優先度値を使用すること:
+- **100**: 悪形（アキ三角など）および ポン抜き
+- **98**: 両アタリ (Ryo-Atari)
+- **95**: アタリ
+- **90**: キリチガイ
+- **75**: 連絡手筋（カタツギ、カケツギ）
+- **60**: ブツカリ
+- **30**: ノビ、ナラビ
+- **20**: 一般手筋（ケイマ、一間トビ、ハネ、コスミ）
+- **10**: ツケ

@@ -2,27 +2,27 @@
 description: Ensure thorough codebase review before implementation
 ---
 
-# Pre-Implementation Checklist
+# 実装前チェックリスト
 
-Run this workflow before starting any new feature or refactoring task to prevent duplication and ensure architectural consistency.
+新機能追加やリファクタリング作業を開始する前にこのワークフローを実行し、重複防止とアーキテクチャの一貫性を確認すること。
 
-1. **Check Prior Art**:
-   - [ ] Search `PROJECT_STRUCTURE.md` for relevant components.
-   - [ ] Run `grep` or `find` to locate existing implementation of similar logic.
-   - [ ] _Specific check_: Does logic already exist in `src/core` or `src/services`?
+1. **先行実装の確認 (Check Prior Art)**:
+   - [ ] `PROJECT_STRUCTURE.md` を検索し、関連コンポーネントを確認する。
+   - [ ] `grep` や `find` を実行し、類似ロジックの既存実装を特定する。
+   - [ ] _特定チェック_: `src/core` や `src/services` に既にロジックが存在しないか？
 
-2. **Verify MCP Alignment**:
-   - [ ] Check `src/mcp_modules/` to see if the feature should be an MCP tool.
-   - [ ] Consult `design_mcp_engine.md` for alignment.
+2. **MCP整合性の確認 (Verify MCP Alignment)**:
+   - [ ] `src/mcp_modules/` を確認し、その機能がMCPツールであるべきか判断する。
+   - [ ] `design_mcp_engine.md` との整合性を確認する。
 
-3. **Rules & Constraints**:
-   - [ ] Review `.agent/rules.md`.
-   - [ ] Confirm no outdated model references (Gemini 1.5 etc.) will be introduced.
+3. **ルールと制約 (Rules & Constraints)**:
+   - [ ] `.agent/rules.md` をレビューする。
+   - [ ] **古いモデル名の参照（Gemini 1.5, -exp など）が混入しないことを確認する。**
 
-4. **Impact Analysis**:
-   - [ ] Identify which shared components (EventBus, Renderer) might be affected.
-   - [ ] Plan verification steps to prevent regression (e.g., Zombie Subscriptions).
+4. **影響分析 (Impact Analysis)**:
+   - [ ] 影響を受ける可能性のある共有コンポーネント（EventBus, Renderer）を特定する。
+   - [ ] 退行（ゾンビ購読など）を防ぐための検証手順を計画する。
 
 // turbo
-5. **Output Requirement**:
-   - [ ] Append the summary of this check to the `Implementation Plan`.
+5. **出力要件**:
+   - [ ] このチェックの要約を「実装計画書 (Implementation Plan)」に追加する。

@@ -102,7 +102,7 @@ class GeminiCommentator:
                 )
 
             # 初回生成
-            logger.info("Calling Gemini for initial commentary...", layer="AI")
+            logger.debug("Calling Gemini for initial commentary...", layer="AI")
             response = await _call_gemini_async(sys_inst, user_prompt)
             final_text = ""
             if response.candidates and response.candidates[0].content.parts:
@@ -112,37 +112,74 @@ class GeminiCommentator:
                 logger.error("Empty response from Gemini", layer="AI")
                 return f"【解析事実】\n{fact_summary}\n\n(AIがテキスト解説を生成できませんでした。)"
 
-            # --- Self-Correction (Double Check) ---
-            try:
-                logger.info("Starting Self-Correction (Double Check)...", layer="AI")
-                verify_prompt = self._load_prompt("commentary_verification", facts=fact_summary, generated_text=final_text)
+            # --- 高速化・品質保証ロジック (案1 & 案2) ---
+            
+            # 1. 検証が必要な重要局面か判定 (案1)
+            from core.inference_fact import FactCategory
+            needs_strict_check = False
+            for f in collector.facts:
+                # 失着、急場、または重要度4以上の事実がある場合は厳格チェック対象
+                if (f.category == FactCategory.MISTAKE and f.severity >= 4) or \
+                   (f.category == FactCategory.URGENCY and f.severity >= 5) or \
+                   (f.severity >= 5):
+                    needs_strict_check = True
+                    break
+            
+            # 2. 自己診断タグの解析とリトライ (案2)
+            if "[自己診断: 再考が必要" in final_text:
+                logger.warning("AI detected its own mistake via Self-Diagnosis. Retrying...", layer="AI")
+                diag_reason = final_text.split("[自己診断: 再考が必要")[-1].split("]")[0].strip("（）")
+                retry_prompt = f"{user_prompt}\n\n=== AI自己診断による再生成の指示 ===\n自身の内部チェックで以下の懸念が発見されました：\n{diag_reason}\n\nこれを修正して解説を再生成してください。"
                 
-                logger.info("Calling Gemini for verification...", layer="AI")
-                check_res = await _call_gemini_async("You are a strict logic checker.", verify_prompt)
-                
-                if not check_res.candidates or not check_res.candidates[0].content.parts:
-                    logger.warning("Verification response was empty, skipping self-correction.", layer="AI")
-                else:
-                    check_text = check_res.candidates[0].content.parts[0].text.strip()
-                    logger.info(f"Verification Result: {check_text[:100]}...", layer="AI")
-                    
-                    if check_text.startswith("NG"):
-                        logger.warning(f"AI Logic Error Detected: {check_text}", layer="AI")
-                        # 指摘事項を含めてリトライ
-                        retry_prompt = f"{user_prompt}\n\n=== 前回の生成に対する修正指示 ===\nあなたの前回の回答には以下の論理矛盾がありました：\n{check_text}\n\nこの指摘を修正し、正しい解説を再生成してください。"
-                        
-                        logger.info("Calling Gemini for RE-GENERATION (Retry)...", layer="AI")
-                        retry_res = await _call_gemini_async(sys_inst, retry_prompt)
-                        if retry_res.candidates and retry_res.candidates[0].content.parts:
-                            final_text = "".join([p.text for p in retry_res.candidates[0].content.parts if p.text])
-                            logger.info("AI Commentary Corrected and Regenerated.", layer="AI")
-            except Exception as e:
-                logger.error(f"Verification Process Error: {e}", layer="AI")
-                # 検証失敗時は初回のテキストをそのまま使う
-                pass
+                logger.info("Calling Gemini for RE-GENERATION (Self-Correction Retry)...", layer="AI")
+                retry_res = await _call_gemini_async(sys_inst, retry_prompt)
+                if retry_res.candidates and retry_res.candidates[0].content.parts:
+                    final_text = "".join([p.text for p in retry_res.candidates[0].content.parts if p.text])
+                    logger.info("AI Commentary Corrected (Self-Check).", layer="AI")
+                # リトライした場合は、念のため外部検証も行う（論理が複雑な可能性が高いため）
+                needs_strict_check = True
 
+            # 3. 外部検証（Double Check）の実行判定
+            if needs_strict_check:
+                # --- Self-Correction (Double Check) ---
+                try:
+                    logger.debug("Starting External Self-Correction (Double Check)...", layer="AI")
+                    verify_prompt = self._load_prompt("commentary_verification", facts=fact_summary, generated_text=final_text)
+                    
+                    logger.debug("Calling Gemini for verification...", layer="AI")
+                    check_res = await _call_gemini_async("You are a strict logic checker.", verify_prompt)
+                    
+                    if not check_res.candidates or not check_res.candidates[0].content.parts:
+                        logger.debug("Verification response was empty, skipping self-correction.", layer="AI")
+                    else:
+                        check_text = check_res.candidates[0].content.parts[0].text.strip()
+                        if check_text.startswith("NG"):
+                            logger.warning(f"AI Logic Error Detected: {check_text}", layer="AI")
+                            # 指摘事項を含めてリトライ
+                            retry_prompt = f"{user_prompt}\n\n=== 前回の生成に対する修正指示 ===\nあなたの前回の回答には以下の論理矛盾がありました：\n{check_text}\n\nこの指摘を修正し、正しい解説を再生成してください。"
+                            
+                            logger.info("Calling Gemini for RE-GENERATION (Retry)...", layer="AI")
+                            retry_res = await _call_gemini_async(sys_inst, retry_prompt)
+                            if retry_res.candidates and retry_res.candidates[0].content.parts:
+                                final_text = "".join([p.text for p in retry_res.candidates[0].content.parts if p.text])
+                                logger.info("AI Commentary Corrected and Regenerated.", layer="AI")
+                        else:
+                            logger.debug(f"Verification Result: {check_text[:100]}...", layer="AI")
+                except Exception as e:
+                    logger.debug(f"Verification Process Error (Ignored): {e}", layer="AI")
+                    pass
+            else:
+                logger.info("Skipping external verification for routine scenario.", layer="AI")
+
+            # --- 最終クリーンアップ処理 ---
+
+            # ユーザーに見せる前に診断タグ（および区切り線）を削除
+            if "---" in final_text and "[自己診断:" in final_text:
+                final_text = final_text.split("---")[0].strip()
+            
             # --- 品質ガード (数値情報の欠落チェック) ---
-            has_wr = any(x in final_text for x in ["%", "％", "勝率", "リード"])
+            # 解説に勝率などの具体的数値が全く含まれていない場合、念のためFactsを添える
+            has_wr = any(x in final_text for x in ["%", "％", "勝率", "リード", "目"])
             if not has_wr:
                 return f"【解析事実】\n{fact_summary}\n\n---\n{final_text}"
 

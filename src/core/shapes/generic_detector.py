@@ -77,51 +77,62 @@ class GenericPatternDetector(BaseShape):
             
         return all_variants
 
-    def detect(self, context):
-        """context.curr_board に対してパターン照合を行う"""
-        if not context.last_move:
+    def detect(self, context, center_point=None):
+        """context.curr_board に対してパターン照合を行う。center_point が指定された場合はその座標を起点とする。"""
+        target_pt = center_point or context.last_move
+        if not target_pt:
             return self.category, []
 
         # アキ三角の検知除外条件: コウを解消（埋める）した手である場合
         if self.key == "aki_sankaku":
-            if context.prev_board and context.prev_board.ko_point == context.last_move:
+            if context.prev_board and context.prev_board.ko_point == target_pt:
                 return self.category, []
 
         results = []
         matched_points = set()
 
         for variant in self.patterns:
-            # パターン内の "last" エレメントを探す
-            for i, target_el in enumerate(variant["elements"]):
-                if target_el.get("state") != "last": 
-                    continue
-                
-                # 'last' が context.last_move と一致するように原点を逆算
-                origin = context.last_move - tuple(target_el["offset"])
-                
-                if self._match_at(context, variant, origin):
-                    coord = context.last_move.to_gtp()
-                    if coord not in matched_points:
-                        msg = self.message_template.format(coord)
-                        
-                        meta = ShapeMetadata(key=self.key)
-                        remedy_off = variant.get("remedy_offset")
-                        if remedy_off:
-                            abs_remedy = origin + tuple(remedy_off)
-                            if abs_remedy.is_valid(context.board_size):
-                                meta.remedy_gtp = abs_remedy.to_gtp()
-                        
-                        results.append({"message": msg, "metadata": meta})
-                        matched_points.add(coord)
-                    break 
+            # パターン内の基準となるエレメントを探す
+            # 1. 'last' (最新手) 
+            # 2. 'self' (自分の石) -> scan_all モード用
+            target_states = ["last", "self"]
+            
+            for state in target_states:
+                for i, target_el in enumerate(variant["elements"]):
+                    if target_el.get("state") != state: 
+                        continue
+                    
+                    # 基準点が target_pt と一致するように原点を逆算
+                    origin = target_pt - tuple(target_el["offset"])
+                    
+                    if self._match_at(context, variant, origin, target_pt):
+                        coord = target_pt.to_gtp()
+                        if coord not in matched_points:
+                            msg = self.message_template.format(coord)
+                            
+                            meta = ShapeMetadata(key=self.key)
+                            remedy_off = variant.get("remedy_offset")
+                            if remedy_off:
+                                abs_remedy = origin + tuple(remedy_off)
+                                if abs_remedy.is_valid(context.board_size):
+                                    meta.remedy_gtp = abs_remedy.to_gtp()
+                            
+                            results.append({"message": msg, "metadata": meta})
+                            matched_points.add(coord)
+                        break # この variant で1つ見つかれば OK
+                if matched_points: break # 'last' で見つかれば 'self' は不要
 
         return self.category, results
 
-    def _match_at(self, context, pattern, origin):
+    def _match_at(self, context, pattern, origin, target_pt=None):
         """特定の原点位置でパターンが一致するか判定する"""
-        last_color_char = context.last_color.value if context.last_color else '.'
+        # 起点の石の色を基準にする
+        ref_pt = target_pt or context.last_move
+        ref_color = context.curr_board.get(ref_pt) if ref_pt else context.last_color
+        
+        last_color_char = ref_color.value if ref_color else '.'
         opp_color_char = 'w' if last_color_char == 'b' else 'b'
-        opp_color_obj = context.last_color.opposite() if context.last_color else None
+        opp_color_obj = ref_color.opposite() if ref_color else None
         
         matched_pts = {} # pattern_local_index -> abs_point
         
