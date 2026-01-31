@@ -4,3 +4,4 @@ from utils.renderer.layers.stone_layer import StoneLayer
 from utils.renderer.layers.markup_layer import MarkupLayer
 from utils.renderer.layers.analysis_layer import AnalysisLayer
 from utils.renderer.layers.info_layer import InfoLayer
+from utils.renderer.layers.heatmap_layer import HeatmapLayer

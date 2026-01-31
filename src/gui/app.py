@@ -41,6 +41,7 @@ class GoReplayApp(GoAppBase):
         event_bus.subscribe(AppEvents.STATUS_MSG_UPDATED, lambda msg: self.lbl_status.config(text=msg))
         event_bus.subscribe(AppEvents.PROGRESS_UPDATED, lambda val: self.progress_bar.config(value=val))
         event_bus.subscribe("AI_DIAGRAMS_READY", self._on_ai_diagrams_ready)
+        event_bus.subscribe("ANALYSIS_RESULT_READY", self._on_state_updated)
 
         # 再生モード固有の初期化
         self.transformer = CoordinateTransformer()
@@ -280,28 +281,47 @@ class GoReplayApp(GoAppBase):
             self.update_display()
 
     def update_display(self):
-        img = self.controller.get_current_image()
-        if not img: return
+        curr = self.controller.current_move
         
+        # 1. 必要なデータの準備
+        img = None
+        board = self.game.get_board_at(curr)
         moves = self.game.moves
         wr_text, sc_text, cands = "--%", "--", []
-        curr = self.controller.current_move
+        
+        analysis_res = None
+        ownership_data = None
         
         if moves and curr < len(moves):
             d = moves[curr]
             if d:
                 # AnalysisResultオブジェクトか辞書かを判別して属性取得
-                if hasattr(d, 'winrate_label'):
+                if hasattr(d, 'winrate_label'): # AnalysisResult Object
+                    analysis_res = d
                     wr_text = d.winrate_label
                     sc_text = f"{d.score_lead:.1f}"
-                    # candidateもオブジェクトなら辞書化
                     from dataclasses import is_dataclass, asdict
                     cands = [asdict(c) if is_dataclass(c) else c for c in d.candidates]
-                elif isinstance(d, dict):
-                    # 辞書（analysis.jsonからロードされた場合など）
+                elif isinstance(d, dict): # Dictionary
                     wr_text = d.get('winrate_label', f"{d.get('winrate_black', 0.5):.1%}")
                     sc_text = f"{d.get('score_lead', d.get('score_lead_black', 0.0)):.1f}"
                     cands = d.get('candidates', [])
+                    if 'ownership' in d:
+                        ownership_data = d['ownership']
+
+        # 2. 画像の生成（ここでヒートマップを適用）
+        # analysis_result または ownership_data がある場合は、キャッシュを使わず再レンダリングする
+        if analysis_res or ownership_data:
+            kwargs = {}
+            if analysis_res: kwargs['analysis_result'] = analysis_res
+            if ownership_data: kwargs['ownership'] = ownership_data
+            # レンダリング実行
+            img = self.renderer.render(board, candidates=cands, **kwargs)
+        else:
+            # データがない場合はキャッシュまたはController任せ
+            img = self.controller.get_current_image()
+            
+        if not img: return
         
         self.lbl_counter.config(text=f"{curr} / {self.game.total_moves}")
         
@@ -330,7 +350,14 @@ class GoReplayApp(GoAppBase):
             self._last_notified_move = curr
 
         # board_viewはまだイベント対応していないため直接呼ぶ（移行期）
-        self.board_view.update_board(img, self.info_view.review_mode.get(), cands)
+        # analysis_res または ownership_data を渡す
+        kwargs = {}
+        if 'analysis_res' in locals() and analysis_res:
+            kwargs['analysis_result'] = analysis_res
+        if 'ownership_data' in locals() and ownership_data:
+            kwargs['ownership'] = ownership_data
+            
+        self.board_view.update_board(img, self.info_view.review_mode.get(), cands, **kwargs)
 
     def generate_commentary(self):
         """AI解説をサービス経由で非同期実行する"""
@@ -352,6 +379,38 @@ class GoReplayApp(GoAppBase):
         """AI解説の表示を更新する (イベント経由)"""
         event_bus.publish(AppEvents.COMMENTARY_READY, text)
         self.info_view.btn_comment.config(state="normal", text="Ask AI Agent")
+
+    def _on_state_updated(self, data):
+        """解析更新イベントのハンドラ。AnalysisServiceからの通知であればgame.movesを更新する"""
+        print(f"DEBUG: _on_state_updated called. Thread: {threading.current_thread().name}") # DEBUG
+        if not data or not isinstance(data, dict): return
+        
+        # AnalysisServiceからの通知には 'result' キーが含まれる
+        if 'result' in data:
+            # メインスレッドで安全に実行するために after を使用
+            self.root.after(0, lambda: self._process_state_update(data))
+
+    def _process_state_update(self, data):
+        """メインスレッドで実行される更新処理"""
+        try:
+            result = data['result']
+            curr_move = data.get('current_move')
+            
+            print(f"DEBUG: Processing state update for move {curr_move}. own_len={len(result.ownership) if result.ownership else 0}, ID={id(result)}") # DEBUG
+            
+            if curr_move is not None:
+                # game.moves の該当箇所を更新
+                while len(self.game.moves) <= curr_move:
+                    self.game.moves.append(None)
+                self.game.moves[curr_move] = result
+                
+                # 現在表示中の手番と同じなら再描画
+                if curr_move == self.controller.current_move:
+                    print(f"DEBUG: Triggering update_display for move {curr_move}") # DEBUG
+                    self.update_display()
+        except Exception as e:
+            print(f"ERROR in _process_state_update: {e}")
+            traceback.print_exc()
 
     def _on_ai_diagrams_ready(self, res):
         """AIが生成した図を表示する"""

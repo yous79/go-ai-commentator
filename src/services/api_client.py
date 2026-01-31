@@ -145,7 +145,7 @@ class GoAPIClient:
         if resp:
             data = resp.json()
             result = AnalysisResult.from_dict(data)
-            logger.debug(f"Analysis response received: candidates={len(result.candidates)}, has_own={result.ownership is not None}, has_inf={result.influence is not None}", layer="API_CLIENT")
+            logger.debug(f"Analysis response for history_len={len(history)}: candidates={len(result.candidates)}", layer="API_CLIENT")
             return result
         elif err == "CIRCUIT_OPEN":
             logger.warning("Analysis skipped: Circuit Breaker is OPEN.", layer="API_CLIENT")

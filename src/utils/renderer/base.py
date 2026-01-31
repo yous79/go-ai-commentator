@@ -13,6 +13,7 @@ class RenderContext:
     transformer: CoordinateTransformer
     image_size: int
     board_size: int
+    image: Optional[Any] = None # Added for layers needing direct image access
     theme: RenderTheme = field(default_factory=lambda: CLASSIC_THEME)
     
     # Optional Data
@@ -23,6 +24,10 @@ class RenderContext:
     marks: Optional[dict] = None
     review_stones: Optional[List[Tuple]] = None
     candidates: Optional[List[dict]] = None
+    analysis_result: Optional[Any] = None # Added for HeatmapLayer
+    ownership: Optional[List[float]] = None # Added for HeatmapLayer
+    influence: Optional[List[float]] = None # Added for potential InfluenceLayer
+    kwargs: dict = field(default_factory=dict) # Added for flexible data
     
     # Resources (Fonts)
     font: Any = None

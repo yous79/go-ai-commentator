@@ -25,7 +25,7 @@ class BoardView(tk.Frame):
     def bind_click(self, callback):
         self.canvas.bind("<Button-1>", callback)
 
-    def update_board(self, image, show_candidates=False, candidates=None):
+    def update_board(self, image, show_candidates=False, candidates=None, **kwargs):
         self.original_image = image
         self.show_candidates = show_candidates
         self.candidates = candidates if candidates else []

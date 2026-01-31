@@ -20,6 +20,9 @@ class RenderTheme:
     markup_color_dark: str = "white"   # 黒石上のマーク色
     markup_color_light: str = "black"  # 白石・盤上のマーク色
     
+    # ヒートマップ用 (黒地色, 白地色) - RGBAのRGB部分のみ
+    heatmap_colors: Tuple[Tuple[int, int, int], Tuple[int, int, int]] = ((0, 0, 0), (255, 255, 255))
+    
     # フォントサイズ倍率
     font_scale: float = 1.0
 
@@ -29,7 +32,8 @@ CLASSIC_THEME = RenderTheme(
     board_color=(220, 179, 92),
     line_color=(0, 0, 0),
     star_color=(0, 0, 0),
-    label_color=(0, 0, 0)
+    label_color=(0, 0, 0),
+    heatmap_colors=((0, 0, 255), (255, 0, 0)) # Classic: 青/赤
 )
 
 MODERN_DARK_THEME = RenderTheme(
@@ -40,7 +44,8 @@ MODERN_DARK_THEME = RenderTheme(
     label_color=(171, 178, 191),
     white_stone_color=(200, 200, 200),
     markup_color_dark="cyan",
-    markup_color_light="orange"
+    markup_color_light="orange",
+    heatmap_colors=((100, 149, 237), (255, 99, 71)) # Dark: CornflowerBlue / Tomato
 )
 
 class ThemeManager:

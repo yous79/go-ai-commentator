@@ -128,15 +128,15 @@ class KataGoDriver:
         final_winrate = 1.0 - current_winrate if is_white_turn else current_winrate
         final_score = -current_score if is_white_turn else current_score
         
-        # Ownershipの抽出と正規化
-        raw_ownership = root.get('ownership')
+        # Ownershipの抽出と正規化 (data直下にある場合とrootInfoにある場合の両対応)
+        raw_ownership = data.get('ownership') or root.get('ownership')
         if raw_ownership:
             final_ownership = [-v for v in raw_ownership] if is_white_turn else raw_ownership
         else:
             final_ownership = []
 
-        # Influenceの抽出と正規化 [NEW]
-        raw_influence = root.get('influence')
+        # Influenceの抽出と正規化
+        raw_influence = data.get('influence') or root.get('influence')
         if raw_influence:
             final_influence = [-v for v in raw_influence] if is_white_turn else raw_influence
         else:

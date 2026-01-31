@@ -66,7 +66,12 @@ class AnalysisService:
     def _notify_result(self, result: AnalysisResult, move_idx: int):
         """解析結果をイベントバスに流す"""
         # UIが期待するデータ構造を作成
-        event_bus.publish(AppEvents.STATE_UPDATED, {
+    def _notify_result(self, result: AnalysisResult, move_idx: int):
+        """解析結果をイベントバスに流す"""
+        # UIが期待するデータ構造を作成
+        # STATE_UPDATED は GUI更新用として頻繁に使われるため、
+        # 解析完了専用のイベントを発行して App側で確実にキャッチさせる
+        event_bus.publish("ANALYSIS_RESULT_READY", {
             "result": result,
             "winrate_text": result.winrate_label,
             "score_text": f"{result.score_lead:.1f}",
@@ -172,12 +177,30 @@ class AnalysisService:
                             
                             # 画像の保存（レンダラーを使用）
                             img_text = f"Move {m_num} | WR(B): {result.winrate_label} | Score(B): {result.score_lead:.1f}"
-                            img = renderer.render(move_info["board_copy"], analysis_text=img_text, history=move_info["history"])
+                            
+                            # ヒートマップ用データの準備
+                            render_kwargs = {"analysis_text": img_text, "history": move_info["history"]}
+                            if result.ownership:
+                                render_kwargs["ownership"] = result.ownership
+                                
+                            img = renderer.render(move_info["board_copy"], **render_kwargs)
                             img.save(os.path.join(out_dir, f"move_{m_num:03d}.png"))
                             
                             completed_count += 1
                             event_bus.publish(AppEvents.PROGRESS_UPDATED, completed_count)
                             event_bus.publish(AppEvents.STATUS_MSG_UPDATED, f"Analyzing: {completed_count}/{total_moves}")
+                            
+                            # リアルタイム更新のためにイベント発行
+                            # NOTE: _notify_result は winrate_history 全体を使うが、マルチスレッド中は不完全かもしれない。
+                            # しかし個別の結果通知としては十分。
+                            event_bus.publish("ANALYSIS_RESULT_READY", {
+                                "result": result,
+                                "winrate_text": result.winrate_label,
+                                "score_text": f"{result.score_lead:.1f}",
+                                "winrate_history": list(self._winrate_history), # コピーを渡す
+                                "current_move": m_num,
+                                "candidates": [dataclasses.asdict(c) for c in result.candidates]
+                            })
                     except Exception as e:
                         logger.error(f"Bulk Analysis Error at move {m_num}: {e}")
 

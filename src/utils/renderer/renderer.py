@@ -5,7 +5,7 @@ from core.coordinate_transformer import CoordinateTransformer
 from utils.renderer.base import RenderLayer, RenderContext
 from utils.renderer.theme import ThemeManager
 from utils.renderer.layers import (
-    GridLayer, CoordinateLayer, StoneLayer, MarkupLayer, AnalysisLayer, InfoLayer
+    GridLayer, CoordinateLayer, StoneLayer, MarkupLayer, AnalysisLayer, InfoLayer, HeatmapLayer
 )
 
 class LayeredBoardRenderer:
@@ -20,6 +20,7 @@ class LayeredBoardRenderer:
         # デフォルトレイヤーの構成
         self.layers: List[RenderLayer] = [
             GridLayer(),
+            HeatmapLayer(), # Gridの上にヒートマップを表示
             CoordinateLayer(),
             StoneLayer(),
             MarkupLayer(),
@@ -64,15 +65,19 @@ class LayeredBoardRenderer:
         
         # 下部エリアがある場合は高さを調整
         extra_height = 100 if ctx.analysis_text else 0
-        img = Image.new("RGB", (self.image_size, self.image_size + extra_height), ctx.theme.board_color)
+        img = Image.new("RGBA", (self.image_size, self.image_size + extra_height), (*ctx.theme.board_color, 255))
+        ctx.image = img # Set image reference for layers
         draw = ImageDraw.Draw(img)
         
         # 各レイヤーの描画
         for layer in self.layers:
             if layer.visible:
+                # print(f"DEBUG: Drawing layer {layer.__class__.__name__}") # DEBUG
                 layer.draw(draw, ctx)
                 
-        return img
+        return img.convert("RGB")
+                
+        return img.convert("RGB")
 
     def render_pv(self, board: GameBoard, pv_list: List[str], starting_color: str, title: str = "") -> Image.Image:
         """PV（参考図）をレンダリングする便利なラッパー"""
