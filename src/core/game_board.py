@@ -188,5 +188,9 @@ class GameBoard:
         return new_obj
 
     @property
+    def board_size(self):
+        return self.side
+
+    @property
     def raw_board(self):
         return self._board

@@ -47,8 +47,21 @@ class LayeredBoardRenderer:
 
     def render(self, board: GameBoard, **kwargs) -> Image.Image:
         """全レイヤーを重ねてレンダリングを実行する"""
+        # 碁盤のサイズを渡された盤面に合わせる
+        if board.board_size != self.board_size:
+            self.board_size = board.board_size
+            
         # レンダラーの設定を最新に同期
         self.transformer = CoordinateTransformer(self.board_size, self.image_size)
+        
+        # フォントサイズを動的に計算 (升目の30%-40%)
+        gs = self.transformer.grid_size
+        dynamic_size = max(10, int(gs * 0.35))
+        try:
+             # 再ロードしてサイズ適用
+            self.font_number = ImageFont.truetype("arial.ttf", dynamic_size)
+        except:
+            self.font_number = ImageFont.load_default()
         
         # コンテキストの作成
         ctx = RenderContext(
@@ -74,8 +87,6 @@ class LayeredBoardRenderer:
             if layer.visible:
                 # print(f"DEBUG: Drawing layer {layer.__class__.__name__}") # DEBUG
                 layer.draw(draw, ctx)
-                
-        return img.convert("RGB")
                 
         return img.convert("RGB")
 

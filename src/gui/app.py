@@ -357,7 +357,8 @@ class GoReplayApp(GoAppBase):
         if 'ownership_data' in locals() and ownership_data:
             kwargs['ownership'] = ownership_data
             
-        self.board_view.update_board(img, self.info_view.review_mode.get(), cands, **kwargs)
+        # BoardViewでの二重描画を防ぐため、candidatesは渡さない（レンダラー側で描画済み）
+        self.board_view.update_board(img, self.info_view.review_mode.get(), [], **kwargs)
 
     def generate_commentary(self):
         """AI解説をサービス経由で非同期実行する"""
