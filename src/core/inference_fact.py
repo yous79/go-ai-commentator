@@ -64,6 +64,22 @@ class MistakeMetadata(BaseFactMetadata):
     value: Optional[float] = None # どれくらい悪くなったか
 
 @dataclass
+class AtsumiMetadata(BaseFactMetadata):
+    """厚みに関するメタデータ"""
+    stones: List[str]       # 石の座標
+    strength: float         # 強度（安定度）
+    influence_power: float  # 周囲への影響力
+    direction: Optional[str] = None # 影響力が向いている主な方向
+
+@dataclass
+class MoyoMetadata(BaseFactMetadata):
+    """模様に関するメタデータ"""
+    points: List[str]       # 領域を構成する座標
+    size: int               # 大きさ（目数）
+    potential: float        # 地になる期待値（平均Ownership）
+    label: str              # 黒模様 or 白模様
+
+@dataclass
 class InferenceFact:
     """解析によって得られた個別の『事実』を表すオブジェクト"""
     category: FactCategory

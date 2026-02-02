@@ -161,3 +161,39 @@ class StabilityAnalyzer:
                     if n_color == color:
                         visited.add(neighbor)
                         queue.append(neighbor)
+
+    def calculate_group_influence(self, stones: List[Point], influence_map: List[float]) -> float:
+        """
+        グループ周辺の影響力平均値を算出する。
+        影響力マップは黒プラス、白マイナスの前提。
+        """
+        if not influence_map:
+            return 0.0
+
+        targets = set()
+        visited_stones = set(stones)
+        
+        # 距離1の近傍
+        for s in stones:
+            for n in s.neighbors(self.board_size):
+                if n not in visited_stones:
+                    targets.add(n)
+        
+        # 距離2の近傍
+        second_targets = set()
+        for t in targets:
+            for n in t.neighbors(self.board_size):
+                if n not in visited_stones and n not in targets:
+                    second_targets.add(n)
+                    
+        all_targets = targets.union(second_targets)
+        if not all_targets:
+            return 0.0
+            
+        total = 0.0
+        for p in all_targets:
+            idx = p.row * self.board_size + p.col
+            if 0 <= idx < len(influence_map):
+                total += influence_map[idx]
+                
+        return total / len(all_targets)

@@ -3,8 +3,10 @@ from typing import List, Optional, Dict, Any, Union
 from core.inference_fact import (
     InferenceFact, FactCategory, FactCollector, TemporalScope, 
     BaseFactMetadata, GamePhaseMetadata, KoMetadata, UrgencyMetadata, 
-    ShapeMetadata, MistakeMetadata, StabilityMetadata
+    BaseFactMetadata, GamePhaseMetadata, KoMetadata, UrgencyMetadata, 
+    ShapeMetadata, MistakeMetadata, StabilityMetadata, AtsumiMetadata, MoyoMetadata
 )
+from core.point import Point
 from core.board_simulator import SimulationContext, BoardSimulator
 from core.shape_detector import ShapeDetector
 from core.stability_analyzer import StabilityAnalyzer
@@ -106,6 +108,78 @@ class InfluenceFactProvider(BaseFactProvider):
             msg = self._judge_influence(rt, avg_own, avg_inf)
             if msg:
                 collector.add(FactCategory.STRATEGY, msg, severity=3, scope=TemporalScope.EXISTING)
+
+        # 模様（Moyo）の検出
+        self._detect_moyo(collector, analysis)
+
+    def _detect_moyo(self, collector: FactCollector, analysis: AnalysisResult):
+        visited = set()
+        moyo_candidates = {} # Point -> color_str
+
+        # 1. 候補点の特定
+        for r in range(self.board_size):
+            for c in range(self.board_size):
+                p = Point(r, c)
+                idx = r * self.board_size + c
+                own = analysis.ownership[idx]
+                inf = analysis.influence[idx]
+
+                color = None
+                # 黒模様候補: 地になりかけ(0.35~0.85) または 影響力大(Inf>2.0)
+                if (0.35 < own < 0.85) or (own >= -0.1 and inf > 2.0):
+                    color = "黒"
+                # 白模様候補
+                elif (-0.85 < own < -0.35) or (own <= 0.1 and inf < -2.0):
+                    color = "白"
+                
+                if color:
+                    moyo_candidates[p] = color
+
+        # 2. クラスタリング (BFS)
+        clusters = []
+        for p, color in moyo_candidates.items():
+            if p in visited: continue
+            
+            cluster_points = []
+            queue = [p]
+            visited.add(p)
+            while queue:
+                curr = queue.pop(0)
+                cluster_points.append(curr)
+                for n in curr.neighbors(self.board_size):
+                    if n in moyo_candidates and moyo_candidates[n] == color and n not in visited:
+                        visited.add(n)
+                        queue.append(n)
+            
+            clusters.append((color, cluster_points))
+
+        # 3. 評価とFact生成
+        for color, points in clusters:
+            # 閾値: ある程度の広さがないと模様とは呼ばない (例: 12目以上)
+            if len(points) >= 12:
+                total_own = 0
+                for pt in points:
+                    idx = pt.row * self.board_size + pt.col
+                    val = analysis.ownership[idx]
+                    total_own += val if color == "黒" else -val
+                
+                avg_potential = total_own / len(points)
+                points_gtp = [pt.to_gtp() for pt in points]
+                center_pt = points[len(points)//2] # 簡易的な中心
+
+                msg = f"{color}の模様が {center_pt.to_gtp()} 周辺に広がっています（大きさ: {len(points)}目）。"
+                collector.add(
+                    FactCategory.STRATEGY,
+                    msg,
+                    severity=3,
+                    metadata=MoyoMetadata(
+                        points=points_gtp,
+                        size=len(points),
+                        potential=avg_potential,
+                        label=f"{color}模様"
+                    ),
+                    scope=TemporalScope.EXISTING
+                )
 
     def _judge_influence(self, rt: RegionType, avg_own: float, avg_inf: float) -> str:
         TERRITORY_THRES, INFLUENCE_THRES = 0.4, 0.3
@@ -301,45 +375,67 @@ class StrategicFactProvider(BaseFactProvider):
         self.analyzer = stability_analyzer
 
     async def provide_facts(self, collector: FactCollector, context: SimulationContext, analysis: AnalysisResult):
-        last_move = context.last_move
-        if not last_move or not analysis.ownership:
+        if not analysis.ownership:
             return
 
         # 1. 安定度分析を実行して強い石（厚み）を特定
         stability_results = self.analyzer.analyze(context.board, analysis.ownership, getattr(analysis, 'uncertainty', None))
+        
+        last_move = context.last_move
         
         for group in stability_results:
             if group.status != 'strong':
                 continue
             
             # 2. 最新手と「強い石」との距離をチェック
-            is_near = False
-            for stone_gtp in group.stones:
-                # GTP座標をPointに変換
-                row = int(stone_gtp[1:]) - 1
-                col = ord(stone_gtp[0].upper()) - ord('A')
-                if col >= 9: col -= 1 # 'I'を飛ばす処理
+            if last_move:
+                is_near = False
+                for stone_gtp in group.stones:
+                    # GTP座標をPointに変換
+                    row = int(stone_gtp[1:]) - 1
+                    col = ord(stone_gtp[0].upper()) - ord('A')
+                    if col >= 9: col -= 1 # 'I'を飛ばす処理
+                    
+                    dist = abs(last_move.row - row) + abs(last_move.col - col)
+                    if dist <= 2:
+                        is_near = True
+                        break
                 
-                dist = abs(last_move.row - row) + abs(last_move.col - col)
-                if dist <= 2:
-                    is_near = True
-                    break
+                if is_near:
+                    msg = ""
+                    if group.color_label == context.last_color.label:
+                        msg = f"【警告：重複】{context.last_color.label}の手は、{group.color_label}自身の厚み（{group.stones[0]}周辺）に近すぎます。これは『コリ形（Overconcentration）』です。"
+                    else:
+                        msg = f"【警告：危険】{context.last_color.label}の手は、{group.color_label}の厚み（{group.stones[0]}周辺）に近すぎます。これは『自爆』のリスクが高い手です。"
+                    
+                    collector.add(
+                        FactCategory.STRATEGY, 
+                        msg, 
+                        severity=4, 
+                        metadata=group, 
+                        scope=TemporalScope.IMMEDIATE
+                    )
+
+            # 3. 厚み（Atsumi）としての評価
+            stones_points = [Point.from_gtp(s) for s in group.stones]
+            raw_inf = self.analyzer.calculate_group_influence(stones_points, analysis.influence)
             
-            if is_near:
-                msg = ""
-                # group.color_label は "黒" か "白" の文字列
-                # context.last_color.label も "黒" か "白" の文字列
-                if group.color_label == context.last_color.label:
-                    msg = f"【警告：重複】{context.last_color.label}の手は、{group.color_label}自身の厚み（{group.stones[0]}周辺）に近すぎます。これは『コリ形（Overconcentration）』です。"
-                else:
-                    msg = f"【警告：危険】{context.last_color.label}の手は、{group.color_label}の厚み（{group.stones[0]}周辺）に近すぎます。これは『自爆』のリスクが高い手です。"
-                
+            is_black_group = (group.color_label == "黒")
+            inf_power = raw_inf if is_black_group else -raw_inf
+            
+            if inf_power > 1.2:
+                msg = f"{group.color_label}の石（{group.stones[0]}周辺）は『厚み』として機能しており、周囲に強い影響力を及ぼしています。"
                 collector.add(
-                    FactCategory.STRATEGY, 
-                    msg, 
-                    severity=4, 
-                    metadata=group, # StabilityMetadata
-                    scope=TemporalScope.IMMEDIATE
+                    FactCategory.STRATEGY,
+                    msg,
+                    severity=3,
+                    metadata=AtsumiMetadata(
+                        stones=group.stones,
+                        strength=group.stability,
+                        influence_power=inf_power,
+                        direction="omnidirectional" 
+                    ),
+                    scope=TemporalScope.EXISTING
                 )
 
 class BasicStatsFactProvider(BaseFactProvider):
