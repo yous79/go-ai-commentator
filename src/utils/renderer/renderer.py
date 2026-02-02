@@ -54,6 +54,12 @@ class LayeredBoardRenderer:
         # レンダラーの設定を最新に同期
         self.transformer = CoordinateTransformer(self.board_size, self.image_size)
         
+        # レイヤーの表示・非表示切替 (kwargsから削除してContextに渡さないようにする)
+        show_heatmap = kwargs.pop('show_heatmap', True)
+        for layer in self.layers:
+            if isinstance(layer, HeatmapLayer):
+                layer.visible = show_heatmap
+        
         # フォントサイズを動的に計算 (升目の30%-40%)
         gs = self.transformer.grid_size
         dynamic_size = max(10, int(gs * 0.35))
@@ -85,7 +91,6 @@ class LayeredBoardRenderer:
         # 各レイヤーの描画
         for layer in self.layers:
             if layer.visible:
-                # print(f"DEBUG: Drawing layer {layer.__class__.__name__}") # DEBUG
                 layer.draw(draw, ctx)
                 
         return img.convert("RGB")

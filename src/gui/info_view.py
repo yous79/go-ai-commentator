@@ -106,6 +106,10 @@ class AnalysisTab(tk.Frame):
         tk.Checkbutton(row2, text="Show Candidates", variable=self.review_mode, font=("Arial", 8),
                        command=self.callbacks['update_display'], bg="#f0f0f0").pack(side=tk.LEFT)
         
+        self.show_heatmap = tk.BooleanVar(value=True)
+        tk.Checkbutton(row2, text="Heatmap", variable=self.show_heatmap, font=("Arial", 8),
+                       command=self.callbacks['update_display'], bg="#f0f0f0").pack(side=tk.LEFT, padx=2)
+        
         self.edit_mode = tk.BooleanVar(value=True)
         tk.Checkbutton(row2, text="Play Mode", variable=self.edit_mode, font=("Arial", 8), bg="#f0f0f0").pack(side=tk.LEFT, padx=5)
         
@@ -347,6 +351,7 @@ class InfoView(tk.Frame):
         self.btn_comment = self.analysis_tab.btn_comment
         self.btn_report = self.analysis_tab.btn_report
         self.review_mode = self.analysis_tab.review_mode
+        self.show_heatmap = self.analysis_tab.show_heatmap
         self.edit_mode = self.analysis_tab.edit_mode
 
     def cleanup(self):

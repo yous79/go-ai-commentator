@@ -315,6 +315,10 @@ class GoReplayApp(GoAppBase):
             kwargs = {}
             if analysis_res: kwargs['analysis_result'] = analysis_res
             if ownership_data: kwargs['ownership'] = ownership_data
+            
+            # ヒートマップ表示設定を適用
+            kwargs['show_heatmap'] = self.info_view.show_heatmap.get()
+
             # レンダリング実行
             img = self.renderer.render(board, candidates=cands, **kwargs)
         else:
@@ -383,7 +387,6 @@ class GoReplayApp(GoAppBase):
 
     def _on_state_updated(self, data):
         """解析更新イベントのハンドラ。AnalysisServiceからの通知であればgame.movesを更新する"""
-        print(f"DEBUG: _on_state_updated called. Thread: {threading.current_thread().name}") # DEBUG
         if not data or not isinstance(data, dict): return
         
         # AnalysisServiceからの通知には 'result' キーが含まれる
@@ -397,7 +400,6 @@ class GoReplayApp(GoAppBase):
             result = data['result']
             curr_move = data.get('current_move')
             
-            print(f"DEBUG: Processing state update for move {curr_move}. own_len={len(result.ownership) if result.ownership else 0}, ID={id(result)}") # DEBUG
             
             if curr_move is not None:
                 # game.moves の該当箇所を更新
@@ -407,7 +409,6 @@ class GoReplayApp(GoAppBase):
                 
                 # 現在表示中の手番と同じなら再描画
                 if curr_move == self.controller.current_move:
-                    print(f"DEBUG: Triggering update_display for move {curr_move}") # DEBUG
                     self.update_display()
         except Exception as e:
             print(f"ERROR in _process_state_update: {e}")
