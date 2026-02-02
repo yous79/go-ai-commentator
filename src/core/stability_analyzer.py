@@ -72,7 +72,8 @@ class StabilityAnalyzer:
             if uncertainty_map:
                 total_unc = 0.0
                 for p in stones:
-                    idx = p.row * self.board_size + p.col
+                    kata_row = (self.board_size - 1) - p.row
+                    idx = kata_row * self.board_size + p.col
                     if idx < len(uncertainty_map):
                         total_unc += uncertainty_map[idx]
                 avg_uncertainty = total_unc / len(stones) if stones else 0.0
@@ -97,7 +98,8 @@ class StabilityAnalyzer:
         for color_obj, stones in physical_groups:
             total_own = 0
             for p in stones:
-                idx = p.row * self.board_size + p.col
+                kata_row = (self.board_size - 1) - p.row
+                idx = kata_row * self.board_size + p.col
                 total_own += ownership_map[idx]
             avg_own = total_own / len(stones)
             group_data.append({
@@ -192,7 +194,8 @@ class StabilityAnalyzer:
             
         total = 0.0
         for p in all_targets:
-            idx = p.row * self.board_size + p.col
+            kata_row = (self.board_size - 1) - p.row
+            idx = kata_row * self.board_size + p.col
             if 0 <= idx < len(influence_map):
                 total += influence_map[idx]
                 

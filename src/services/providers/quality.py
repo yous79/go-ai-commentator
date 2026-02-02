@@ -57,7 +57,8 @@ class MoveQualityFactProvider(BaseFactProvider):
                     if not prev_stone: continue
                     
                     # 前の局面でのOwnershipを取得
-                    idx = neighbor.row * self.board_size + neighbor.col
+                    kata_row = (self.board_size - 1) - neighbor.row
+                    idx = kata_row * self.board_size + neighbor.col
                     own = prev_analysis.ownership[idx] # 黒地+, 白地-
                     
                     # 1. 自分の石の救済判定
@@ -75,17 +76,17 @@ class MoveQualityFactProvider(BaseFactProvider):
 
             if is_saving_junk:
                 mistake_type = "kasu_ishi_salvage"
-                msg = f"【警告：救済】{player}の手は、すでに死んでいる石（カス石）を助けようとして評価値を損ねました（下落幅: {score_drop:.1f}目）。これは『沈没船に荷物を積む』ような行為です。"
+                msg = f"【警告：救済】{player}の手は、すでに死んでいる石（カス石）を助けようとして勝率が {wr_drop:.1%} 低下し、評価値を {score_drop:.1f} 目損ねました。これは『沈没船に荷物を積む』ような行為です。"
             elif is_capturing_junk:
                 mistake_type = "kasu_ishi_capture"
-                msg = f"【警告：空回り】{player}の手は、すでに死んでいる相手の石に追い打ちをかけて評価値を損ねました（下落幅: {score_drop:.1f}目）。これは『レシート拾い』のような非効率な手です。"
+                msg = f"【警告：空回り】{player}の手は、すでに死んでいる相手の石に追い打ちをかけて勝率が {wr_drop:.1%} 低下し、評価値を {score_drop:.1f} 目損ねました。これは『レシート拾い』のような非効率な手です。"
             else:
-                msg = f"{player}の最新手は評価値を損ねました（下落幅: {score_drop:.1f}目 / 勝率: {wr_drop:.1%})。より価値の高い場所があった可能性があります。"
+                msg = f"{player}の最新手により勝率が {wr_drop:.1%} 低下し、評価値を {score_drop:.1f} 目損ねました。より価値の高い場所があった可能性があります。"
             
             collector.add(
                 FactCategory.MISTAKE, 
                 msg, 
                 severity=severity, 
-                metadata=MistakeMetadata(type=mistake_type, value=score_drop),
+                metadata=MistakeMetadata(type=mistake_type, value=score_drop, winrate_drop=wr_drop),
                 scope=TemporalScope.IMMEDIATE
             )

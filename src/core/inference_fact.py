@@ -60,8 +60,9 @@ class KoMetadata(BaseFactMetadata):
 @dataclass
 class MistakeMetadata(BaseFactMetadata):
     """失着に関するメタデータ"""
-    type: str                   # drop_winrate, drop_score, kasu_ishi_interference
-    value: Optional[float] = None # どれくらい悪くなったか
+    type: str                   # drop_winrate, drop_score, kasu_ishi_salvage, kasu_ishi_capture
+    value: Optional[float] = None # スコアの下落幅
+    winrate_drop: Optional[float] = None # 勝率の下落幅 (0.0 〜 1.0)
 
 @dataclass
 class AtsumiMetadata(BaseFactMetadata):
