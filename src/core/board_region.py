@@ -14,9 +14,20 @@ class RegionType(Enum):
 
 class BoardRegion:
     def __init__(self, board_size=19):
-        self.board_size = board_size
+        self._board_size = board_size
         self.regions = {} # Point -> RegionType
         self._init_regions()
+
+    @property
+    def board_size(self):
+        return self._board_size
+
+    @board_size.setter
+    def board_size(self, value):
+        if self._board_size != value:
+            self._board_size = value
+            self.regions = {}
+            self._init_regions()
 
     def _init_regions(self):
         sz = self.board_size

@@ -70,6 +70,13 @@ class AnalysisOrchestrator:
 
         # 3. 各プロバイダによる事実生成の並列実行
         logger.debug("Step 3: Fact Generation (Parallel) started...", layer="ORCHESTRATOR")
+        
+        # 解析対象のサイズを内部コンポーネントに同期
+        self.simulator.board_size = bs
+        self.detector.board_size = bs
+        self.stability_analyzer.board_size = bs
+        self.board_region.board_size = bs
+
         t0 = time.time()
         tasks = []
         for provider in self.providers:

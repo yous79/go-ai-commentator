@@ -5,7 +5,10 @@
 ## 1. 実装済みの機能 (検証完了)
 
 ### 1.1 MCPサーバーとしての囲碁エンジン (Go Engine as MCP Server)
-**ステータス**: ✅ 稼働中 (`src/mcp_server.py`)
+**ステータス**:- [x] Draft Refactoring Proposal (`refactoring_proposal.md`) <!-- id: 23 -->
+    - [x] Outline high-impact refactoring options in Japanese <!-- id: 24 -->
+- [x] Request User Review <!-- id: 25 -->
+- [x] Record and update proposals in `IDEAS.md` <!-- id: 26 -->
 - **機能**:
     - `katago_analyze`: 自律的なエンジン解析（勝率、目数差、候補手）。
     - `detect_shapes`: 幾何学的なパターン認識（アキ三角、ポン抜きなど）。
@@ -57,3 +60,16 @@
 ### 4.1 クラウド同期解析
 - **コンセプト**: ローカルマシンのスペックが低い場合、重いKataGo解析をリモートのGPUサーバーへオフロードする。
 - **技術**: `KataGoDriver` を抽象化し、リモートgRPC呼び出しをサポートする。
+
+---
+
+## 5. メンテナンス & リファクタリング
+
+### 5.1 GUIコンポーネントの共通化 (GUI Consolidation)
+- **目的**: `app.py` と `test_play_app.py` に点在する重複ロジック（描画、座標変換、状態同期）を基底クラスやMixinに集約する。
+
+### 5.2 Fact Providerのパッケージ化 (Modularity)
+- **目的**: 巨大化した `fact_providers.py` を機能ごとに詳細分割し、新しい解析事実（Fact）の追加を容易にする。
+
+### 5.3 GameStateの責務分離
+- **目的**: SGF操作と解析計算ロジック（Mistakes計算など）を分離し、ロジックの再利用性とテスト性を高める。

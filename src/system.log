@@ -3659,3 +3659,65 @@
 [2026-02-02 15:07:30] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
 [2026-02-02 15:07:33] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
 [2026-02-02 15:07:33] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 15:28:21] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-02-02 15:28:21] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-02-02 15:28:21] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-02-02 15:28:22] [STARTUP] [INFO] API Server is Ready.
+[2026-02-02 15:28:27] [GUI] [INFO] Switching to Replay Mode...
+[2026-02-02 15:28:27] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-02-02 15:28:27] [STARTUP] [INFO] AI Services Initialized.
+[2026-02-02 15:28:58] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-02-02 15:29:08] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 15:29:08] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 15:29:08] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-02-02 15:29:08] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-02-02 15:29:15] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-02-02 15:29:21] [ASYNC] [ERROR] Async task failed: list index out of range
+[2026-02-02 15:32:23] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 2)
+[2026-02-02 15:32:29] [SYSTEM] [WARNING] [BOARD] Result: ILLEGAL | Reason: OCCUPIED at D6
+[2026-02-02 15:32:29] [ORCHESTRATOR] [WARNING] Analyzed move D6 is considered ILLEGAL by local rule engine.
+[2026-02-02 15:34:02] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-02-02 15:34:02] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-02-02 15:34:03] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-02-02 15:34:03] [STARTUP] [INFO] API Server is Ready.
+[2026-02-02 15:37:04] [GUI] [INFO] Switching to Replay Mode...
+[2026-02-02 15:37:04] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-02-02 15:37:04] [STARTUP] [INFO] AI Services Initialized.
+[2026-02-02 15:37:11] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-02-02 15:37:21] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 15:37:21] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 15:37:23] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-02-02 15:37:23] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-02-02 15:37:39] [SYSTEM] [WARNING] [BOARD] Result: ILLEGAL | Reason: OCCUPIED at F5
+[2026-02-02 15:37:39] [ORCHESTRATOR] [WARNING] Analyzed move F5 is considered ILLEGAL by local rule engine.
+[2026-02-02 15:38:14] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-02-02 15:38:16] [SYSTEM] [WARNING] [BOARD] Result: ILLEGAL | Reason: OCCUPIED at F5
+[2026-02-02 15:38:16] [ORCHESTRATOR] [WARNING] Analyzed move F5 is considered ILLEGAL by local rule engine.
+[2026-02-02 15:39:17] [SYSTEM] [WARNING] [BOARD] Result: ILLEGAL | Reason: OCCUPIED at F6
+[2026-02-02 15:39:17] [CORE] [WARNING] Illegal move rejected: B[5,5]
+[2026-02-02 15:50:04] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-02-02 15:50:04] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-02-02 15:50:05] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-02-02 15:50:07] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-02-02 15:50:07] [STARTUP] [INFO] API Server is Ready.
+[2026-02-02 15:50:36] [GUI] [INFO] Switching to Replay Mode...
+[2026-02-02 15:50:36] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-02-02 15:50:37] [STARTUP] [INFO] AI Services Initialized.
+[2026-02-02 15:51:28] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-02-02 15:51:49] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 15:51:49] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 15:51:50] [COMMAND] [INFO] Executed: PlayMove(白 E3)
+[2026-02-02 15:51:53] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 15:51:53] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 15:52:34] [COMMAND] [INFO] Undone: PlayMove
+[2026-02-02 15:52:34] [GUI] [INFO] Undo performed
+[2026-02-02 15:53:08] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-02-02 15:53:08] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-02-02 15:53:11] [SYSTEM] [WARNING] [BOARD] Result: ILLEGAL | Reason: OCCUPIED at F5
+[2026-02-02 15:53:11] [ORCHESTRATOR] [WARNING] Analyzed move F5 is considered ILLEGAL by local rule engine.
+[2026-02-02 15:54:18] [AI] [WARNING] AI Logic Error Detected: NG: 冒頭に「盤上はまだ4手目」との記述がありますが、解析事実（Facts）に手数の記載はなく、提示された局面状況（白の厚みの形成、黒のカス石の発生、緊急度16.2目など）とも論理的に矛盾しています。
+[2026-02-02 15:54:18] [AI] [INFO] Calling Gemini for RE-GENERATION (Retry)...
+[2026-02-02 15:54:35] [AI] [INFO] AI Commentary Corrected and Regenerated.
+[2026-02-02 15:54:35] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-02-02 15:54:38] [SYSTEM] [WARNING] [BOARD] Result: ILLEGAL | Reason: OCCUPIED at F5
+[2026-02-02 15:54:38] [ORCHESTRATOR] [WARNING] Analyzed move F5 is considered ILLEGAL by local rule engine.

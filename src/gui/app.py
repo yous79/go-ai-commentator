@@ -79,6 +79,57 @@ class GoReplayApp(GoAppBase):
         self.root.bind("<Left>", lambda e: self.prev_move())
         self.root.bind("<Right>", lambda e: self.next_move())
         self.root.bind("<Configure>", self.on_resize)
+        
+        # Hover handling
+        self.board_view.bind_motion(self._on_board_hover)
+
+    def _on_board_hover(self, event):
+        """マウスホバー時にOwnership情報を表示する"""
+        # ヒートマップ表示時のみ有効
+        if not hasattr(self, 'info_view') or not self.info_view.show_heatmap.get():
+            return
+
+        # 1. 座標変換
+        cw = self.board_view.canvas.winfo_width()
+        ch = self.board_view.canvas.winfo_height()
+        # 画像がロードされていない場合はスキップ
+        img_h = self.board_view.original_image.height if hasattr(self.board_view, 'original_image') and self.board_view.original_image else None
+        
+        res = self.transformer.pixel_to_indices(event.x, event.y, cw, ch, actual_img_height=img_h)
+        
+        if not res:
+            return
+            
+        r, c = res
+        
+        # 2. Ownershipデータの取得
+        val_str = "--"
+        curr = self.controller.current_move
+        
+        if hasattr(self.game, 'moves') and curr < len(self.game.moves):
+            d = self.game.moves[curr]
+            ownership = None
+            if d:
+                if hasattr(d, 'ownership'): # AnalysisResult
+                    ownership = d.ownership
+                elif isinstance(d, dict) and 'ownership' in d: # Dict
+                    ownership = d['ownership']
+            
+            if ownership:
+                # 座標変換: bottom-up (r) -> top-down (kata_row)
+                bs = self.game.board_size
+                kata_row = (bs - 1) - r
+                idx = kata_row * bs + c
+                
+                if 0 <= idx < len(ownership):
+                    val = ownership[idx]
+                    # 黒地: +, 白地: -
+                    val_str = f"{val:+.2f}"
+
+        # 3. 表示更新
+        gtp = self.transformer.indices_to_gtp(r, c)
+        if gtp:
+            self.lbl_status.config(text=f"Point: {gtp} | Ownership: {val_str}")
 
     def setup_layout(self, callbacks):
         self.root.rowconfigure(1, weight=1)

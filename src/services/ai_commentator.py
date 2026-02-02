@@ -144,7 +144,22 @@ class GeminiCommentator:
                 # --- Self-Correction (Double Check) ---
                 try:
                     logger.debug("Starting External Self-Correction (Double Check)...", layer="AI")
-                    verify_prompt = self._load_prompt("commentary_verification", facts=fact_summary, generated_text=final_text)
+                    
+                    last_move_gtp = history[-1][1] if history else "なし"
+                    player_c = "黒" if (move_idx % 2 != 0) else "白" # move_idxは次の手番を示すことが多いが、解説対象の手番に合わせる
+                    # AI解説は「直前の手（historyの最後）」について語ることが多いが、
+                    # generate_commentary(move_idx) は「局面move_idx」に対する解説（つまりmove_idx手目の直後）。
+                    # なので history[-1] が直前に打たれた手。
+                    # move_idx が 1 なら 1手目(黒)が打たれた後の局面。
+                    
+                    verify_prompt = self._load_prompt(
+                        "commentary_verification", 
+                        facts=fact_summary, 
+                        generated_text=final_text,
+                        move_idx=move_idx,
+                        player_color=player_c,
+                        last_move=last_move_gtp
+                    )
                     
                     logger.debug("Calling Gemini for verification...", layer="AI")
                     check_res = await _call_gemini_async("You are a strict logic checker.", verify_prompt)
