@@ -118,11 +118,8 @@ class GoGameState:
             except:
                 break
         
-        # 2. もし既存の子ノード（次の一手）がある場合は、それを削除して上書きする
-        while len(node) > 0:
-            node[0].delete()
-            
-        # 3. 新しい着手ノードを作成
+        # 3. 既存の手順を削除せずに、新しい手を先頭の分岐（Index 0）として挿入する
+        # これにより、元々あった手は Variation (Index 1以降) として保持される
         new_node = node.new_child(0)
         c_val = color.value if hasattr(color, 'value') else color.lower()
         if row is None or col is None:
@@ -142,19 +139,18 @@ class GoGameState:
             return False
             
         node = self.sgf_game.get_root()
-        # 末尾の親ノードまで移動
-        for _ in range(self.total_moves - 1):
+        # 末尾のノードまで移動
+        for _ in range(self.total_moves):
             try: node = node[0]
             except: return False
             
-        # 子ノード（最新手）を削除
-        if len(node) > 0:
-            node.delete()
-            self._update_total_moves()
-            # マークデータも削除
-            if (self.total_moves + 1) in self.marks_data:
-                del self.marks_data[self.total_moves + 1]
-            return True
+        # 末尾ノードを削除
+        node.delete()
+        self._update_total_moves()
+        # マークデータも削除
+        if (self.total_moves + 1) in self.marks_data:
+            del self.marks_data[self.total_moves + 1]
+        return True
         return False
 
     def get_history_up_to(self, move_idx):
@@ -216,10 +212,12 @@ class GoGameState:
                 sc_before = prev.get('score', prev.get('score_lead_black', 0.0))
                 sc_after = curr.get('score', curr.get('score_lead_black', 0.0))
                 
-                if (i % 2 != 0): # Black
+                if (i % 2 != 0): # Black turn (1, 3, 5...)
+                    # 黒が打った結果、黒の勝率がどれだけ下がったか
                     mb.append((sc_before - sc_after, wr_before - wr_after, i))
-                else: # White
-                    mw.append((sc_before - sc_after, wr_before - wr_after, i))
+                else: # White turn (2, 4, 6...)
+                    # 白が打った結果、黒の勝率がどれだけ上がったか（＝白の勝率がどれだけ下がったか）
+                    mw.append((sc_after - sc_before, wr_after - wr_before, i))
             except (IndexError, KeyError):
                 continue
                 

@@ -227,7 +227,8 @@ class TestPlayApp(GoAppBase):
 
     def click_on_board(self, event):
         cw, ch = self.board_view.canvas.winfo_width(), self.board_view.canvas.winfo_height()
-        res = self.transformer.pixel_to_indices(event.x, event.y, cw, ch)
+        img_h = self.board_view.original_image.height if hasattr(self.board_view, 'original_image') and self.board_view.original_image else None
+        res = self.transformer.pixel_to_indices(event.x, event.y, cw, ch, actual_img_height=img_h)
         if res:
             row, col = res
             tool = self.current_tool.get()

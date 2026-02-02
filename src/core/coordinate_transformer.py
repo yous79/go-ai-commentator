@@ -50,13 +50,19 @@ class CoordinateTransformer:
         y = self.margin + visual_row * self.grid_size
         return x, y
 
-    def pixel_to_indices(self, x, y, canvas_width, canvas_height):
+    def pixel_to_indices(self, x, y, canvas_width, canvas_height, actual_img_height=None):
         """キャンバス上のクリック位置を (row, col) インデックスに変換"""
-        actual_height = self.image_size + 100
-        ratio = min(canvas_width / self.image_size, canvas_height / actual_height)
+        if actual_img_height is None:
+            # 指定がない場合は、アスペクト比から100pxエリアの有無を推定する
+            if canvas_height / canvas_width > 1.05:
+                actual_img_height = self.image_size + 100
+            else:
+                actual_img_height = self.image_size
+
+        ratio = min(canvas_width / self.image_size, canvas_height / actual_img_height)
         
         ox = (canvas_width - self.image_size * ratio) // 2
-        oy = (canvas_height - actual_height * ratio) // 2
+        oy = (canvas_height - actual_img_height * ratio) // 2
         
         rel_x = (x - ox) / ratio
         rel_y = (y - oy) / ratio

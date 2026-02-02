@@ -122,7 +122,6 @@ async def analyze(req: AnalysisRequest):
                 for cand in top_candidates:
                     cand["future_shape_analysis"] = "（高速解析モード：個別検討で表示）"
                 
-            print(f"DEBUG: Analysis complete. Winrate(B): {final_wr:.1%}, Influence: {len(final_inf) > 0}")
             return {
                 "winrate_black": final_wr,
                 "score_lead_black": final_score,

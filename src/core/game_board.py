@@ -3,6 +3,7 @@ from typing import Optional, List, Tuple, Set, Union
 from sgfmill import boards
 from core.point import Point
 import sys
+from utils.logger import logger
 
 class Color(Enum):
     BLACK = 'b'
@@ -58,19 +59,16 @@ class GameBoard:
         
         # 詳細ログ
         ko_str = f", Ko: {self.ko_point.to_gtp()}" if self.ko_point else ""
-        sys.stdout.write(f"[BOARD] Validating Move -> Color: {color_obj.label}({color_obj.value}), Point: {pt.to_gtp()}{ko_str}\n")
-        sys.stdout.flush()
+        logger.debug(f"[BOARD] Validating Move -> Color: {color_obj.label}({color_obj.value}), Point: {pt.to_gtp()}{ko_str}")
 
         # 1. 座標の重複チェック
         if self.get(pt):
-            sys.stderr.write(f"[BOARD] Result: ILLEGAL | Reason: OCCUPIED at {pt.to_gtp()}\n")
-            sys.stderr.flush()
+            logger.warning(f"[BOARD] Result: ILLEGAL | Reason: OCCUPIED at {pt.to_gtp()}")
             return False
 
         # 2. コウのチェック
         if self.ko_point and pt == self.ko_point:
-            sys.stderr.write(f"[BOARD] Result: ILLEGAL | Reason: KO at {pt.to_gtp()}\n")
-            sys.stderr.flush()
+            logger.warning(f"[BOARD] Result: ILLEGAL | Reason: KO at {pt.to_gtp()}")
             return False
 
         # 3. 自殺手のチェック（実際に置いてみる）
@@ -90,13 +88,11 @@ class GameBoard:
                 sys.stderr.flush()
                 return False
             
-            sys.stdout.write(f"[BOARD] Result: LEGAL for {pt.to_gtp()}\n")
-            sys.stdout.flush()
+            logger.debug(f"[BOARD] Result: LEGAL for {pt.to_gtp()}")
             return True
         except ValueError as e:
             # sgfmillが投げるその他のエラー
-            sys.stderr.write(f"[BOARD] Result: ILLEGAL | Reason: SGFMILL REJECT ({e})\n")
-            sys.stderr.flush()
+            logger.error(f"[BOARD] Result: ILLEGAL | Reason: SGFMILL REJECT ({e})")
             return False
 
     def play(self, pt: Point, color: Union[Color, str]) -> List[Point]:
@@ -124,21 +120,18 @@ class GameBoard:
             old_ko = self.ko_point
             self.ko_point = None
             if old_ko:
-                sys.stdout.write(f"[BOARD] Ko Point Cleared (was {old_ko.to_gtp()})\n")
-                sys.stdout.flush()
+                logger.debug(f"[BOARD] Ko Point Cleared (was {old_ko.to_gtp()})")
             
             if len(captured_pts) == 1:
                 group, liberties = self.get_group_and_liberties(pt)
                 if len(group) == 1 and len(liberties) == 1:
                     if captured_pts[0] in liberties:
                         self.ko_point = captured_pts[0]
-                        sys.stdout.write(f"[BOARD] New KO established at {self.ko_point.to_gtp()}\n")
-                        sys.stdout.flush()
+                        logger.info(f"[BOARD] New KO established at {self.ko_point.to_gtp()}")
             
             return captured_pts
         except Exception as e:
-            sys.stderr.write(f"[BOARD] Play Error at {pt.to_gtp()}: {e}\n")
-            sys.stderr.flush()
+            logger.error(f"[BOARD] Play Error at {pt.to_gtp()}: {e}")
             return []
 
     def apply_pass(self) -> None:

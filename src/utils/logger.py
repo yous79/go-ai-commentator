@@ -36,7 +36,7 @@ class GoAILogger:
         # コンソール出力設定
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(formatter)
-        console_handler.setLevel(logging.DEBUG) # コンソールには詳細も表示
+        console_handler.setLevel(logging.INFO) # コンソールにはINFO以上を表示して軽量化
 
         self.logger.addHandler(file_handler)
         self.logger.addHandler(console_handler)

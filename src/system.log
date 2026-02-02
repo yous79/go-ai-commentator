@@ -2292,3 +2292,1370 @@
 [2026-01-25 21:04:45] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
 [2026-01-25 21:24:29] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 0)
 [2026-01-26 13:16:20] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 0)
+[2026-01-26 13:22:27] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-26 13:22:27] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-26 13:22:28] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-26 13:22:30] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-26 13:22:30] [STARTUP] [INFO] API Server is Ready.
+[2026-01-26 13:22:40] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-26 13:22:40] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-26 13:22:41] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-26 13:23:10] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-26 13:23:41] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-26 13:23:41] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-26 13:23:45] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-26 13:23:45] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-26 13:24:09] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 6)
+[2026-01-26 13:24:09] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 6)
+[2026-01-26 13:24:11] [ORCHESTRATOR] [WARNING] Analyzed move D5 is considered ILLEGAL by local rule engine.
+[2026-01-26 13:27:56] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 9)
+[2026-01-26 13:27:58] [ORCHESTRATOR] [WARNING] Analyzed move E6 is considered ILLEGAL by local rule engine.
+[2026-01-26 13:28:14] [ASYNC] [ERROR] Async task failed: 'MoveCandidate' object has no attribute 'get'
+[2026-01-26 13:36:07] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-26 13:36:07] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-26 13:36:08] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-26 13:36:10] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-26 13:36:10] [STARTUP] [INFO] API Server is Ready.
+[2026-01-26 13:36:18] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-26 13:36:18] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-26 13:36:19] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-26 13:36:30] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-26 13:36:37] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-26 13:36:37] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-26 13:36:48] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-26 13:36:48] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-26 13:36:51] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-26 13:36:51] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-26 13:36:52] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 7)
+[2026-01-26 13:36:52] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 7)
+[2026-01-26 13:37:13] [ORCHESTRATOR] [WARNING] Analyzed move D7 is considered ILLEGAL by local rule engine.
+[2026-01-26 13:38:13] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 1)
+[2026-01-26 13:38:15] [ORCHESTRATOR] [WARNING] Analyzed move E7 is considered ILLEGAL by local rule engine.
+[2026-01-26 13:38:34] [ASYNC] [ERROR] Async task failed: 'MoveCandidate' object has no attribute 'get'
+[2026-01-26 13:41:28] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-26 13:41:28] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-26 13:41:29] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-26 13:41:31] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-26 13:41:31] [STARTUP] [INFO] API Server is Ready.
+[2026-01-26 13:42:00] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-26 13:42:00] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-26 13:42:02] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-26 13:42:22] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-26 13:42:22] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-26 13:42:23] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-26 13:42:25] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-26 13:42:25] [STARTUP] [INFO] API Server is Ready.
+[2026-01-26 13:42:32] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-26 13:42:32] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-26 13:42:33] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-26 13:43:10] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-26 13:44:06] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 11)
+[2026-01-26 13:44:08] [ORCHESTRATOR] [WARNING] Analyzed move G4 is considered ILLEGAL by local rule engine.
+[2026-01-26 13:44:23] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 13)
+[2026-01-26 13:44:25] [ORCHESTRATOR] [WARNING] Analyzed move F5 is considered ILLEGAL by local rule engine.
+[2026-01-26 13:44:40] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 17)
+[2026-01-26 13:44:42] [ORCHESTRATOR] [WARNING] Analyzed move H5 is considered ILLEGAL by local rule engine.
+[2026-01-29 12:55:11] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 12:55:11] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 12:55:11] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 12:55:14] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-29 12:55:14] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 12:55:25] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 12:55:25] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 12:55:27] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 12:55:45] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-29 12:55:52] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 12:55:52] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 12:55:59] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 8)
+[2026-01-29 12:55:59] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 8)
+[2026-01-29 12:56:03] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: bad window path name ".!panedwindow.!infoview.!notebook.!analysistab.!canvas2.!frame.!frame"
+[2026-01-29 12:56:10] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: bad window path name ".!panedwindow.!infoview.!notebook.!analysistab.!canvas2.!frame.!frame2"
+[2026-01-29 12:56:10] [ORCHESTRATOR] [WARNING] Analyzed move C5 is considered ILLEGAL by local rule engine.
+[2026-01-29 12:56:10] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 8)
+[2026-01-29 12:56:12] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: bad window path name ".!panedwindow.!infoview.!notebook.!analysistab.!canvas2.!frame.!frame3"
+[2026-01-29 12:56:12] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: bad window path name ".!panedwindow.!infoview.!notebook.!analysistab.!canvas2.!frame.!frame4"
+[2026-01-29 12:56:12] [ORCHESTRATOR] [WARNING] Analyzed move C5 is considered ILLEGAL by local rule engine.
+[2026-01-29 12:56:34] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 8)
+[2026-01-29 12:56:34] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 8)
+[2026-01-29 12:56:34] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: bad window path name ".!panedwindow.!infoview.!notebook.!analysistab.!canvas2.!frame.!frame5"
+[2026-01-29 12:56:34] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: bad window path name ".!panedwindow.!infoview.!notebook.!analysistab.!canvas2.!frame.!frame6"
+[2026-01-29 12:56:34] [ORCHESTRATOR] [WARNING] Analyzed move C5 is considered ILLEGAL by local rule engine.
+[2026-01-29 12:56:34] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 8)
+[2026-01-29 12:56:34] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: bad window path name ".!panedwindow.!infoview.!notebook.!analysistab.!canvas2.!frame.!frame7"
+[2026-01-29 12:56:35] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: bad window path name ".!panedwindow.!infoview.!notebook.!analysistab.!canvas2.!frame.!frame8"
+[2026-01-29 12:56:35] [ORCHESTRATOR] [WARNING] Analyzed move C5 is considered ILLEGAL by local rule engine.
+[2026-01-29 13:09:19] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 13:09:19] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 13:09:20] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 13:09:20] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 13:09:25] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 13:09:25] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 13:09:26] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 13:09:57] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-29 13:10:19] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 13:10:19] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 13:10:21] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-29 13:10:21] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-29 13:10:27] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: bad window path name ".!panedwindow.!infoview.!notebook.!analysistab.!canvas2.!frame.!frame"
+[2026-01-29 13:10:29] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: bad window path name ".!panedwindow.!infoview.!notebook.!analysistab.!canvas2.!frame.!frame2"
+[2026-01-29 13:10:29] [ORCHESTRATOR] [WARNING] Analyzed move F6 is considered ILLEGAL by local rule engine.
+[2026-01-29 13:10:43] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-29 13:10:43] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: bad window path name ".!panedwindow.!infoview.!notebook.!analysistab.!canvas2.!frame.!frame3"
+[2026-01-29 13:10:43] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: bad window path name ".!panedwindow.!infoview.!notebook.!analysistab.!canvas2.!frame.!frame4"
+[2026-01-29 13:10:43] [ORCHESTRATOR] [WARNING] Analyzed move F6 is considered ILLEGAL by local rule engine.
+[2026-01-29 14:15:05] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 14:15:05] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 14:15:05] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 14:15:06] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 14:15:12] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 14:15:12] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 14:15:12] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 14:15:24] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-29 14:15:24] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:24] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:26] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:26] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:28] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:28] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:31] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:31] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:33] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:33] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:35] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:35] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:37] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:37] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:39] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:39] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:41] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:41] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:43] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:43] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:45] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:45] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:46] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 14:15:46] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 14:15:47] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:47] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:15:54] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-29 14:15:54] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-29 14:15:55] [ORCHESTRATOR] [WARNING] Analyzed move G5 is considered ILLEGAL by local rule engine.
+[2026-01-29 14:16:08] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-29 14:16:08] [ORCHESTRATOR] [WARNING] Analyzed move G5 is considered ILLEGAL by local rule engine.
+[2026-01-29 14:19:28] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 14:19:28] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 14:19:28] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 14:19:29] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 14:19:48] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 14:19:48] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 14:19:49] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 14:20:22] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-29 14:20:22] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:22] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:24] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:24] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:26] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:26] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:28] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:28] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:30] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:30] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:32] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:32] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:32] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 14:20:32] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 14:20:34] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-29 14:20:34] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-29 14:20:34] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:34] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:37] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:37] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:39] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:39] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:41] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:41] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:43] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: name 'logger' is not defined
+[2026-01-29 14:20:43] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:43] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:45] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:45] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:47] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:47] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:49] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:49] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:51] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:51] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:53] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: name 'logger' is not defined
+[2026-01-29 14:20:53] [ORCHESTRATOR] [WARNING] Analyzed move G5 is considered ILLEGAL by local rule engine.
+[2026-01-29 14:20:54] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:20:54] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:21:09] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-29 14:21:09] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: name 'logger' is not defined
+[2026-01-29 14:21:10] [EVENT] [ERROR] Error in event handler for FACT_DISCOVERED: name 'logger' is not defined
+[2026-01-29 14:21:10] [ORCHESTRATOR] [WARNING] Analyzed move G5 is considered ILLEGAL by local rule engine.
+[2026-01-29 14:22:54] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 14:22:54] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 14:22:55] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 14:22:56] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 14:23:02] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 14:23:02] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 14:23:02] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 14:23:12] [GUI] [INFO] GoReplayApp cleaning up...
+[2026-01-29 14:23:12] [GUI] [INFO] Cleaning up app resources and subscriptions...
+[2026-01-29 14:23:12] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-29 14:23:14] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 14:23:14] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 14:23:15] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 14:23:22] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-29 14:23:22] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:22] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:23] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:25] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:25] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:25] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:25] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:25] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:25] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:26] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:26] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:27] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:27] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:27] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:27] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:29] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:29] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:29] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 14:23:29] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 14:23:29] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:29] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:29] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:29] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:30] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:30] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:31] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:31] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:31] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:31] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:32] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-29 14:23:32] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-29 14:23:32] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 14:23:32] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 14:23:33] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:33] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:34] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:34] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:34] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:34] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:35] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:35] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:35] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:35] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:36] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:36] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:37] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:37] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:38] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:38] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:38] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:38] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:40] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:40] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:40] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:41] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:41] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:41] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:43] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:43] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:44] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:44] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:44] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:44] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:45] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:45] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:45] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:45] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:46] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:46] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:47] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:47] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:49] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:49] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:49] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:49] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:49] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:49] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:51] [ORCHESTRATOR] [WARNING] Analyzed move G5 is considered ILLEGAL by local rule engine.
+[2026-01-29 14:23:52] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:52] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:52] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:52] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:52] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:52] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:54] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:54] [EVENT] [ERROR] Error in event handler for MISTAKES_UPDATED: 'AnalysisTab' object has no attribute 'mistake_buttons'
+[2026-01-29 14:23:54] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:54] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:54] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:54] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:55] [EVENT] [ERROR] Error in event handler for PROGRESS_UPDATED: invalid command name ".!frame.!progressbar"
+[2026-01-29 14:23:55] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:23:55] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-29 14:24:05] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-29 14:24:05] [ORCHESTRATOR] [WARNING] Analyzed move G5 is considered ILLEGAL by local rule engine.
+[2026-01-29 14:25:45] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 14:25:45] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 14:25:46] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 14:25:46] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 14:25:52] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 14:25:52] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 14:25:53] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 14:26:05] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-29 14:26:54] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 14:26:54] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 14:26:54] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 14:26:55] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 14:27:01] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 14:27:01] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 14:27:02] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 14:27:26] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-29 14:27:26] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:26] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:26] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:27] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:27] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:27] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:27] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:27] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:27] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:27] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:27] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:27] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:27] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:28] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:31] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:33] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:35] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:37] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:39] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:40] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:41] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:41] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:41] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:41] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:42] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:43] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:43] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:43] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 14:27:43] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 14:27:43] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:45] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:45] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-29 14:27:45] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-29 14:27:46] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 14:27:46] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 14:27:47] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:49] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:51] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:51] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:51] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:51] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:51] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:51] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:51] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:53] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:56] [ORCHESTRATOR] [WARNING] Analyzed move G5 is considered ILLEGAL by local rule engine.
+[2026-01-29 14:27:56] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:56] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:56] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:56] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:56] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:27:56] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:28:11] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-29 14:28:11] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:28:11] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:28:11] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:28:11] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:28:11] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:28:11] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:28:11] [ORCHESTRATOR] [WARNING] Analyzed move G5 is considered ILLEGAL by local rule engine.
+[2026-01-29 14:28:11] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:28:11] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:28:11] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:28:11] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:28:11] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:28:11] [EVENT] [ERROR] Error in event handler for STATE_UPDATED: 'AnalysisTab' object has no attribute 'lbl_score'
+[2026-01-29 14:30:13] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 14:30:13] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 14:30:14] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 14:30:15] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 14:30:19] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 14:30:19] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 14:30:20] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 14:30:41] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-29 14:30:53] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 14:30:53] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 14:30:56] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 14:30:56] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 14:30:59] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-29 14:30:59] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 14:31:16] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 14:31:29] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 14:31:30] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 14:35:38] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 14:35:38] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 14:35:39] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 14:35:40] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 14:35:45] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 14:35:45] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 14:35:46] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 14:36:00] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-29 14:36:04] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 14:36:04] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 14:36:10] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 5)
+[2026-01-29 14:36:10] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-29 14:36:29] [ORCHESTRATOR] [WARNING] Analyzed move G5 is considered ILLEGAL by local rule engine.
+[2026-01-29 14:36:42] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 5)
+[2026-01-29 14:36:42] [ORCHESTRATOR] [WARNING] Analyzed move G5 is considered ILLEGAL by local rule engine.
+[2026-01-29 14:43:43] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-29 14:43:43] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-29 14:43:45] [ORCHESTRATOR] [WARNING] Analyzed move F6 is considered ILLEGAL by local rule engine.
+[2026-01-29 14:43:58] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-29 14:43:58] [ORCHESTRATOR] [WARNING] Analyzed move F6 is considered ILLEGAL by local rule engine.
+[2026-01-29 15:13:56] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 15:13:56] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 15:13:57] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 15:13:57] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 15:14:40] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 15:14:40] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 15:14:40] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 15:14:48] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-29 15:14:52] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 15:14:52] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 15:14:55] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 15:14:55] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 15:17:30] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-29 15:17:30] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 15:17:30] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 15:17:32] [ASYNC] [ERROR] Async task failed: name 'MistakeMetadata' is not defined
+[2026-01-29 15:20:16] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 15:20:16] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 15:20:17] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 15:20:17] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 15:20:33] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 15:20:33] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 15:20:34] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 15:21:14] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-29 15:21:19] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 15:21:19] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 15:21:23] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 15:21:23] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 15:22:39] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-29 15:22:39] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 15:22:41] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 15:22:58] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 15:22:59] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 15:35:15] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 15:35:15] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 15:35:15] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 15:35:16] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 15:35:21] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 15:35:21] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 15:35:22] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 15:35:29] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-29 15:35:37] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 15:35:37] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 15:35:40] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 15:35:40] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 15:36:26] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-29 15:36:26] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 15:36:27] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 15:36:41] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 15:36:42] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 15:45:46] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 15:45:46] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 15:45:47] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 15:45:47] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 15:46:31] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 15:46:31] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 15:46:32] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 15:49:21] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-29 15:49:26] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 15:49:26] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 15:49:29] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 15:49:29] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 15:49:43] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 15:49:43] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 15:49:46] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 15:49:46] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 15:49:46] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-29 15:49:46] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 15:49:58] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 15:50:15] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 15:50:16] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 16:04:55] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 16:04:55] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 16:04:56] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 16:04:57] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 16:06:29] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 16:06:29] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 16:06:30] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 16:06:37] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-29 16:06:42] [COMMAND] [INFO] Executed: PlayMove(白 H3)
+[2026-01-29 16:06:43] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 16:06:43] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 16:06:44] [CORE] [WARNING] Illegal move rejected: B[2,7]
+[2026-01-29 16:06:49] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 16:06:49] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 16:06:52] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 16:06:52] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 16:07:00] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 16:07:00] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 16:07:10] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-29 16:07:13] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 16:07:13] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 16:07:14] [SYSTEM] [ERROR] Bulk Analysis Error at move 27: list assignment index out of range
+[2026-01-29 16:07:14] [SYSTEM] [ERROR] Bulk Analysis Error at move 28: list assignment index out of range
+[2026-01-29 16:07:14] [SYSTEM] [ERROR] Bulk Analysis Error at move 29: list assignment index out of range
+[2026-01-29 16:07:16] [SYSTEM] [ERROR] Bulk Analysis Error at move 30: list assignment index out of range
+[2026-01-29 16:07:23] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-29 16:07:26] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 16:07:26] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 16:07:33] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 16:07:33] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 16:07:36] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 16:07:36] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 16:07:38] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-29 16:07:38] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 16:07:53] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 16:08:12] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 16:08:15] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 16:21:03] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 16:21:03] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 16:21:04] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 16:21:04] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 16:21:38] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 16:21:38] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 16:21:38] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 16:22:12] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-29 16:22:16] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 16:22:16] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 16:22:19] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-29 16:22:19] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 16:22:19] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 16:22:19] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 16:22:45] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 16:23:49] [AI] [WARNING] AI Logic Error Detected: NG: 解析事実（Facts）に記載のない座標「E3」「F4」「E2」が含まれています（座標の幻覚）。また、事実に基づかない「10手目」という具体的な手数が記述されています。
+[2026-01-29 16:24:08] [AI] [INFO] AI Commentary Corrected and Regenerated.
+[2026-01-29 16:24:08] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 16:24:09] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 16:24:09] [EVENT] [ERROR] Error in event handler for COMMENTARY_READY: invalid command name ".!panedwindow.!infoview.!notebook.!analysistab.!panedwindow.!frame2.!text"
+[2026-01-29 16:24:09] [EVENT] [ERROR] Error in event handler for AI_DIAGRAMS_READY: can't invoke "toplevel" command: application has been destroyed
+[2026-01-29 16:26:20] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 16:26:20] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 16:26:20] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 16:26:22] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-29 16:26:22] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 16:26:41] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 16:26:41] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 16:26:42] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 16:27:04] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-29 16:27:10] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 16:27:10] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 16:27:13] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 16:27:13] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 16:29:14] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-29 16:29:14] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 16:29:14] [ORCHESTRATOR] [INFO] Step 1: KataGo Base Analysis started...
+[2026-01-29 16:29:15] [ORCHESTRATOR] [INFO] Step 1 finished in 0.27s
+[2026-01-29 16:29:15] [ORCHESTRATOR] [INFO] Step 2: Reconstructing Board Context...
+[2026-01-29 16:29:15] [ORCHESTRATOR] [INFO] Step 2 finished in 0.00s
+[2026-01-29 16:29:15] [ORCHESTRATOR] [INFO] Step 3: Fact Generation (Parallel) started...
+[2026-01-29 16:29:16] [ORCHESTRATOR] [INFO] Step 3 finished in 1.42s
+[2026-01-29 16:29:16] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 16:29:16] [AI] [INFO] Calling Gemini for initial commentary...
+[2026-01-29 16:29:34] [AI] [INFO] Starting Self-Correction (Double Check)...
+[2026-01-29 16:29:34] [AI] [INFO] Calling Gemini for verification...
+[2026-01-29 16:29:58] [AI] [INFO] Verification Result: NG: Factsに存在しない座標「E3」および「F4」が解説に含まれています（座標の幻覚）。特に「白のF4・F3の二石が並んだ」という前提で「二子の頭（G5）」を説く論理は、事実に基づかない捏造され...
+[2026-01-29 16:29:58] [AI] [WARNING] AI Logic Error Detected: NG: Factsに存在しない座標「E3」および「F4」が解説に含まれています（座標の幻覚）。特に「白のF4・F3の二石が並んだ」という前提で「二子の頭（G5）」を説く論理は、事実に基づかない捏造された状況です。
+[2026-01-29 16:29:58] [AI] [INFO] Calling Gemini for RE-GENERATION (Retry)...
+[2026-01-29 16:30:24] [AI] [INFO] AI Commentary Corrected and Regenerated.
+[2026-01-29 16:30:24] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 16:30:24] [ORCHESTRATOR] [INFO] Step 1: KataGo Base Analysis started...
+[2026-01-29 16:30:24] [ORCHESTRATOR] [INFO] Step 1 finished in 0.12s
+[2026-01-29 16:30:24] [ORCHESTRATOR] [INFO] Step 2: Reconstructing Board Context...
+[2026-01-29 16:30:24] [ORCHESTRATOR] [INFO] Step 2 finished in 0.01s
+[2026-01-29 16:30:24] [ORCHESTRATOR] [INFO] Step 3: Fact Generation (Parallel) started...
+[2026-01-29 16:30:25] [ORCHESTRATOR] [INFO] Step 3 finished in 0.75s
+[2026-01-29 16:30:25] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 16:46:45] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 16:46:45] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 16:46:46] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 16:46:48] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-29 16:46:48] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 16:47:15] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 16:47:15] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 16:47:16] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 16:48:15] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-29 16:50:19] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-29 16:50:19] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 16:50:19] [ORCHESTRATOR] [INFO] Step 1: KataGo Base Analysis started...
+[2026-01-29 16:50:20] [ORCHESTRATOR] [INFO] Step 1 finished in 0.39s
+[2026-01-29 16:50:20] [ORCHESTRATOR] [INFO] Step 2: Reconstructing Board Context...
+[2026-01-29 16:50:20] [ORCHESTRATOR] [INFO] Step 2 finished in 0.00s
+[2026-01-29 16:50:20] [ORCHESTRATOR] [INFO] Step 3: Fact Generation (Parallel) started...
+[2026-01-29 16:50:22] [ORCHESTRATOR] [INFO] Step 3 finished in 1.78s
+[2026-01-29 16:50:22] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 16:50:22] [AI] [INFO] Calling Gemini for initial commentary...
+[2026-01-29 16:50:36] [AI] [INFO] Starting Self-Correction (Double Check)...
+[2026-01-29 16:50:36] [AI] [INFO] Calling Gemini for verification...
+[2026-01-29 16:51:56] [AI] [INFO] Verification Result: OK...
+[2026-01-29 16:51:56] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 16:51:56] [ORCHESTRATOR] [INFO] Step 1: KataGo Base Analysis started...
+[2026-01-29 16:51:57] [ORCHESTRATOR] [INFO] Step 1 finished in 0.16s
+[2026-01-29 16:51:57] [ORCHESTRATOR] [INFO] Step 2: Reconstructing Board Context...
+[2026-01-29 16:51:57] [ORCHESTRATOR] [INFO] Step 2 finished in 0.01s
+[2026-01-29 16:51:57] [ORCHESTRATOR] [INFO] Step 3: Fact Generation (Parallel) started...
+[2026-01-29 16:51:58] [ORCHESTRATOR] [INFO] Step 3 finished in 1.56s
+[2026-01-29 16:51:58] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 16:58:30] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-29 16:58:30] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-29 16:58:31] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-29 16:58:33] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-29 16:58:33] [STARTUP] [INFO] API Server is Ready.
+[2026-01-29 16:58:52] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-29 16:58:52] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-29 16:58:53] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-29 16:59:15] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-01-29 16:59:20] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-29 16:59:20] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-29 17:00:48] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 10)
+[2026-01-29 17:00:48] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 17:00:48] [ORCHESTRATOR] [INFO] Step 1: KataGo Base Analysis started...
+[2026-01-29 17:00:48] [ORCHESTRATOR] [INFO] Step 1 finished in 0.49s
+[2026-01-29 17:00:48] [ORCHESTRATOR] [INFO] Step 2: Reconstructing Board Context...
+[2026-01-29 17:00:48] [ORCHESTRATOR] [INFO] Step 2 finished in 0.01s
+[2026-01-29 17:00:48] [ORCHESTRATOR] [INFO] Step 3: Fact Generation (Parallel) started...
+[2026-01-29 17:00:50] [ORCHESTRATOR] [INFO] Step 3 finished in 1.89s
+[2026-01-29 17:00:50] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-29 17:00:50] [AI] [INFO] Calling Gemini for initial commentary...
+[2026-01-29 17:01:07] [AI] [INFO] Starting Self-Correction (Double Check)...
+[2026-01-29 17:01:07] [AI] [INFO] Calling Gemini for verification...
+[2026-01-29 17:01:19] [AI] [INFO] Verification Result: OK...
+[2026-01-29 17:01:19] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 10)
+[2026-01-29 17:01:19] [ORCHESTRATOR] [INFO] Step 1: KataGo Base Analysis started...
+[2026-01-29 17:01:19] [ORCHESTRATOR] [INFO] Step 1 finished in 0.16s
+[2026-01-29 17:01:19] [ORCHESTRATOR] [INFO] Step 2: Reconstructing Board Context...
+[2026-01-29 17:01:19] [ORCHESTRATOR] [INFO] Step 2 finished in 0.00s
+[2026-01-29 17:01:19] [ORCHESTRATOR] [INFO] Step 3: Fact Generation (Parallel) started...
+[2026-01-29 17:01:20] [ORCHESTRATOR] [INFO] Step 3 finished in 1.26s
+[2026-01-29 17:01:20] [ORCHESTRATOR] [WARNING] Analyzed move F3 is considered ILLEGAL by local rule engine.
+[2026-01-30 15:20:47] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-30 15:20:47] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-30 15:20:48] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-30 15:20:50] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-30 15:20:50] [STARTUP] [INFO] API Server is Ready.
+[2026-01-30 15:20:59] [GUI] [INFO] Switching to Test Play Mode...
+[2026-01-30 15:20:59] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-30 15:21:00] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-30 15:21:00] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-30 15:21:06] [GUI] [INFO] EDIT MODE Attempt -> Move: 1, Color: B, Point: D4
+[2026-01-30 15:21:07] [GUI] [INFO] EDIT MODE Attempt -> Move: 2, Color: W, Point: Q4
+[2026-01-30 15:21:19] [GUI] [INFO] EDIT MODE Attempt -> Move: 3, Color: B, Point: O3
+[2026-01-30 15:21:31] [GUI] [INFO] EDIT MODE Attempt -> Move: 3, Color: B, Point: D16
+[2026-01-30 15:21:32] [GUI] [INFO] EDIT MODE Attempt -> Move: 4, Color: W, Point: Q16
+[2026-01-30 15:21:34] [GUI] [INFO] EDIT MODE Attempt -> Move: 5, Color: B, Point: O3
+[2026-01-30 15:21:35] [GUI] [INFO] EDIT MODE Attempt -> Move: 6, Color: W, Point: R6
+[2026-01-30 15:21:36] [GUI] [INFO] EDIT MODE Attempt -> Move: 7, Color: B, Point: K4
+[2026-01-30 15:23:24] [GUI] [INFO] TestPlayApp cleaning up...
+[2026-01-30 15:23:24] [GUI] [INFO] Cleaning up app resources and subscriptions...
+[2026-01-30 15:23:24] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-30 15:23:26] [GUI] [INFO] Switching to Test Play Mode...
+[2026-01-30 15:23:26] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-30 15:23:27] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-30 15:23:27] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-30 15:25:15] [GUI] [INFO] TestPlayApp cleaning up...
+[2026-01-30 15:25:15] [GUI] [INFO] Cleaning up app resources and subscriptions...
+[2026-01-30 15:25:15] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-30 15:25:16] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-30 15:25:16] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-30 15:25:17] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-30 15:25:34] [GUI] [INFO] GoReplayApp cleaning up...
+[2026-01-30 15:25:34] [GUI] [INFO] Cleaning up app resources and subscriptions...
+[2026-01-30 15:25:34] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-30 15:25:36] [GUI] [INFO] Switching to Test Play Mode...
+[2026-01-30 15:25:36] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-30 15:25:37] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-30 15:25:37] [CORE] [INFO] New 19x19 game initialized.
+[2026-01-30 16:42:11] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-30 16:42:11] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-30 16:42:11] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-30 16:42:12] [STARTUP] [INFO] API Server is Ready.
+[2026-01-30 16:43:06] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-30 16:43:06] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-30 16:43:07] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-30 16:44:38] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-30 16:44:52] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-30 16:44:52] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-30 16:44:53] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-30 16:44:53] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-30 16:44:53] [ORCHESTRATOR] [INFO] Step 1: KataGo Base Analysis started...
+[2026-01-30 16:44:58] [ORCHESTRATOR] [INFO] Step 1 finished in 5.22s
+[2026-01-30 16:44:58] [ORCHESTRATOR] [INFO] Step 2: Reconstructing Board Context...
+[2026-01-30 16:44:58] [ORCHESTRATOR] [INFO] Step 2 finished in 0.00s
+[2026-01-30 16:44:58] [ORCHESTRATOR] [INFO] Step 3: Fact Generation (Parallel) started...
+[2026-01-30 16:45:03] [ORCHESTRATOR] [INFO] Step 3 finished in 5.08s
+[2026-01-30 16:45:03] [ORCHESTRATOR] [WARNING] Analyzed move F6 is considered ILLEGAL by local rule engine.
+[2026-01-30 16:45:03] [AI] [INFO] Calling Gemini for initial commentary...
+[2026-01-30 16:45:20] [AI] [INFO] Starting Self-Correction (Double Check)...
+[2026-01-30 16:45:20] [AI] [INFO] Calling Gemini for verification...
+[2026-01-30 16:45:36] [AI] [INFO] Verification Result: OK...
+[2026-01-30 16:45:36] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-30 16:45:36] [ORCHESTRATOR] [INFO] Step 1: KataGo Base Analysis started...
+[2026-01-30 16:45:36] [ORCHESTRATOR] [INFO] Step 1 finished in 0.12s
+[2026-01-30 16:45:36] [ORCHESTRATOR] [INFO] Step 2: Reconstructing Board Context...
+[2026-01-30 16:45:36] [ORCHESTRATOR] [INFO] Step 2 finished in 0.00s
+[2026-01-30 16:45:36] [ORCHESTRATOR] [INFO] Step 3: Fact Generation (Parallel) started...
+[2026-01-30 16:45:36] [ORCHESTRATOR] [INFO] Step 3 finished in 0.61s
+[2026-01-30 16:45:36] [ORCHESTRATOR] [WARNING] Analyzed move F6 is considered ILLEGAL by local rule engine.
+[2026-01-30 16:57:47] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-30 16:57:47] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-30 16:57:48] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-30 16:57:50] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-30 16:57:50] [STARTUP] [INFO] API Server is Ready.
+[2026-01-30 16:58:08] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-30 16:58:08] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-30 16:58:09] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-30 16:58:25] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-30 16:58:31] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-30 16:58:31] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-30 16:58:34] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-30 16:58:34] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-30 16:58:34] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-30 16:58:34] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-30 16:59:00] [ORCHESTRATOR] [WARNING] Analyzed move F6 is considered ILLEGAL by local rule engine.
+[2026-01-30 16:59:06] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-30 16:59:06] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-30 17:00:19] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-30 17:00:21] [ORCHESTRATOR] [WARNING] Analyzed move F6 is considered ILLEGAL by local rule engine.
+[2026-01-31 08:18:52] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 08:18:52] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 08:18:52] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 08:18:55] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 08:18:55] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 08:19:05] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 08:19:05] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 08:19:06] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 08:19:19] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-31 08:19:30] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:19:30] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:19:31] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-01-31 08:19:31] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-31 08:19:56] [ORCHESTRATOR] [WARNING] Analyzed move F6 is considered ILLEGAL by local rule engine.
+[2026-01-31 08:20:16] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-01-31 08:20:18] [ORCHESTRATOR] [WARNING] Analyzed move F6 is considered ILLEGAL by local rule engine.
+[2026-01-31 08:27:11] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 08:27:11] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 08:27:12] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 08:27:14] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 08:27:14] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 08:28:36] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 08:28:36] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 08:28:37] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 08:28:39] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 08:28:39] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 08:28:49] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 08:28:49] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 08:28:50] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 08:29:03] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-31 08:29:05] [SYSTEM] [ERROR] Bulk Analysis Error at move 2: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:07] [SYSTEM] [ERROR] Bulk Analysis Error at move 3: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:08] [SYSTEM] [ERROR] Bulk Analysis Error at move 1: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:10] [SYSTEM] [ERROR] Bulk Analysis Error at move 0: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:10] [SYSTEM] [ERROR] Bulk Analysis Error at move 4: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:11] [SYSTEM] [ERROR] Bulk Analysis Error at move 5: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:12] [SYSTEM] [ERROR] Bulk Analysis Error at move 6: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:13] [SYSTEM] [ERROR] Bulk Analysis Error at move 7: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:13] [SYSTEM] [ERROR] Bulk Analysis Error at move 8: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:14] [SYSTEM] [ERROR] Bulk Analysis Error at move 9: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:15] [SYSTEM] [ERROR] Bulk Analysis Error at move 10: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:17] [SYSTEM] [ERROR] Bulk Analysis Error at move 12: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:17] [SYSTEM] [ERROR] Bulk Analysis Error at move 11: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:18] [SYSTEM] [ERROR] Bulk Analysis Error at move 13: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:19] [SYSTEM] [ERROR] Bulk Analysis Error at move 14: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:21] [SYSTEM] [ERROR] Bulk Analysis Error at move 15: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:21] [SYSTEM] [ERROR] Bulk Analysis Error at move 16: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:23] [SYSTEM] [ERROR] Bulk Analysis Error at move 17: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:24] [SYSTEM] [ERROR] Bulk Analysis Error at move 18: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:25] [SYSTEM] [ERROR] Bulk Analysis Error at move 19: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:25] [SYSTEM] [ERROR] Bulk Analysis Error at move 20: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:26] [SYSTEM] [ERROR] Bulk Analysis Error at move 21: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:27] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:29:27] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:29:28] [SYSTEM] [ERROR] Bulk Analysis Error at move 22: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:29] [SYSTEM] [ERROR] Bulk Analysis Error at move 23: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:29] [SYSTEM] [ERROR] Bulk Analysis Error at move 24: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:30] [SYSTEM] [ERROR] Bulk Analysis Error at move 25: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:31] [SYSTEM] [ERROR] Bulk Analysis Error at move 26: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:33] [SYSTEM] [ERROR] Bulk Analysis Error at move 27: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:33] [SYSTEM] [ERROR] Bulk Analysis Error at move 28: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:29:33] [SYSTEM] [ERROR] Bulk Analysis Error at move 29: 'RenderContext' object has no attribute 'kwargs'
+[2026-01-31 08:30:24] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 08:30:24] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 08:30:24] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 08:30:27] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 08:30:27] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 08:30:32] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 08:30:32] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 08:30:34] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 08:30:43] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-31 08:30:52] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:30:52] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:30:55] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:30:55] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:30:58] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:30:58] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:37:14] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 08:37:14] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 08:37:15] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 08:37:17] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 08:37:17] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 08:37:33] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 08:37:33] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 08:37:34] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 08:37:43] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-31 08:37:50] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:37:50] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:38:40] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 7)
+[2026-01-31 08:38:40] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 7)
+[2026-01-31 08:38:42] [ORCHESTRATOR] [WARNING] Analyzed move B6 is considered ILLEGAL by local rule engine.
+[2026-01-31 08:39:33] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 7)
+[2026-01-31 08:39:35] [ORCHESTRATOR] [WARNING] Analyzed move B6 is considered ILLEGAL by local rule engine.
+[2026-01-31 08:43:02] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 08:43:02] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 08:43:03] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 08:43:05] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 08:43:05] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 08:43:11] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 08:43:11] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 08:43:13] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 08:43:25] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-31 08:43:41] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:43:41] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:43:44] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:43:44] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:46:22] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 08:46:22] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 08:46:23] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 08:46:25] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 08:46:25] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 08:46:30] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 08:46:30] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 08:46:32] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 08:46:50] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-31 08:46:54] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:46:54] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:48:34] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 08:48:34] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 08:48:35] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 08:48:37] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 08:48:37] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 08:48:45] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 08:48:45] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 08:48:46] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 08:49:40] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-31 08:49:43] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:49:43] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:49:47] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:49:47] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:49:50] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:49:50] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:49:54] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:49:54] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:49:57] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:49:57] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:53:13] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 08:53:13] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 08:53:14] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 08:53:16] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 08:53:16] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 08:53:23] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 08:53:23] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 08:53:24] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 08:53:40] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-31 08:53:42] [COMMAND] [INFO] Executed: PlayMove(白 H3)
+[2026-01-31 08:53:44] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:53:44] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:53:47] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 08:53:47] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 08:55:46] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 08:55:46] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 08:55:47] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 08:55:49] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 08:55:49] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 08:55:55] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 08:55:55] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 08:55:56] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 08:56:26] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 09:00:20] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 09:00:20] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 09:00:21] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 09:00:23] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 09:00:23] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 09:00:27] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 09:00:28] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 09:00:31] [STARTUP] [INFO] Auto-loading SGF: C:\Users\youst\go-ai-commentator\test.sgf
+[2026-01-31 09:00:34] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 09:02:08] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 09:02:08] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 09:02:08] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 09:02:10] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 09:02:10] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 09:02:14] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 09:02:15] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 09:02:17] [STARTUP] [INFO] Auto-loading SGF: C:\Users\youst\go-ai-commentator\test.sgf
+[2026-01-31 09:02:20] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 09:02:54] [COMMAND] [INFO] Executed: PlayMove(黒 B7)
+[2026-01-31 09:03:25] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-31 09:03:25] [GUI] [INFO] GoReplayApp cleaning up...
+[2026-01-31 09:03:25] [GUI] [INFO] Cleaning up app resources and subscriptions...
+[2026-01-31 09:03:25] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-31 09:04:57] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 09:04:57] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 09:04:57] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 09:04:59] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 09:04:59] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 09:05:03] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 09:05:05] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 09:05:06] [STARTUP] [INFO] Auto-loading SGF: C:\Users\youst\go-ai-commentator\test.sgf
+[2026-01-31 09:05:09] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 09:05:36] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 09:05:36] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 09:05:40] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 09:05:40] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 09:07:29] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 09:07:29] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 09:07:30] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 09:07:32] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 09:07:32] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 09:07:36] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 09:07:38] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 09:07:40] [STARTUP] [INFO] Auto-loading SGF: C:\Users\youst\go-ai-commentator\test.sgf
+[2026-01-31 09:07:43] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 09:10:28] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 09:10:28] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 09:10:29] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 09:10:31] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 09:10:31] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 09:10:35] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 09:10:36] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 09:10:38] [STARTUP] [INFO] Auto-loading SGF: C:\Users\youst\go-ai-commentator\test.sgf
+[2026-01-31 09:10:41] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 09:12:34] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 09:12:34] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 09:12:35] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 09:12:37] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 09:12:37] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 09:12:41] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 09:12:43] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 09:12:46] [STARTUP] [INFO] Auto-loading SGF: C:\Users\youst\go-ai-commentator\test.sgf
+[2026-01-31 09:12:49] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 09:14:19] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 09:14:19] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 09:14:20] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 09:14:22] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 09:14:22] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 09:14:26] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 09:14:28] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 09:14:30] [STARTUP] [INFO] Auto-loading SGF: C:\Users\youst\go-ai-commentator\test.sgf
+[2026-01-31 09:14:33] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 09:14:36] [SYSTEM] [ERROR] Bulk Analysis Error at move 0: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:14:38] [SYSTEM] [ERROR] Bulk Analysis Error at move 3: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:14:40] [SYSTEM] [ERROR] Bulk Analysis Error at move 1: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:14:43] [SYSTEM] [ERROR] Bulk Analysis Error at move 4: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:14:43] [SYSTEM] [ERROR] Bulk Analysis Error at move 2: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:14:44] [SYSTEM] [ERROR] Bulk Analysis Error at move 5: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:14:45] [SYSTEM] [ERROR] Bulk Analysis Error at move 6: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:14:48] [SYSTEM] [ERROR] Bulk Analysis Error at move 8: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:14:48] [SYSTEM] [ERROR] Bulk Analysis Error at move 7: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:14:50] [SYSTEM] [ERROR] Bulk Analysis Error at move 9: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:14:53] [SYSTEM] [ERROR] Bulk Analysis Error at move 10: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:14:57] [SYSTEM] [ERROR] Bulk Analysis Error at move 12: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:14:57] [SYSTEM] [ERROR] Bulk Analysis Error at move 11: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:15:00] [SYSTEM] [ERROR] Bulk Analysis Error at move 13: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:15:02] [SYSTEM] [ERROR] Bulk Analysis Error at move 14: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:15:06] [SYSTEM] [ERROR] Bulk Analysis Error at move 16: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:15:06] [SYSTEM] [ERROR] Bulk Analysis Error at move 15: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:15:08] [SYSTEM] [ERROR] Bulk Analysis Error at move 17: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:15:10] [SYSTEM] [ERROR] Bulk Analysis Error at move 18: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:16:48] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-31 09:16:48] [GUI] [INFO] GoReplayApp cleaning up...
+[2026-01-31 09:16:48] [GUI] [INFO] Cleaning up app resources and subscriptions...
+[2026-01-31 09:16:48] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-31 09:16:50] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-31 09:16:50] [GUI] [INFO] GoReplayApp cleaning up...
+[2026-01-31 09:16:50] [GUI] [INFO] Cleaning up app resources and subscriptions...
+[2026-01-31 09:16:50] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-31 09:16:57] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 09:16:57] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 09:16:58] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 09:17:00] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 09:17:00] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 09:17:04] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 09:17:05] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 09:17:07] [STARTUP] [INFO] Auto-loading SGF: C:\Users\youst\go-ai-commentator\test.sgf
+[2026-01-31 09:17:10] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 09:17:12] [SYSTEM] [ERROR] Bulk Analysis Error at move 0: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:15] [SYSTEM] [ERROR] Bulk Analysis Error at move 2: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:17] [SYSTEM] [ERROR] Bulk Analysis Error at move 1: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:20] [SYSTEM] [ERROR] Bulk Analysis Error at move 3: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:20] [SYSTEM] [ERROR] Bulk Analysis Error at move 4: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:22] [SYSTEM] [ERROR] Bulk Analysis Error at move 5: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:23] [SYSTEM] [ERROR] Bulk Analysis Error at move 6: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:25] [SYSTEM] [ERROR] Bulk Analysis Error at move 7: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:25] [SYSTEM] [ERROR] Bulk Analysis Error at move 8: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:27] [SYSTEM] [ERROR] Bulk Analysis Error at move 9: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:29] [SYSTEM] [ERROR] Bulk Analysis Error at move 10: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:33] [SYSTEM] [ERROR] Bulk Analysis Error at move 12: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:33] [SYSTEM] [ERROR] Bulk Analysis Error at move 11: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:35] [SYSTEM] [ERROR] Bulk Analysis Error at move 13: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:36] [SYSTEM] [ERROR] Bulk Analysis Error at move 14: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:40] [SYSTEM] [ERROR] Bulk Analysis Error at move 16: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:40] [SYSTEM] [ERROR] Bulk Analysis Error at move 15: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:41] [SYSTEM] [ERROR] Bulk Analysis Error at move 17: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:17:43] [SYSTEM] [ERROR] Bulk Analysis Error at move 18: RenderContext.__init__() got an unexpected keyword argument 'ownership'
+[2026-01-31 09:19:10] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 09:19:10] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 09:19:11] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 09:19:13] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 09:19:13] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 09:19:18] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 09:19:20] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 09:19:22] [STARTUP] [INFO] Auto-loading SGF: C:\Users\youst\go-ai-commentator\test.sgf
+[2026-01-31 09:19:25] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 09:19:40] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 09:19:40] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 09:19:43] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 09:19:43] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 09:19:47] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 09:19:47] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 09:21:03] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 09:21:03] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 09:21:04] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 09:21:06] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 09:21:06] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 09:21:10] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 09:21:12] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 09:21:14] [STARTUP] [INFO] Auto-loading SGF: C:\Users\youst\go-ai-commentator\test.sgf
+[2026-01-31 09:21:17] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 09:21:45] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 09:21:45] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 09:26:45] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 09:26:45] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 09:26:46] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 09:26:48] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 09:26:48] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 09:26:56] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 09:26:56] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 09:26:58] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 09:27:41] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-31 09:28:00] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 09:28:00] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 09:28:06] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 09:28:06] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 09:28:09] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 09:28:09] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 09:28:14] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 09:28:14] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 09:28:18] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 09:28:18] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:10:52] [COMMAND] [INFO] Executed: PlayMove(黒 A7)
+[2026-01-31 11:11:01] [COMMAND] [INFO] Executed: PlayMove(白 A5)
+[2026-01-31 11:11:04] [CORE] [WARNING] Illegal move rejected: B[6,0]
+[2026-01-31 11:11:06] [CORE] [WARNING] Illegal move rejected: B[6,0]
+[2026-01-31 11:11:18] [CORE] [WARNING] Illegal move rejected: B[6,2]
+[2026-01-31 11:18:54] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-31 11:18:54] [GUI] [INFO] GoReplayApp cleaning up...
+[2026-01-31 11:18:54] [GUI] [INFO] Cleaning up app resources and subscriptions...
+[2026-01-31 11:18:54] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-31 11:18:55] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-31 11:18:55] [GUI] [INFO] GoReplayApp cleaning up...
+[2026-01-31 11:18:55] [GUI] [INFO] Cleaning up app resources and subscriptions...
+[2026-01-31 11:18:55] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-31 11:19:01] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 11:19:01] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 11:19:02] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 11:19:04] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 11:19:04] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 11:19:14] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 11:19:14] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 11:19:15] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 11:19:27] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\サカレ
+[2026-01-31 11:19:32] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:19:32] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:19:37] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:19:37] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:19:41] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:19:41] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:19:49] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:19:49] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:19:56] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:19:56] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:20:00] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:20:00] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:20:07] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:20:07] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:20:11] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:20:11] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:26:24] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 11:26:24] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 11:26:25] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 11:26:27] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 11:26:27] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 11:26:34] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 11:26:34] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 11:26:35] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 11:26:59] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-01-31 11:27:01] [SYSTEM] [ERROR] Bulk Analysis Error at move 0: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:03] [SYSTEM] [ERROR] Bulk Analysis Error at move 2: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:03] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:27:03] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:27:04] [SYSTEM] [ERROR] Bulk Analysis Error at move 3: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:07] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:27:07] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:27:07] [SYSTEM] [ERROR] Bulk Analysis Error at move 1: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:07] [SYSTEM] [ERROR] Bulk Analysis Error at move 4: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:08] [SYSTEM] [ERROR] Bulk Analysis Error at move 5: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:09] [SYSTEM] [ERROR] Bulk Analysis Error at move 6: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:10] [SYSTEM] [ERROR] Bulk Analysis Error at move 7: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:10] [SYSTEM] [ERROR] Bulk Analysis Error at move 8: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:11] [SYSTEM] [ERROR] Bulk Analysis Error at move 9: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:11] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:27:11] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:27:11] [SYSTEM] [ERROR] Bulk Analysis Error at move 10: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:13] [SYSTEM] [ERROR] Bulk Analysis Error at move 11: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:13] [SYSTEM] [ERROR] Bulk Analysis Error at move 12: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:14] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:27:14] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:27:15] [SYSTEM] [ERROR] Bulk Analysis Error at move 13: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:16] [SYSTEM] [ERROR] Bulk Analysis Error at move 14: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:18] [SYSTEM] [ERROR] Bulk Analysis Error at move 15: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:18] [SYSTEM] [ERROR] Bulk Analysis Error at move 16: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:19] [SYSTEM] [ERROR] Bulk Analysis Error at move 17: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:21] [SYSTEM] [ERROR] Bulk Analysis Error at move 18: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:22] [SYSTEM] [ERROR] Bulk Analysis Error at move 20: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:22] [SYSTEM] [ERROR] Bulk Analysis Error at move 19: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:23] [SYSTEM] [ERROR] Bulk Analysis Error at move 21: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:25] [SYSTEM] [ERROR] Bulk Analysis Error at move 22: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:27] [SYSTEM] [ERROR] Bulk Analysis Error at move 24: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:27] [SYSTEM] [ERROR] Bulk Analysis Error at move 23: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:28] [SYSTEM] [ERROR] Bulk Analysis Error at move 25: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:28] [SYSTEM] [ERROR] Bulk Analysis Error at move 26: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:30] [SYSTEM] [ERROR] Bulk Analysis Error at move 28: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:30] [SYSTEM] [ERROR] Bulk Analysis Error at move 27: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:31] [SYSTEM] [ERROR] Bulk Analysis Error at move 29: 'GameBoard' object has no attribute 'board_size'
+[2026-01-31 11:27:31] [EVENT] [ERROR] Error in event handler for STATUS_MSG_UPDATED: invalid command name ".!frame.!label"
+[2026-01-31 11:30:08] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 11:30:08] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 11:30:09] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 11:30:11] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 11:30:11] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 11:30:13] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 11:30:14] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 11:30:15] [STARTUP] [INFO] Auto-loading SGF: C:\Users\youst\go-ai-commentator\test.sgf
+[2026-01-31 11:30:18] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 11:33:02] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 11:33:02] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 11:33:02] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 11:33:04] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 11:33:04] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 11:33:11] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 11:33:11] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 11:33:12] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 11:33:24] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 11:33:33] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:33:33] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:33:44] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:33:44] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:33:49] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:33:49] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:36:25] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 11:36:25] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 11:36:26] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 11:36:28] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 11:36:28] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 11:36:37] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 11:36:37] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 11:36:38] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 11:37:41] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 11:37:46] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:37:46] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:48:57] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 11:48:57] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 11:48:58] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 11:49:00] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 11:49:00] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 11:49:04] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 11:49:05] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 11:49:08] [STARTUP] [INFO] Auto-loading SGF: C:\Users\youst\go-ai-commentator\test.sgf
+[2026-01-31 11:49:11] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 11:51:12] [COMMAND] [INFO] Executed: PlayMove(黒 G3)
+[2026-01-31 11:51:26] [GUI] [INFO] Closing application (Force Exit)...
+[2026-01-31 11:51:26] [GUI] [INFO] GoReplayApp cleaning up...
+[2026-01-31 11:51:26] [GUI] [INFO] Cleaning up app resources and subscriptions...
+[2026-01-31 11:51:26] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-01-31 11:51:59] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 11:51:59] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 11:52:00] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 11:52:02] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 11:52:02] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 11:52:09] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 11:52:09] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 11:52:10] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 11:52:53] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 11:53:05] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:53:05] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:53:09] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:53:09] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:53:12] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:53:12] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:53:16] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:53:16] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:53:20] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:53:20] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 11:53:23] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 11:53:23] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 12:04:53] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-01-31 12:04:53] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-01-31 12:04:54] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-01-31 12:04:56] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-01-31 12:04:56] [STARTUP] [INFO] API Server is Ready.
+[2026-01-31 12:05:03] [GUI] [INFO] Switching to Replay Mode...
+[2026-01-31 12:05:03] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-01-31 12:05:05] [STARTUP] [INFO] AI Services Initialized.
+[2026-01-31 12:05:18] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-01-31 12:05:36] [COMMAND] [INFO] Executed: PlayMove(黒 G7)
+[2026-01-31 12:05:39] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 12:05:39] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-01-31 12:05:42] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-01-31 12:05:42] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 12:40:56] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-02-02 12:40:56] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-02-02 12:40:57] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-02-02 12:40:59] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-02-02 12:40:59] [STARTUP] [INFO] API Server is Ready.
+[2026-02-02 12:41:06] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-02-02 12:41:08] [STARTUP] [INFO] AI Services Initialized.
+[2026-02-02 12:41:11] [STARTUP] [INFO] Auto-loading SGF: C:\Users\youst\go-ai-commentator\test.sgf
+[2026-02-02 12:41:14] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-02-02 12:43:12] [GUI] [INFO] Closing application (Force Exit)...
+[2026-02-02 12:43:12] [GUI] [INFO] GoReplayApp cleaning up...
+[2026-02-02 12:43:12] [GUI] [INFO] Cleaning up app resources and subscriptions...
+[2026-02-02 12:43:12] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-02-02 12:43:23] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-02-02 12:43:23] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-02-02 12:43:23] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-02-02 12:43:25] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-02-02 12:43:25] [STARTUP] [INFO] API Server is Ready.
+[2026-02-02 12:43:32] [GUI] [INFO] Switching to Replay Mode...
+[2026-02-02 12:43:32] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-02-02 12:43:34] [STARTUP] [INFO] AI Services Initialized.
+[2026-02-02 12:43:44] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-02-02 12:43:48] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 12:43:48] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 12:46:54] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-02-02 12:46:54] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-02-02 12:46:55] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-02-02 12:46:57] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-02-02 12:46:57] [STARTUP] [INFO] API Server is Ready.
+[2026-02-02 12:47:04] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-02-02 12:47:06] [STARTUP] [INFO] AI Services Initialized.
+[2026-02-02 12:47:08] [STARTUP] [INFO] Auto-loading SGF: test.sgf
+[2026-02-02 12:47:11] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-02-02 12:47:29] [GUI] [INFO] Closing application (Force Exit)...
+[2026-02-02 12:47:29] [GUI] [INFO] GoReplayApp cleaning up...
+[2026-02-02 12:47:29] [GUI] [INFO] Cleaning up app resources and subscriptions...
+[2026-02-02 12:47:29] [ASYNC] [INFO] Shutting down AsyncTaskManager...
+[2026-02-02 14:27:36] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-02-02 14:27:36] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-02-02 14:27:36] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-02-02 14:27:38] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-02-02 14:27:38] [STARTUP] [INFO] API Server is Ready.
+[2026-02-02 14:27:43] [GUI] [INFO] Switching to Replay Mode...
+[2026-02-02 14:27:43] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-02-02 14:27:43] [STARTUP] [INFO] AI Services Initialized.
+[2026-02-02 14:27:53] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\sample
+[2026-02-02 14:28:01] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 14:28:01] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 14:28:05] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 14:28:05] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 14:28:09] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 14:28:09] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 14:28:13] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 14:28:13] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 14:28:36] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 11)
+[2026-02-02 14:28:36] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 11)
+[2026-02-02 14:28:40] [ORCHESTRATOR] [WARNING] Analyzed move P2 is considered ILLEGAL by local rule engine.
+[2026-02-02 14:29:24] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 11)
+[2026-02-02 14:29:27] [ORCHESTRATOR] [WARNING] Analyzed move P2 is considered ILLEGAL by local rule engine.
+[2026-02-02 14:31:59] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-02-02 14:32:03] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 14:32:04] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 14:32:11] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 14:32:11] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 14:32:15] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 14:32:15] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 14:32:18] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 14:32:18] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 14:32:42] [COMMAND] [INFO] Executed: PlayMove(白 G6)
+[2026-02-02 14:32:45] [COMMAND] [INFO] Executed: PlayMove(白 G6)
+[2026-02-02 14:32:55] [COMMAND] [INFO] Executed: PlayMove(白 G7)
+[2026-02-02 14:44:09] [CORE] [INFO] New 19x19 game initialized.
+[2026-02-02 14:44:59] [CORE] [INFO] New 19x19 game initialized.
+[2026-02-02 14:46:11] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-02-02 14:46:11] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-02-02 14:46:12] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-02-02 14:46:12] [STARTUP] [INFO] API Server is Ready.
+[2026-02-02 14:46:16] [GUI] [INFO] Switching to Replay Mode...
+[2026-02-02 14:46:16] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-02-02 14:46:17] [STARTUP] [INFO] AI Services Initialized.
+[2026-02-02 14:46:31] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\カス石
+[2026-02-02 14:48:31] [COMMAND] [INFO] Executed: PlayMove(黒 F3)
+[2026-02-02 14:49:27] [COMMAND] [INFO] Undone: PlayMove
+[2026-02-02 14:49:27] [GUI] [INFO] Undo performed
+[2026-02-02 14:49:52] [COMMAND] [INFO] Executed: PlayMove(白 F5)
+[2026-02-02 14:49:59] [COMMAND] [INFO] Undone: PlayMove
+[2026-02-02 14:49:59] [GUI] [INFO] Undo performed
+[2026-02-02 14:50:46] [COMMAND] [INFO] Executed: PlayMove(白 F6)
+[2026-02-02 14:51:09] [COMMAND] [INFO] Executed: PlayMove(黒 F5)
+[2026-02-02 14:51:12] [COMMAND] [INFO] Executed: PlayMove(白 F7)
+[2026-02-02 14:51:19] [COMMAND] [INFO] Executed: PlayMove(黒 G7)
+[2026-02-02 14:53:31] [CORE] [INFO] New 19x19 game initialized.
+[2026-02-02 14:57:19] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-02-02 14:57:19] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-02-02 14:57:19] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-02-02 14:57:20] [STARTUP] [INFO] API Server is Ready.
+[2026-02-02 14:57:26] [GUI] [INFO] Switching to Replay Mode...
+[2026-02-02 14:57:26] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-02-02 14:57:27] [STARTUP] [INFO] AI Services Initialized.
+[2026-02-02 14:57:41] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-02-02 14:57:56] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 14:57:56] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 14:58:00] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 14:58:00] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 14:58:03] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 14:58:03] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 15:06:22] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-02-02 15:06:22] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-02-02 15:06:22] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-02-02 15:06:24] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-02-02 15:06:24] [STARTUP] [INFO] API Server is Ready.
+[2026-02-02 15:07:02] [GUI] [INFO] Switching to Replay Mode...
+[2026-02-02 15:07:02] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-02-02 15:07:03] [STARTUP] [INFO] AI Services Initialized.
+[2026-02-02 15:07:13] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-02-02 15:07:26] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 15:07:26] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 15:07:30] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 15:07:30] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 15:07:33] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 15:07:33] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)

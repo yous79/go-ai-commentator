@@ -249,11 +249,13 @@ class GoReplayApp(GoAppBase):
                 with open(p, "r", encoding="utf-8") as f: d = json.load(f)
                 self.game.moves = d.get("moves", [])
                 mb, mw = self.game.calculate_mistakes()
-                # イベントによる悪手情報の通知
-                event_bus.publish(AppEvents.MISTAKES_UPDATED, {"color": "b", "mistakes": mb})
-                event_bus.publish(AppEvents.MISTAKES_UPDATED, {"color": "w", "mistakes": mw})
+                # 内部情報の更新とUI通知のリクエスト
+                for i in range(3):
+                    self._upd_mistake_ui("b", i, mb)
+                    self._upd_mistake_ui("w", i, mw)
                 self.update_display()
-            except: pass
+            except Exception as e:
+                logger.error(f"Error in _sync_analysis_data: {e}")
 
     def _upd_mistake_ui(self, color, idx, mistakes):
         store = self.moves_m_b if color == "b" else self.moves_m_w
@@ -483,7 +485,8 @@ class GoReplayApp(GoAppBase):
     def click_on_board(self, event):
         if not self.info_view.edit_mode.get(): return
         cw, ch = self.board_view.canvas.winfo_width(), self.board_view.canvas.winfo_height()
-        res = self.transformer.pixel_to_indices(event.x, event.y, cw, ch)
+        img_h = self.board_view.original_image.height if hasattr(self.board_view, 'original_image') and self.board_view.original_image else None
+        res = self.transformer.pixel_to_indices(event.x, event.y, cw, ch, actual_img_height=img_h)
         if res:
             color = "B" if (self.controller.current_move % 2 == 0) else "W"
             self.play_interactive_move(color, res[0], res[1])

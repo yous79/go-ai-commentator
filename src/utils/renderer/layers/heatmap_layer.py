@@ -10,10 +10,8 @@ class HeatmapLayer(RenderLayer):
             ownership = ctx.analysis_result.ownership
             
         if not ownership:
-            print("DEBUG: No ownership data available for HeatmapLayer") # DEBUG
             return
             
-        print(f"DEBUG: HeatmapLayer drawing... ownership len={len(ownership)}") # DEBUG
         
         gs = ctx.transformer.grid_size
         radius = gs // 2
@@ -28,8 +26,13 @@ class HeatmapLayer(RenderLayer):
         for i, val in enumerate(ownership):
             if i >= ctx.board_size * ctx.board_size: break
             
-            row = i // ctx.board_size
+            # KataGoの ownership は 0 が一番上の行 (GTPの大数字の行)。
+            # 一方、rendererの indices_to_pixel は 0 が一番下の行を想定している。
+            kata_row = i // ctx.board_size
             col = i % ctx.board_size
+            
+            # 行を反転させる (Top-Down -> Bottom-Up)
+            row = (ctx.board_size - 1) - kata_row
             
             # 確信度が低い場合はスキップ
             conf = abs(val)
@@ -37,8 +40,8 @@ class HeatmapLayer(RenderLayer):
 
             px, py = ctx.transformer.indices_to_pixel(row, col)
             
-            # 透明度計算 (最大128程度の半透明)
-            alpha = int(128 * conf)
+            # 透明度計算 (最大100程度の半透明にして、より見やすくする)
+            alpha = int(100 * conf)
             
             # 色の決定 (+: 黒地, -: 白地)
             base_color = c_black if val > 0 else c_white
