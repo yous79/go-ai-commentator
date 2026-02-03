@@ -66,16 +66,23 @@ class StabilityAnalyzer:
         if not ownership_map:
             return []
 
+        from core.analysis_config import AnalysisConfig
+
         groups = self._find_strategic_groups(board, ownership_map)
         analysis_results = []
 
+        dead_thresh = AnalysisConfig.get("KASUISHI_THRESHOLD") # e.g. -0.85
+        crit_thresh = AnalysisConfig.get("CRITICAL_THRESHOLD") # e.g. 0.2
+        weak_thresh = AnalysisConfig.get("WEAK_THRESHOLD")     # e.g. 0.5
+        atsumi_thresh = AnalysisConfig.get("ATSUMI_THRESHOLD") # e.g. 0.9
+
         for color_obj, stones, avg_stability, is_strategic in groups:
-            # ステータス判定
-            if avg_stability < 0.0:    status = "dead"
-            elif avg_stability < 0.2:  status = "critical"
-            elif avg_stability < 0.5:  status = "weak"
-            elif avg_stability < 0.8:  status = "stable"
-            else:                      status = "strong"
+            # ステータス判定 (AnalysisConfigの閾値を使用)
+            if avg_stability <= dead_thresh:     status = "dead"
+            elif avg_stability < crit_thresh:    status = "critical"
+            elif avg_stability < weak_thresh:    status = "weak"
+            elif avg_stability < atsumi_thresh:  status = "stable"
+            else:                                status = "strong"
             
             # 不確実性の計算（uncertainty_mapがあれば使用、なければ0）
             avg_uncertainty = 0.0

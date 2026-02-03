@@ -174,6 +174,8 @@ class GoGameState:
 
     def get_board_at(self, move_idx) -> GameBoard:
         b = GameBoard(self.board_size)
+        if not self.sgf_game:
+            return b
         node = self.sgf_game.get_root()
         for i in range(move_idx):
             try:

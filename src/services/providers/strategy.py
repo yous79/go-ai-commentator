@@ -49,19 +49,45 @@ class StrategicFactProvider(BaseFactProvider):
         current_color = context.last_color
         
         for group in stability_results:
-            # 2. 最新手と「過去の強い石（厚み）」との距離をチェック
+            # --- 厳格化: 平均Ownershipによる本当にその状態かの確認 ---
+            stones_indices = []
+            for s_gtp in group.stones:
+                col = ord(s_gtp[0].upper()) - ord('A')
+                if col >= 9: col -= 1
+                row = int(s_gtp[1:]) - 1
+                stones_indices.append(row * self.board_size + col)
+            
+            if not stones_indices or not target_ownership:
+                continue
+                
+            avg_own = sum(target_ownership[i] for i in stones_indices) / len(stones_indices)
+            
+            # 色とOwnershipの符号の整合性確認
+            # 黒石ならOwnershipプラスが生き、マイナスが死
+            is_black = (group.color_label == "黒")
+            
+            # --- Statusごとの厳格なフィルタリング ---
+            from core.analysis_config import AnalysisConfig
+            atsumi_thresh = AnalysisConfig.get("ATSUMI_THRESHOLD")   # e.g. 0.90
+            kasuishi_thresh = AnalysisConfig.get("KASUISHI_THRESHOLD") # e.g. -0.85
+
             if group.status == 'strong':
-                is_near = False
-                for stone_gtp in group.stones:
-                    # GTP座標をPointに変換
-                    row = int(stone_gtp[1:]) - 1
-                    col = ord(stone_gtp[0].upper()) - ord('A')
-                    if col >= 9: col -= 1
+                # 黒でStrongならOwn > 0.9, 白でStrongならOwn < -0.9 (abs > 0.9)
+                current_val = avg_own if is_black else -avg_own
+                if current_val < atsumi_thresh:
+                    continue # 厚みというほど確定していない
                     
+                # 2. 最新手と「過去の強い石（厚み）」との距離をチェック
+                is_near = False
+                for s_gtp in group.stones:
+                    # 簡易マンハッタン距離
+                    row = int(s_gtp[1:]) - 1
+                    col = ord(s_gtp[0].upper()) - ord('A')
+                    if col >= 9: col -= 1
                     dist = abs(last_move.row - row) + abs(last_move.col - col)
-                    if dist <= 2: # マンハッタン距離2以内（接触または1間飛びの位置）
-                        is_near = True
-                        break
+                    if dist <= 2:
+                         is_near = True
+                         break
                 
                 if is_near:
                     msg = ""
@@ -78,43 +104,77 @@ class StrategicFactProvider(BaseFactProvider):
                         scope=TemporalScope.IMMEDIATE
                     )
 
-            # 3. 最新手と「過去の死に石（カス石）」との関係チェック
-            # 死んでいる石（status='dead'）の近くに打った場合
-            elif group.status == 'dead' and group.color_label != current_color.label:
-                # 相手の死に石に接触したか？
-                is_touching = False
-                for stone_gtp in group.stones:
-                    row = int(stone_gtp[1:]) - 1
-                    col = ord(stone_gtp[0].upper()) - ord('A')
-                    if col >= 9: col -= 1
+            elif group.status == 'dead':
+                # 黒でDeadならOwn < -0.85, 白でDeadならOwn > 0.85 (逆の色が支配)
+                # つまり「支配度」は -current_val (相手の支配)
+                current_val = avg_own if is_black else -avg_own
+                # current_val は マイナスであるはず（死んでいるから）
+                # 相手の支配度が閾値を超えているか？ -> current_val < -0.85
+                if current_val > kasuishi_thresh:
+                    continue # まだ味が残っている（完全なカス石ではない）
+
+                # 3. 最新手と「過去の死に石（カス石）」との関係チェック
+                # カス石取り（相手の死に石への手入れ）
+                if group.color_label != current_color.label:
+                    # 厳格化: 「接触 (Distance<=1)」のみ警告対象とする
+                    is_touching = False
+                    for s_gtp in group.stones:
+                        row = int(s_gtp[1:]) - 1
+                        col = ord(s_gtp[0].upper()) - ord('A')
+                        if col >= 9: col -= 1
+                        dist = abs(last_move.row - row) + abs(last_move.col - col)
+                        if dist <= 1:
+                            is_touching = True
+                            break
                     
-                    # 距離1（接触）
-                    dist = abs(last_move.row - row) + abs(last_move.col - col)
-                    if dist <= 1:
-                        is_touching = True
-                        break
+                    if is_touching:
+                        is_good_move = False
+                        if analysis.candidates:
+                             top_move = analysis.candidates[0].move
+                             if top_move == last_move.to_gtp():
+                                 is_good_move = True
+                        
+                        if not is_good_move:
+                            msg = f"【警告：緩着】すでに死んでいる{group.color_label}の石（{group.stones[0]}周辺）にわざわざ接触しました。これは「カス石」を相手にした効率の悪い手です。"
+                            collector.add(
+                                FactCategory.STRATEGY,
+                                msg,
+                                severity=4,
+                                metadata=group,
+                                scope=TemporalScope.IMMEDIATE
+                            )
                 
-                if is_touching:
-                    # もしその手が「高評価（Good Move）」なら、何か決定的な手筋かもしれないので警告しない
-                    # score_loss が小さい (e.g. < 0.5) ならスルー
-                    # analysis.score_loss は AnalysisResult にない場合が多い (candidates[0].score_loss か、score_lead差分で見る)
-                    is_good_move = False
-                    if analysis.candidates:
-                         # 自分が打った手が候補のトップ近くにあるか？
-                         # 簡易的に、Top1候補の座標と一致するか
-                         top_move = analysis.candidates[0].move
-                         if top_move == last_move.to_gtp():
-                             is_good_move = True
+                # カス石救済（自己の死に石への手入れ）のロジック追加
+                # ユーザー要望の「カス石救済」警告
+                elif group.color_label == current_color.label:
+                     # 自分の死に石に接触（助けようとしている？）
+                    is_trying_to_save = False
+                    for s_gtp in group.stones:
+                        row = int(s_gtp[1:]) - 1
+                        col = ord(s_gtp[0].upper()) - ord('A')
+                        if col >= 9: col -= 1
+                        dist = abs(last_move.row - row) + abs(last_move.col - col)
+                        if dist <= 1:
+                            is_trying_to_save = True
+                            break
                     
-                    if not is_good_move:
-                        msg = f"【警告：緩着】すでに死んでいる{group.color_label}の石（{group.stones[0]}周辺）にさらに手をかけました。これは「カス石」を相手にした効率の悪い手です。"
-                        collector.add(
-                            FactCategory.STRATEGY,
-                            msg,
-                            severity=4,
-                            metadata=group,
-                            scope=TemporalScope.IMMEDIATE
-                        )
+                    if is_trying_to_save:
+                        # 助ける手が有力でない限り警告
+                        is_good_move = False
+                        if analysis.candidates:
+                             top_move = analysis.candidates[0].move
+                             if top_move == last_move.to_gtp():
+                                 is_good_move = True
+
+                        if not is_good_move:
+                            msg = f"【警告：救済】助かる見込みの薄い{group.color_label}の石（{group.stones[0]}周辺）を動きました。これは被害を拡大する『重い手』になるリスクがあります。"
+                            collector.add(
+                                FactCategory.STRATEGY,
+                                msg,
+                                severity=4,
+                                metadata=group,
+                                scope=TemporalScope.IMMEDIATE
+                            )
 
             # 4. 厚み（Atsumi）としての評価 (EXISTING Fact for Context)
             # 現在の盤面ではなく、全体の状況として「厚みが存在する」ことを伝える

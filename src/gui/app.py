@@ -69,7 +69,9 @@ class GoReplayApp(GoAppBase):
             'update_display': self.update_display,
             'goto_move': self.show_image,
             'on_term_select': self.on_term_select,
-            'visualize_term': self.visualize_term
+            'visualize_term': self.visualize_term,
+            'prev_move': self.prev_move,
+            'next_move': self.next_move
         }
 
         self.setup_layout(callbacks)
@@ -183,6 +185,11 @@ class GoReplayApp(GoAppBase):
         
         self.info_view = InfoView(self.paned, callbacks)
         self.paned.add(self.info_view)
+        
+        # Debug toggle trace
+        if hasattr(self.info_view, 'debug_layers_visible'):
+            self.info_view.debug_layers_visible.trace_add('write', lambda *args: self.update_display())
+            
         self._setup_bottom_bar()
 
     def _load_dictionary_terms(self):
@@ -334,6 +341,10 @@ class GoReplayApp(GoAppBase):
             self.update_display()
 
     def update_display(self):
+        # SGFがロードされていない場合は中断
+        if not self.game.sgf_game:
+            return
+            
         curr = self.controller.current_move
         
         # 1. 必要なデータの準備

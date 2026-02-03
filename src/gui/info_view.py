@@ -330,14 +330,163 @@ class DictionaryTab(tk.Frame):
             self.callbacks['visualize_term'](term_name)
 
 
+class InspectorTab(tk.Frame):
+    """開発者用インスペクタ: 生の解析事実を表示"""
+    def __init__(self, master, debug_var=None):
+        super().__init__(master, bg="#ecf0f1")
+        self.debug_var = debug_var
+        self._setup_ui()
+        self._subscriptions = []
+        self._subscribe_to(AppEvents.FACT_DISCOVERED, self._on_fact_discovered)
+        self._subscribe_to(AppEvents.MOVE_CHANGED, lambda _: self._clear_list())
+
+    def _subscribe_to(self, event_type, callback):
+        event_bus.subscribe(event_type, callback)
+        self._subscriptions.append((event_type, callback))
+
+    def _setup_ui(self):
+        # Tools / Filter Header
+        header = tk.Frame(self, bg="#bdc3c7", pady=2)
+        header.pack(fill=tk.X)
+        tk.Label(header, text="Raw Facts Stream", bg="#bdc3c7", font=("Arial", 8, "bold")).pack(side=tk.LEFT, padx=5)
+        
+        if self.debug_var:
+            tk.Checkbutton(header, text="Show Layers", variable=self.debug_var, bg="#bdc3c7", 
+                           activebackground="#bdc3c7", font=("Arial", 8)).pack(side=tk.RIGHT, padx=5)
+        
+        # Fact List
+        self.list_frame = tk.Frame(self, bg="#ecf0f1")
+        self.list_frame.pack(fill=tk.BOTH, expand=True)
+        
+        self.canvas = tk.Canvas(self.list_frame, bg="#ecf0f1", highlightthickness=0)
+        self.scrollbar = ttk.Scrollbar(self.list_frame, orient="vertical", command=self.canvas.yview)
+        self.inner_frame = tk.Frame(self.canvas, bg="#ecf0f1")
+        
+        self.canvas.create_window((0, 0), window=self.inner_frame, anchor="nw", tags="inner")
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        self.inner_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+        self.canvas.bind("<Configure>", lambda e: self.canvas.itemconfig("inner", width=e.width))
+
+    def _on_fact_discovered(self, fact):
+        # メインスレッドで描画
+        self.after(0, lambda: self._add_fact_row(fact))
+
+    def _add_fact_row(self, fact):
+        row = tk.Frame(self.inner_frame, bg="#ffffff", bd=1, relief="solid", pady=2)
+        row.pack(fill=tk.X, pady=1, padx=2)
+        
+        # Severity Indicator
+        color = "#e74c3c" if fact.severity >= 5 else "#f1c40f" if fact.severity >= 4 else "#3498db"
+        tk.Frame(row, bg=color, width=5).pack(side=tk.LEFT, fill=tk.Y)
+        
+        # Text
+        content = tk.Frame(row, bg="white")
+        content.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
+        
+        header_txt = f"[{fact.category.value.upper()}] Scope: {fact.scope.value}"
+        tk.Label(content, text=header_txt, font=("Arial", 7, "bold"), bg="white", fg="#7f8c8d").pack(anchor="w")
+        tk.Label(content, text=fact.description, font=("Meiryo", 8), bg="white", wraplength=250, justify=tk.LEFT).pack(anchor="w")
+
+    def _clear_list(self):
+        self.after(0, self._do_clear)
+
+    def _do_clear(self):
+        for child in self.inner_frame.winfo_children():
+            child.destroy()
+        self.canvas.yview_moveto(0)
+
+    def cleanup(self):
+        for event_type, callback in self._subscriptions:
+            event_bus.unsubscribe(event_type, callback)
+        self._subscriptions = []
+
+
+class ConfigTab(tk.Frame):
+    """ロジックパラメータ調整用タブ"""
+    def __init__(self, master):
+        super().__init__(master, bg="#f0f0f0")
+        from core.analysis_config import AnalysisConfig
+        self.config = AnalysisConfig
+        self._setup_ui()
+        self.config.add_observer(self._on_config_updated)
+
+    def _setup_ui(self):
+        self.canvas = tk.Canvas(self, bg="#f0f0f0")
+        self.scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.inner = tk.Frame(self.canvas, bg="#f0f0f0")
+        
+        self.canvas.create_window((0, 0), window=self.inner, anchor="nw", tags="inner")
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+        self.inner.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+        self.canvas.bind("<Configure>", lambda e: self.canvas.itemconfig("inner", width=e.width))
+
+        self.controls = {}
+        self._refresh_params()
+
+    def _refresh_params(self):
+        params = self.config.get_all_params()
+        for key, value in params.items():
+            if key in self.controls: continue
+            
+            frame = tk.Frame(self.inner, bg="#ECF0F1", bd=1, relief="groove", pady=4, padx=4)
+            frame.pack(fill=tk.X, pady=2, padx=5)
+            
+            tk.Label(frame, text=key, font=("Arial", 8, "bold"), bg="#ECF0F1").pack(anchor="w")
+            
+            if isinstance(value, (int, float)):
+                var = tk.DoubleVar(value=value)
+                self.controls[key] = var
+                
+                from_v, to_v, res = -1.0, 1.0, 0.01
+                if "SEVERITY" in key: from_v, to_v, res = 1, 5, 1
+                elif "INFLUENCE" in key: from_v, to_v, res = 0.0, 5.0, 0.1
+                
+                scale = tk.Scale(frame, variable=var, from_=from_v, to=to_v, resolution=res, orient="horizontal", 
+                                 command=lambda v, k=key: self._on_ui_change(k, v), bg="#ECF0F1", length=200)
+                scale.pack(fill=tk.X)
+            
+    def _on_ui_change(self, key, value):
+        try:
+            val = float(value)
+            self.config.set_param(key, val)
+        except:
+            pass
+
+    def _on_config_updated(self, key, value):
+        if key in self.controls:
+            current_ui_val = self.controls[key].get()
+            if abs(current_ui_val - value) > 0.0001:
+                self.controls[key].set(value)
+
+    def cleanup(self):
+        self.config.remove_observer(self._on_config_updated)
+
+
 class InfoView(tk.Frame):
     """サイドパネル全体のコンテナ"""
     def __init__(self, master, callbacks):
         super().__init__(master, bg="#f0f0f0")
         self.callbacks = callbacks
         
+        # Debugトグル用
+        self.debug_layers_visible = tk.BooleanVar(value=False) # デフォルトOFFにする（ユーザー要望によりON変更可）
+
         self.notebook = ttk.Notebook(self)
         self.notebook.pack(fill=tk.BOTH, expand=True)
+        
+        # 左右キーがタブ移動に奪われるのを防ぎ、手順移動（callbacks）に回す
+        if 'prev_move' in callbacks:
+            self.notebook.bind("<Left>", lambda e: self._handle_nav(callbacks['prev_move']))
+        if 'next_move' in callbacks:
+            self.notebook.bind("<Right>", lambda e: self._handle_nav(callbacks['next_move']))
         
         # --- Analysis Tab ---
         self.analysis_tab = AnalysisTab(self.notebook, callbacks)
@@ -346,6 +495,52 @@ class InfoView(tk.Frame):
         # --- Go Dictionary Tab ---
         self.dict_tab = DictionaryTab(self.notebook, callbacks)
         self.notebook.add(self.dict_tab, text=" Go Dictionary ")
+
+        # --- Inspector Tab (New) ---
+        self.inspector_tab = InspectorTab(self.notebook, debug_var=self.debug_layers_visible)
+        self.notebook.add(self.inspector_tab, text=" Inspector ")
+
+        # --- Config Tab (New) ---
+        self.config_tab = ConfigTab(self.notebook)
+        self.notebook.add(self.config_tab, text=" Config ")
+
+        # 互換性のためのエイリアス（既存のAppクラスからの呼び出しに対応）
+        self.btn_comment = self.analysis_tab.btn_comment
+        self.btn_report = self.analysis_tab.btn_report
+        self.review_mode = self.analysis_tab.review_mode
+        self.show_heatmap = self.analysis_tab.show_heatmap
+        self.edit_mode = self.analysis_tab.edit_mode
+        self.analysis_tab.inspector_visible = tk.BooleanVar(value=True) 
+        
+    def _handle_nav(self, callback):
+        """キー入力を手順移動として処理し、タブ移動イベントを遮断する"""
+        callback()
+        return "break"
+
+    def cleanup(self):
+        """内部のタブを含め、リソースを解放する"""
+        logger.debug("Cleaning up InfoView tabs...", layer="GUI")
+        self.analysis_tab.cleanup()
+        self.inspector_tab.cleanup()
+        self.config_tab.cleanup()
+
+    def update_stats(self, wr, score, commentary):
+        self.analysis_tab.update_stats(wr, score)
+
+    def set_commentary(self, text):
+        self.analysis_tab.set_commentary(text)
+
+    def update_graph(self, wr_history, current_idx):
+        self.analysis_tab.update_graph(wr_history, current_idx)
+
+    def update_mistake_button(self, color, idx, text, state):
+        self.analysis_tab.update_mistake_button(color, idx, text, state)
+
+    def set_terms_list(self, term_names):
+        self.dict_tab.set_terms_list(term_names)
+
+    def set_term_details(self, description, can_visualize=True):
+        self.dict_tab.set_term_details(description, can_visualize)
 
         # 互換性のためのエイリアス（既存のAppクラスからの呼び出しに対応）
         self.btn_comment = self.analysis_tab.btn_comment

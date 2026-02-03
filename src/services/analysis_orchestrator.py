@@ -96,5 +96,32 @@ class AnalysisOrchestrator:
         # 6. 後続処理用のデータ保持
         collector.raw_analysis = ana_data 
         collector.context = curr_ctx
+        
+        # 7. 事実のフィルタリング（焦点の絞り込み）
+        self._filter_facts(collector)
 
         return collector
+
+    def _filter_facts(self, collector: FactCollector):
+        """事実の競合を解決し、最も重要な指摘に焦点を絞る"""
+        from core.inference_fact import FactCategory, TemporalScope
+        
+        # 1. 致命的な悪形（Severity >= 4）がある場合、戦略的警告（厚み接近・カス石）をミュートする
+        # 現在の手(IMMEDIATE)または予測進行(PREDICTED)のいずれかで悪形があれば対象
+        has_bad_shape = any(
+            f.category == FactCategory.SHAPE and \
+            f.severity >= 4 and \
+            f.scope in [TemporalScope.IMMEDIATE, TemporalScope.PREDICTED] \
+            for f in collector.facts
+        )
+        
+        if has_bad_shape:
+            # IMMEDIATEスコープのSTRATEGY（厚み・カス石警告）を削除
+            # ※ PREDICTEDな戦略警告は今のところ生成していないが、あればそれも削除対象
+            original_count = len(collector.facts)
+            collector.facts = [
+                f for f in collector.facts 
+                if not (f.category == FactCategory.STRATEGY and f.scope in [TemporalScope.IMMEDIATE, TemporalScope.PREDICTED])
+            ]
+            if len(collector.facts) < original_count:
+                logger.debug("Filtered out redundant STRATEGY facts due to BAD SHAPE detection (IMMEDIATE or PV).", layer="ORCHESTRATOR")
