@@ -129,10 +129,11 @@ class ShapeDetector:
         return facts
 
     def detect_all_facts(self, sim_ctx: SimulationContext, color: Color, analysis_result=None) -> List[InferenceFact]:
-        """盤面上の指定された色のすべての石について形状検知を行う"""
-        all_facts = []
+        """盤面上の指定された色のすべての石について形状検知を行う（クラスタリング適用）"""
+        raw_facts = []
         seen_shapes = set() # (key, gtp_coord)
 
+        # 1. 全点スキャン
         for r in range(sim_ctx.board_size):
             for c in range(sim_ctx.board_size):
                 p = Point(r, c)
@@ -146,9 +147,100 @@ class ShapeDetector:
                             if shape_id not in seen_shapes:
                                 seen_shapes.add(shape_id)
                                 f.scope = TemporalScope.EXISTING
-                                all_facts.append(f)
+                                # フォーカスポイント（検知座標）をメタデータに追加しておくと便利
+                                # f.metadata は frozen dataclass ではないはずだが、念のため
+                                f.focus_point = p
+                                raw_facts.append(f)
         
-        return all_facts
+        # 2. クラスタリング (同一形状かつ近傍のものはまとめる)
+        clustered_facts = self._cluster_facts(raw_facts, sim_ctx.board_size)
+        return clustered_facts
+
+    def _cluster_facts(self, facts: List[InferenceFact], board_size: int) -> List[InferenceFact]:
+        """同一の形状キーを持ち、かつ近接しているFactを集約する"""
+        if not facts: return []
+        
+        # キーごとに分類
+        by_key = {}
+        for f in facts:
+            key = getattr(f.metadata, 'key', 'unknown')
+            if key not in by_key: by_key[key] = []
+            by_key[key].append(f)
+            
+        final_facts = []
+        
+        for key, group in by_key.items():
+            # 座標(Point)を取り出す
+            # detect_all_facts で focus_point を付与している前提
+            # 付与されていない場合 (detect_facts_at 単体呼び出し時など) はスキップ
+            with_points = [f for f in group if hasattr(f, 'focus_point')]
+            without_points = [f for f in group if not hasattr(f, 'focus_point')]
+            final_facts.extend(without_points)
+            
+            if not with_points:
+                continue
+                
+            # 単純な距離ベースのクラスタリング
+            clusters = []
+            visited = set()
+            
+            for i, f1 in enumerate(with_points):
+                if i in visited: continue
+                visited.add(i)
+                current_cluster = [f1]
+                
+                # 貪欲法で近傍を取り込む
+                # 本来はUnion-FindやBFSがいいが、事実数は少ないのでループで十分
+                changed = True
+                while changed:
+                    changed = False
+                    for j, f2 in enumerate(with_points):
+                        if j in visited: continue
+                        
+                        # クラスター内のいずれかと近いか？
+                        is_near = False
+                        for c_member in current_cluster:
+                            # 距離2以内（マンハッタン距離）なら同一グループとみなす
+                            dist = abs(c_member.focus_point.row - f2.focus_point.row) + \
+                                   abs(c_member.focus_point.col - f2.focus_point.col)
+                            if dist <= 2:
+                                is_near = True
+                                break
+                        
+                        if is_near:
+                            visited.add(j)
+                            current_cluster.append(f2)
+                            changed = True
+                
+                clusters.append(current_cluster)
+            
+            # 各クラスターから代表Factを生成
+            for cluster in clusters:
+                # 代表としてseverityが最も高いもの、あるいは最初のものを選ぶ
+                representative = max(cluster, key=lambda x: x.severity)
+                
+                # 必要ならメッセージを加工
+                # "D4の..." -> "D4付近の..."
+                if len(cluster) > 1:
+                    # 座標の重心などを計算してもいいが、代表点のままで "〜付近" とする
+                    coord_str = representative.focus_point.to_gtp()
+                    # メッセージ内の座標表記を置換するなど高度な処理も可能だが、
+                    # ここでは元のメッセージを生かすか、汎用メッセージにする。
+                    # ShapeDetectorのメッセージは format(coord) されているので、
+                    # 既に "D4" 等が入っている。
+                    # 簡易的に、代表座標を使って書き換える。
+                    rep_key = getattr(representative.metadata, 'key', '')
+                    
+                    # メッセージ生成の再構築は Pattern 定義がないと難しい。
+                    # したがって、代表Factをそのまま使い、description に (他X箇所) を添える程度にするか、
+                    # あるいは "D4付近" に書き換えるか。
+                    # 日本語依存だが "（D4）" を "（D4付近）" に変えるのが手っ取り早い
+                    if "（" in representative.description and "）" in representative.description:
+                        representative.description = representative.description.replace(f"（{coord_str}）", f"（{coord_str}付近）")
+                        
+                final_facts.append(representative)
+                
+        return final_facts
 
     def _detect_inefficient_moves(self, context: DetectionContext) -> List[InferenceFact]:
         facts = []

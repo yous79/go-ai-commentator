@@ -3742,3 +3742,60 @@
 [2026-02-02 16:34:51] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
 [2026-02-02 16:34:51] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
 [2026-02-02 16:34:52] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-02-02 16:34:54] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-02-02 16:34:54] [STARTUP] [INFO] API Server is Ready.
+[2026-02-02 16:35:11] [GUI] [INFO] Switching to Replay Mode...
+[2026-02-02 16:35:11] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-02-02 16:35:12] [STARTUP] [INFO] AI Services Initialized.
+[2026-02-02 16:35:30] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-02-02 16:35:39] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 16:35:39] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 16:35:41] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-02-02 16:35:41] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-02-02 16:35:42] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 16:35:42] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 16:36:06] [SYSTEM] [WARNING] [BOARD] Result: ILLEGAL | Reason: OCCUPIED at F5
+[2026-02-02 16:36:06] [ORCHESTRATOR] [WARNING] Analyzed move F5 is considered ILLEGAL by local rule engine.
+[2026-02-02 16:36:37] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-02-02 16:36:42] [SYSTEM] [WARNING] [BOARD] Result: ILLEGAL | Reason: OCCUPIED at F5
+[2026-02-02 16:36:42] [ORCHESTRATOR] [WARNING] Analyzed move F5 is considered ILLEGAL by local rule engine.
+[2026-02-02 16:52:54] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-02-02 16:52:54] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-02-02 16:52:55] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-02-02 16:52:57] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-02-02 16:52:57] [STARTUP] [INFO] API Server is Ready.
+[2026-02-02 16:53:03] [GUI] [INFO] Switching to Replay Mode...
+[2026-02-02 16:53:03] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-02-02 16:53:04] [STARTUP] [INFO] AI Services Initialized.
+[2026-02-02 16:53:25] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\test
+[2026-02-02 16:53:32] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 16:53:32] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 16:53:36] [API_CLIENT] [ERROR] API Connection Failed at game/state: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=3)
+[2026-02-02 16:53:36] [API_CLIENT] [WARNING] Circuit Breaker: Failure recorded (1/3)
+[2026-02-02 16:53:39] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 4)
+[2026-02-02 16:53:39] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-02-02 16:54:01] [SYSTEM] [WARNING] [BOARD] Result: ILLEGAL | Reason: OCCUPIED at F5
+[2026-02-02 16:54:01] [ORCHESTRATOR] [WARNING] Analyzed move F5 is considered ILLEGAL by local rule engine.
+[2026-02-02 16:56:22] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 4)
+[2026-02-02 16:56:30] [SYSTEM] [WARNING] [BOARD] Result: ILLEGAL | Reason: OCCUPIED at F5
+[2026-02-02 16:56:30] [ORCHESTRATOR] [WARNING] Analyzed move F5 is considered ILLEGAL by local rule engine.
+[2026-02-02 17:02:42] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-02-02 17:02:42] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-02-02 17:02:43] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-02-02 17:02:45] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-02-02 17:02:45] [STARTUP] [INFO] API Server is Ready.
+[2026-02-02 17:03:26] [GUI] [INFO] Switching to Replay Mode...
+[2026-02-02 17:03:26] [ASYNC] [INFO] AsyncTaskManager initialized with 3 daemon workers.
+[2026-02-02 17:03:27] [STARTUP] [INFO] AI Services Initialized.
+[2026-02-02 17:05:05] [CONTROLLER] [INFO] Image directory set to: C:\Users\youst\go-ai-commentator\output_images\アキ三角
+[2026-02-02 17:05:22] [SYSTEM] [INFO] [BOARD] New KO established at F4
+[2026-02-02 17:05:22] [SYSTEM] [INFO] [BOARD] New KO established at F4
+[2026-02-02 17:05:36] [AI_COMMENTATOR] [INFO] AI Commentary Generation Start (Move 7)
+[2026-02-02 17:05:36] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 7)
+[2026-02-02 17:06:44] [ORCHESTRATOR] [INFO] Full Analysis Orchestration Start (History len: 7)
+[2026-02-02 17:06:45] [SYSTEM] [INFO] [BOARD] New KO established at D6
+[2026-02-03 10:53:25] [STARTUP] [INFO] Launching application in Replay/Analysis Mode...
+[2026-02-03 10:53:25] [STARTUP] [INFO] System Startup: Initializing Intelligence Infrastructure
+[2026-02-03 10:53:27] [STARTUP] [INFO] Launching API Server: C:\Users\youst\go-ai-commentator\src\katago_api.py
+[2026-02-03 10:53:29] [STARTUP] [INFO] Waiting for API server to initialize... (0s)
+[2026-02-03 10:53:29] [STARTUP] [INFO] API Server is Ready.

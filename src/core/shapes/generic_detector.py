@@ -15,6 +15,7 @@ class GenericPatternDetector(BaseShape):
         self.key = pattern_def.get("key", "unknown")
         self.name = pattern_def.get("name", "Unknown Shape")
         self.category = pattern_def.get("category", "normal")
+        self.target_side = pattern_def.get("target_side", "self") # self or opponent
         self.message_template = pattern_def.get("message", "{}を検知しました。")
         self.patterns = self._prepare_patterns(pattern_def.get("patterns", []))
 
@@ -97,6 +98,10 @@ class GenericPatternDetector(BaseShape):
             # 2. 'self' (自分の石) -> scan_all モード用
             target_states = ["last", "self"]
             
+            # 相手の形を検知する場合は、相手の石 ('opponent') をスキャンの起点にする
+            if self.target_side == "opponent":
+                target_states = ["opponent"]
+
             for state in target_states:
                 for i, target_el in enumerate(variant["elements"]):
                     if target_el.get("state") != state: 
@@ -130,6 +135,16 @@ class GenericPatternDetector(BaseShape):
         ref_pt = target_pt or context.last_move
         ref_color = context.curr_board.get(ref_pt) if ref_pt else context.last_color
         
+        # 相手の形を検知する場合は、視点（自分/相手）を論理的に反転させる
+        # 「自分(last)」の石を「相手(opponent)」として扱い、「相手」の石を「自分」として扱う
+        is_opponent_target = getattr(self, 'target_side', 'self') == 'opponent'
+        
+        if is_opponent_target:
+             # 視点の反転: パターン定義上の 'last'/'self' は、実際には相手の石（opp_color）であるべき
+             # パターン定義上の 'opponent' は、実際には自分の石（ref_color）であるべき
+             # したがって、ここで ref_color を反転させておけば、以降のロジックをそのまま使える
+             ref_color = ref_color.opposite() if ref_color else None
+
         last_color_char = ref_color.value if ref_color else '.'
         opp_color_char = 'w' if last_color_char == 'b' else 'b'
         opp_color_obj = ref_color.opposite() if ref_color else None
@@ -153,6 +168,10 @@ class GenericPatternDetector(BaseShape):
             actual_char = actual.value if actual else '.'
             
             match = False
+            # target_side='opponent' の場合、ref_colorが「相手」の色になっている。
+            # 'self'/'last' (定義上) -> 実際は「相手」 -> ref_color
+            # 'opponent' (定義上)    -> 実際は「自分」 -> opp_color_obj
+            
             if state_needed == "self" or state_needed == "last":
                 match = (actual_char == last_color_char)
             elif state_needed == "opponent":

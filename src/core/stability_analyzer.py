@@ -43,9 +43,19 @@ class StabilityAnalyzer:
                 status_msg = "は完全に安定しており、当面の手入れは不要です。"
             
             if status_msg:
-                stones_str = ",".join(r.stones[:3]) + ("..." if len(r.stones) > 3 else "")
-                group_type = "戦略的グループ (Move Group)" if r.is_strategic else "グループ"
-                desc = f"{r.color_label}の{group_type} [{stones_str}] {status_msg}"
+                # 代表的な座標（中心付近や最小インデックス）を表示
+                # stones は文字列リストだが、ソート済みか不明。
+                # 基本的に左上が先頭に来る順序で追加されているはず。
+                first_stone = r.stones[0] if r.stones else "?"
+                num_stones = len(r.stones)
+                
+                group_label = f"{first_stone}付近の{num_stones}子" if num_stones > 1 else f"{first_stone}"
+                
+                # group_type = "戦略的グループ (Move Group)" if r.is_strategic else "グループ"
+                # "Move Group" は少し内部的すぎるので、表現を柔らかくする
+                
+                desc = f"{r.color_label}の{group_label}は、{status_msg}"
+                # desc = f"{r.color_label}の{group_type} [{stones_str}] {status_msg}"
                 
                 facts.append(InferenceFact(category, desc, severity, r))
                 

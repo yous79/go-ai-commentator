@@ -1,0 +1,49 @@
+{
+    "key": "force_aki_sankaku",
+    "name": "アキ三角強制",
+    "category": "good",
+    "target_side": "opponent",
+    "message": "相手にアキ三角の愚形を強いる厳しい手です。",
+    "patterns": [
+        {
+            "elements": [
+                {
+                    "offset": [
+                        0,
+                        0
+                    ],
+                    "state": "last"
+                },
+                {
+                    "offset": [
+                        0,
+                        1
+                    ],
+                    "state": "opponent"
+                },
+                {
+                    "offset": [
+                        1,
+                        0
+                    ],
+                    "state": "opponent"
+                },
+                {
+                    "offset": [
+                        1,
+                        1
+                    ],
+                    "state": "opponent"
+                }
+            ],
+            "constraints": [
+                {
+                    "type": "different_group",
+                    "targets": [
+                        "target"
+                    ]
+                }
+            ]
+        }
+    ]
+}

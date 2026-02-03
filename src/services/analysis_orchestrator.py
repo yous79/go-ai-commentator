@@ -33,7 +33,7 @@ class AnalysisOrchestrator:
         # プロバイダの登録
         self.providers: List[BaseFactProvider] = [
             BasicStatsFactProvider(board_size),
-            ShapeFactProvider(board_size, self.detector),
+            ShapeFactProvider(board_size, self.detector, self.simulator),
             UrgencyFactProvider(board_size, self.simulator, self.detector),
             StabilityFactProvider(board_size, self.stability_analyzer),
             StrategicFactProvider(board_size, self.stability_analyzer),
@@ -91,11 +91,6 @@ class AnalysisOrchestrator:
             collector.add(FactCategory.STRATEGY, "一部の解析（緊急度など）が制限時間内に完了しませんでした。", severity=3)
         
         logger.debug(f"Step 3 finished in {time.time()-t0:.2f}s", layer="ORCHESTRATOR")
-
-        # 5. ルール適合性チェック (デバッグ用)
-        if curr_ctx.last_move:
-            if not curr_ctx.board.is_legal(curr_ctx.last_move, curr_ctx.last_color):
-                logger.warning(f"Analyzed move {curr_ctx.last_move.to_gtp()} is considered ILLEGAL by local rule engine.", layer="ORCHESTRATOR")
 
         # 6. 後続処理用のデータ保持
         collector.raw_analysis = ana_data 

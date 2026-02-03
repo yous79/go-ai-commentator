@@ -1,0 +1,42 @@
+{
+    "key": "hane_atama",
+    "name": "二目の頭",
+    "category": "good",
+    "target_side": "opponent",
+    "message": "二目の頭を叩く絶好点です。",
+    "patterns": [
+        {
+            "elements": [
+                {
+                    "offset": [
+                        0,
+                        0
+                    ],
+                    "state": "last"
+                },
+                {
+                    "offset": [
+                        0,
+                        1
+                    ],
+                    "state": "opponent"
+                },
+                {
+                    "offset": [
+                        0,
+                        2
+                    ],
+                    "state": "opponent"
+                },
+                {
+                    "offset": [
+                        1,
+                        1
+                    ],
+                    "state": "last",
+                    "label": "base"
+                }
+            ]
+        }
+    ]
+}
