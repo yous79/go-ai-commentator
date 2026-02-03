@@ -236,25 +236,37 @@ class AnalysisService:
         def _task():
             # asyncメソッドを同期コンテキストから呼び出すためのエントリーポイント
             async def _run_async():
+                # 0. 1手前の解析結果をキャッシュから取得
+                prev_result = None
+                if len(history) > 1:
+                    prev_history = history[:-1]
+                    prev_hash = self._get_history_hash(prev_history)
+                    if prev_hash in self._cache:
+                         prev_result = self._cache[prev_hash]
+                
                 # 1. 解説生成 (内部で orchestrator.analyze_full を実行し、並列解析が行われる)
-                commentary_text = await gemini.generate_commentary(move_idx, history, board_size)
+                # generate_commentary returns {"text": str, "collector": FactCollector}
+                res = await gemini.generate_commentary(move_idx, history, board_size, prev_analysis=prev_result)
+                commentary_text = res["text"]
+                collector = res["collector"]
                 
-                # 2. Orchestrator が収集した情報を再利用して図を生成
-                # analyze_full は generate_commentary 内で既に呼ばれているが、
-                # context や raw_analysis を取得するために再度呼んでも、
-                # 内部が非同期並列化されているため、API待機時間は重複しない
-                collector = await gemini.orchestrator.analyze_full(history, board_size)
-                
+                # IMPORTANT: collector might be None if analysis failed
+                if not collector:
+                     # Fallback or error handling if needed, though generate_commentary handles errors gracefully usually
+                     pass
+
+                # Pre-calculate paths
                 rec_path = None
                 thr_path = None
                 
-                # UrgencyMetadata を探す
-                from core.inference_fact import FactCategory, UrgencyMetadata
-                u_fact = next((f for f in collector.facts if f.category == FactCategory.URGENCY), None)
-                
-                if u_fact and isinstance(u_fact.metadata, UrgencyMetadata):
-                    meta = u_fact.metadata
-                    curr_ctx = collector.context
+                if collector:
+                    # UrgencyMetadata を探す
+                    from core.inference_fact import FactCategory, UrgencyMetadata
+                    u_fact = next((f for f in collector.facts if f.category == FactCategory.URGENCY), None)
+                    
+                    if u_fact and isinstance(u_fact.metadata, UrgencyMetadata):
+                        meta = u_fact.metadata
+                        curr_ctx = collector.context
                     
                     # 成功図（最善進行）
                     best_pv = collector.raw_analysis.candidates[0].pv if collector.raw_analysis.candidates else []

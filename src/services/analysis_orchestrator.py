@@ -43,7 +43,7 @@ class AnalysisOrchestrator:
             KoFactProvider(board_size)
         ]
 
-    async def analyze_full(self, history, board_size=None) -> FactCollector:
+    async def analyze_full(self, history, board_size=None, prev_analysis: Optional[AnalysisResult] = None) -> FactCollector:
         """全ての解析事実を収集し、トリアージ済みの FactCollector を返す (非同期並列版)"""
         import asyncio
         bs = board_size or self.board_size
@@ -66,6 +66,7 @@ class AnalysisOrchestrator:
         logger.debug("Step 2: Reconstructing Board Context...", layer="ORCHESTRATOR")
         t0 = time.time()
         curr_ctx = await asyncio.to_thread(self.simulator.reconstruct_to_context, history, bs)
+        curr_ctx.prev_analysis = prev_analysis
         logger.debug(f"Step 2 finished in {time.time()-t0:.2f}s", layer="ORCHESTRATOR")
 
         # 3. 各プロバイダによる事実生成の並列実行

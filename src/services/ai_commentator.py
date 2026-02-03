@@ -28,7 +28,7 @@ class GeminiCommentator:
                 content = content.replace("{" + k + "}", str(v))
             return content
 
-    async def generate_commentary(self, move_idx, history, board_size=19):
+    async def generate_commentary(self, move_idx, history, board_size=19, prev_analysis=None):
         """【事実先行型】Orchestratorから得た構造化データに基づき、AIによる解説を生成する (非同期版)"""
         try:
             from utils.logger import logger
@@ -36,10 +36,13 @@ class GeminiCommentator:
             logger.info(f"AI Commentary Generation Start (Move {move_idx})", layer="AI_COMMENTATOR")
             
             # 1. Orchestratorによる一括並列解析
-            collector = await self.orchestrator.analyze_full(history, board_size)
+            collector = await self.orchestrator.analyze_full(history, board_size, prev_analysis=prev_analysis)
             ana_result = getattr(collector, 'raw_analysis', None)
             if not ana_result:
-                return "【エラー】解析データの取得に失敗しました。"
+                return {
+                    "text": "【エラー】解析データの取得に失敗しました。",
+                    "collector": None
+                }
 
             # 2. 事実のトリアージと時間軸別サマリー作成
             from core.inference_fact import TemporalScope
@@ -81,9 +84,17 @@ class GeminiCommentator:
                 "You MUST NOT call any tools or functions. You already have all necessary analysis data.\n"
                 "Your task is ONLY to provide a text commentary based on the facts provided above.\n"
                 "Focus on reasoning and instruction, using the provided prioritized facts.\n"
+                "IMPORTANT: The analysis provided is from the perspective of {next_player}. Talk to {next_player} about {last_player}'s move.\n"
             )
             
-            user_prompt = self._load_prompt("analysis_request", move_idx=move_idx, history=history)
+            # 手番（プレイヤー色）の明確化
+            # history[-1] は直前に打たれた手。move_idx は次の手番の手数（例：1手目黒、その直後のmove_idx=1の局面で、次は白番）
+            # よって、直前の手番(last_player)は move_idxが奇数なら黒、偶数なら白。
+            # 例: move_idx=1 (1手目黒が打たれた直後) -> last=黒, next=白
+            last_c_jp = "黒" if (move_idx % 2 != 0) else "白"
+            next_c_jp = "白" if last_c_jp == "黒" else "黒"
+            
+            user_prompt = self._load_prompt("analysis_request", move_idx=move_idx, history=history, last_player=last_c_jp, next_player=next_c_jp)
             user_prompt = f"【最新の解析事実】\n{fact_summary}\n\n{user_prompt}"
 
             # 5. 生成リクエスト (Gemini API)
@@ -94,10 +105,12 @@ class GeminiCommentator:
             ]]
 
             async def _call_gemini_async(sys, usr):
+                # システムプロンプト内の変数も置換
+                final_sys = sys.replace("{last_player}", last_c_jp).replace("{next_player}", next_c_jp)
                 return await asyncio.to_thread(
                     self.client.models.generate_content,
                     model=GEMINI_MODEL_NAME,
-                    config=types.GenerateContentConfig(system_instruction=sys, safety_settings=safety),
+                    config=types.GenerateContentConfig(system_instruction=final_sys, safety_settings=safety),
                     contents=[types.Content(role="user", parts=[types.Part(text=usr)])]
                 )
 
@@ -110,22 +123,14 @@ class GeminiCommentator:
             
             if not final_text:
                 logger.error("Empty response from Gemini", layer="AI")
-                return f"【解析事実】\n{fact_summary}\n\n(AIがテキスト解説を生成できませんでした。)"
+                return {
+                    "text": f"【解析事実】\n{fact_summary}\n\n(AIがテキスト解説を生成できませんでした。)",
+                    "collector": collector
+                }
 
-            # --- 高速化・品質保証ロジック (案1 & 案2) ---
+            # --- 高速化・品質保証ロジック ---
             
-            # 1. 検証が必要な重要局面か判定 (案1)
-            from core.inference_fact import FactCategory
-            needs_strict_check = False
-            for f in collector.facts:
-                # 失着、急場、または重要度4以上の事実がある場合は厳格チェック対象
-                if (f.category == FactCategory.MISTAKE and f.severity >= 4) or \
-                   (f.category == FactCategory.URGENCY and f.severity >= 5) or \
-                   (f.severity >= 5):
-                    needs_strict_check = True
-                    break
-            
-            # 2. 自己診断タグの解析とリトライ (案2)
+            # 1. 自己診断タグの解析とリトライ
             if "[自己診断: 再考が必要" in final_text:
                 logger.warning("AI detected its own mistake via Self-Diagnosis. Retrying...", layer="AI")
                 diag_reason = final_text.split("[自己診断: 再考が必要")[-1].split("]")[0].strip("（）")
@@ -136,55 +141,6 @@ class GeminiCommentator:
                 if retry_res.candidates and retry_res.candidates[0].content.parts:
                     final_text = "".join([p.text for p in retry_res.candidates[0].content.parts if p.text])
                     logger.info("AI Commentary Corrected (Self-Check).", layer="AI")
-                # リトライした場合は、念のため外部検証も行う（論理が複雑な可能性が高いため）
-                needs_strict_check = True
-
-            # 3. 外部検証（Double Check）の実行判定
-            if needs_strict_check:
-                # --- Self-Correction (Double Check) ---
-                try:
-                    logger.debug("Starting External Self-Correction (Double Check)...", layer="AI")
-                    
-                    last_move_gtp = history[-1][1] if history else "なし"
-                    player_c = "黒" if (move_idx % 2 != 0) else "白" # move_idxは次の手番を示すことが多いが、解説対象の手番に合わせる
-                    # AI解説は「直前の手（historyの最後）」について語ることが多いが、
-                    # generate_commentary(move_idx) は「局面move_idx」に対する解説（つまりmove_idx手目の直後）。
-                    # なので history[-1] が直前に打たれた手。
-                    # move_idx が 1 なら 1手目(黒)が打たれた後の局面。
-                    
-                    verify_prompt = self._load_prompt(
-                        "commentary_verification", 
-                        facts=fact_summary, 
-                        generated_text=final_text,
-                        move_idx=move_idx,
-                        player_color=player_c,
-                        last_move=last_move_gtp
-                    )
-                    
-                    logger.debug("Calling Gemini for verification...", layer="AI")
-                    check_res = await _call_gemini_async("You are a strict logic checker.", verify_prompt)
-                    
-                    if not check_res.candidates or not check_res.candidates[0].content.parts:
-                        logger.debug("Verification response was empty, skipping self-correction.", layer="AI")
-                    else:
-                        check_text = check_res.candidates[0].content.parts[0].text.strip()
-                        if check_text.startswith("NG"):
-                            logger.warning(f"AI Logic Error Detected: {check_text}", layer="AI")
-                            # 指摘事項を含めてリトライ
-                            retry_prompt = f"{user_prompt}\n\n=== 前回の生成に対する修正指示 ===\nあなたの前回の回答には以下の論理矛盾がありました：\n{check_text}\n\nこの指摘を修正し、正しい解説を再生成してください。"
-                            
-                            logger.info("Calling Gemini for RE-GENERATION (Retry)...", layer="AI")
-                            retry_res = await _call_gemini_async(sys_inst, retry_prompt)
-                            if retry_res.candidates and retry_res.candidates[0].content.parts:
-                                final_text = "".join([p.text for p in retry_res.candidates[0].content.parts if p.text])
-                                logger.info("AI Commentary Corrected and Regenerated.", layer="AI")
-                        else:
-                            logger.debug(f"Verification Result: {check_text[:100]}...", layer="AI")
-                except Exception as e:
-                    logger.debug(f"Verification Process Error (Ignored): {e}", layer="AI")
-                    pass
-            else:
-                logger.info("Skipping external verification for routine scenario.", layer="AI")
 
             # --- 最終クリーンアップ処理 ---
 
@@ -196,13 +152,22 @@ class GeminiCommentator:
             # 解説に勝率などの具体的数値が全く含まれていない場合、念のためFactsを添える
             has_wr = any(x in final_text for x in ["%", "％", "勝率", "リード", "目"])
             if not has_wr:
-                return f"【解析事実】\n{fact_summary}\n\n---\n{final_text}"
+                return {
+                    "text": f"【解析事実】\n{fact_summary}\n\n---\n{final_text}",
+                    "collector": collector
+                }
 
-            return final_text
+            return {
+                "text": final_text,
+                "collector": collector
+            }
 
         except Exception as e:
             traceback.print_exc()
-            return f"SYSTEM ERROR: {str(e)}"
+            return {
+                "text": f"SYSTEM ERROR: {str(e)}",
+                "collector": None
+            }
 
     def reset_chat(self):
         pass
