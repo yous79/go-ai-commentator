@@ -29,9 +29,6 @@ class StabilityAnalyzer:
                 status_msg = f"は生存が確定しておらず、味が悪い（不安定な）状態です。コウや手が生じる余地があります (不確実性: {r.uncertainty:.2f})。"
             # --- End AJI Logic ---
             
-            elif r.status == 'dead':
-                severity = 5 if is_large else 4
-                status_msg = "は、AIの認識上すでに戦略的役割を終えた『カス石』です。これ以上手をかけず、捨て石として活用するか、放置して大場に先行すべき局面です。"
             elif r.status == 'critical':
                 severity = 5
                 status_msg = "は生存確率が極めて低く、死に体に近い状態です。強引に助け出すよりも、周囲への響きを考慮して軽く扱う判断が求められます。"
@@ -71,15 +68,13 @@ class StabilityAnalyzer:
         groups = self._find_strategic_groups(board, ownership_map)
         analysis_results = []
 
-        dead_thresh = AnalysisConfig.get("KASUISHI_THRESHOLD") # e.g. -0.85
         crit_thresh = AnalysisConfig.get("CRITICAL_THRESHOLD") # e.g. 0.2
         weak_thresh = AnalysisConfig.get("WEAK_THRESHOLD")     # e.g. 0.5
         atsumi_thresh = AnalysisConfig.get("ATSUMI_THRESHOLD") # e.g. 0.9
 
         for color_obj, stones, avg_stability, is_strategic in groups:
             # ステータス判定 (AnalysisConfigの閾値を使用)
-            if avg_stability <= dead_thresh:     status = "dead"
-            elif avg_stability < crit_thresh:    status = "critical"
+            if avg_stability < crit_thresh:      status = "critical"
             elif avg_stability < weak_thresh:    status = "weak"
             elif avg_stability < atsumi_thresh:  status = "stable"
             else:                                status = "strong"

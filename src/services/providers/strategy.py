@@ -69,7 +69,7 @@ class StrategicFactProvider(BaseFactProvider):
             # --- Statusごとの厳格なフィルタリング ---
             from core.analysis_config import AnalysisConfig
             atsumi_thresh = AnalysisConfig.get("ATSUMI_THRESHOLD")   # e.g. 0.90
-            kasuishi_thresh = AnalysisConfig.get("KASUISHI_THRESHOLD") # e.g. -0.85
+            atsumi_thresh = AnalysisConfig.get("ATSUMI_THRESHOLD")   # e.g. 0.90
 
             if group.status == 'strong':
                 # 黒でStrongならOwn > 0.9, 白でStrongならOwn < -0.9 (abs > 0.9)
@@ -104,77 +104,67 @@ class StrategicFactProvider(BaseFactProvider):
                         scope=TemporalScope.IMMEDIATE
                     )
 
-            elif group.status == 'dead':
-                # 黒でDeadならOwn < -0.85, 白でDeadならOwn > 0.85 (逆の色が支配)
-                # つまり「支配度」は -current_val (相手の支配)
-                current_val = avg_own if is_black else -avg_own
-                # current_val は マイナスであるはず（死んでいるから）
-                # 相手の支配度が閾値を超えているか？ -> current_val < -0.85
-                if current_val > kasuishi_thresh:
-                    continue # まだ味が残っている（完全なカス石ではない）
-
-                # 3. 最新手と「過去の死に石（カス石）」との関係チェック
-                # カス石取り（相手の死に石への手入れ）
-                if group.color_label != current_color.label:
-                    # 厳格化: 「接触 (Distance<=1)」のみ警告対象とする
-                    is_touching = False
-                    for s_gtp in group.stones:
-                        row = int(s_gtp[1:]) - 1
-                        col = ord(s_gtp[0].upper()) - ord('A')
-                        if col >= 9: col -= 1
-                        dist = abs(last_move.row - row) + abs(last_move.col - col)
-                        if dist <= 1:
-                            is_touching = True
-                            break
-                    
-                    if is_touching:
-                        is_good_move = False
-                        if analysis.candidates:
-                             top_move = analysis.candidates[0].move
-                             if top_move == last_move.to_gtp():
-                                 is_good_move = True
-                        
-                        if not is_good_move:
-                            msg = f"【警告：緩着】すでに死んでいる{group.color_label}の石（{group.stones[0]}周辺）にわざわざ接触しました。これは「カス石」を相手にした効率の悪い手です。"
-                            collector.add(
-                                FactCategory.STRATEGY,
-                                msg,
-                                severity=4,
-                                metadata=group,
-                                scope=TemporalScope.IMMEDIATE
-                            )
+            elif group.status == 'critical':
+                # --- v2 Logic: Stability < CRITICAL_THRESHOLD なグループへの干渉をチェック ---
+                is_touching = False
+                for s_gtp in group.stones:
+                    row = int(s_gtp[1:]) - 1
+                    col = ord(s_gtp[0].upper()) - ord('A')
+                    if col >= 9: col -= 1
+                    dist = abs(last_move.row - row) + abs(last_move.col - col)
+                    if dist <= 1:
+                        is_touching = True
+                        break
                 
-                # カス石救済（自己の死に石への手入れ）のロジック追加
-                # ユーザー要望の「カス石救済」警告
-                elif group.color_label == current_color.label:
-                     # 自分の死に石に接触（助けようとしている？）
-                    is_trying_to_save = False
-                    for s_gtp in group.stones:
-                        row = int(s_gtp[1:]) - 1
-                        col = ord(s_gtp[0].upper()) - ord('A')
-                        if col >= 9: col -= 1
-                        dist = abs(last_move.row - row) + abs(last_move.col - col)
-                        if dist <= 1:
-                            is_trying_to_save = True
-                            break
+                if is_touching:
+                    # 評価値をチェック
+                    loss_threshold = AnalysisConfig.get("MISTAKE_LOSS_THRESHOLD")
+                    current_loss = 0.0
                     
-                    if is_trying_to_save:
-                        # 助ける手が有力でない限り警告
-                        is_good_move = False
-                        if analysis.candidates:
-                             top_move = analysis.candidates[0].move
-                             if top_move == last_move.to_gtp():
-                                 is_good_move = True
+                    # analysis.candidates から最新手の損失を特定する（または analysis.score_lead 等から計算）
+                    # ここでは簡易的に、analysis.candidates[0]（最善手）との差分を見る
+                    if analysis.candidates:
+                        best_candidate = analysis.candidates[0]
+                        # 最新手が候補手リストにあるか探す
+                        current_candidate = next((c for c in analysis.candidates if c.move == last_move.to_gtp()), None)
+                        
+                        if current_candidate:
+                            current_loss = best_candidate.score_lead - current_candidate.score_lead
+                        else:
+                            # 候補リストにない＝相当な悪手
+                            current_loss = 99.0 
 
-                        if not is_good_move:
-                            msg = f"【警告：救済】助かる見込みの薄い{group.color_label}の石（{group.stones[0]}周辺）を動きました。これは被害を拡大する『重い手』になるリスクがあります。"
-                            collector.add(
-                                FactCategory.STRATEGY,
-                                msg,
-                                severity=4,
-                                metadata=group,
-                                scope=TemporalScope.IMMEDIATE
-                            )
+                    if current_loss >= loss_threshold:
+                        # 損失が大きい場合のみ「カス石」という強い言葉を使う
+                        msg = ""
+                        if group.color_label != current_color.label:
+                            msg = f"【警告：緩着】すでに死んでいる{group.color_label}の石（{group.stones[0]}周辺）にわざわざ接触しました。これは「カス石」を相手にした効率の悪い手であり、評価値を {current_loss:.1f} 目損ねています。"
+                        else:
+                            msg = f"【警告：救済不要】助かる見込みの極めて薄い（Stability: {group.stability:.2f}）自身の石（{group.stones[0]}周辺）を助けようとしました。これは「カス石」に手をかけた無駄な手であり、評価値を {current_loss:.1f} 目損ねています。"
+                        
+                        collector.add(
+                            FactCategory.STRATEGY,
+                            msg,
+                            severity=5,
+                            metadata=group,
+                            scope=TemporalScope.IMMEDIATE
+                        )
+                    else:
+                        # 損失が少ない場合は、死に体である事実のみを伝える（既存のメッセージに近い）
+                        # ただし、すでに StabilityAnalyzer が EXISTING スコープで出している可能性があるので、
+                        # ここでは IMMEDIATE (この手に対する反応) として「死に体ですが、活用としては有効です」程度にする
+                        if group.color_label == current_color.label:
+                            msg = f"{current_color.label}の手は、死に体に近い自身の石（{group.stones[0]}周辺）に働いていますが、AIの評価に大きな下落はありません。活用の一手として機能しています。"
+                        else:
+                            msg = f"相手の死に体に近い石（{group.stones[0]}周辺）に接触しましたが、これは有効な利かし（アジ消し）として機能しており、評価を維持しています。"
+                            
+                        collector.add(
+                            FactCategory.STRATEGY,
+                            msg,
+                            severity=2,
+                            metadata=group,
+                            scope=TemporalScope.IMMEDIATE
+                        )
 
             # 4. 厚み（Atsumi）としての評価 (EXISTING Fact for Context)
             # 現在の盤面ではなく、全体の状況として「厚みが存在する」ことを伝える

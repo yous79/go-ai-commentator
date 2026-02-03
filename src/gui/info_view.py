@@ -448,6 +448,7 @@ class ConfigTab(tk.Frame):
                 from_v, to_v, res = -1.0, 1.0, 0.01
                 if "SEVERITY" in key: from_v, to_v, res = 1, 5, 1
                 elif "INFLUENCE" in key: from_v, to_v, res = 0.0, 5.0, 0.1
+                elif "LOSS" in key or "MISTAKE" in key: from_v, to_v, res = 0.0, 10.0, 0.1
                 
                 scale = tk.Scale(frame, variable=var, from_=from_v, to=to_v, resolution=res, orient="horizontal", 
                                  command=lambda v, k=key: self._on_ui_change(k, v), bg="#ECF0F1", length=200)
