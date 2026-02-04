@@ -209,10 +209,19 @@ class GoGameState:
                 if prev is None or curr is None:
                     continue # まだ解析が終わっていない手はスキップ
                 
-                wr_before = prev.get('winrate', prev.get('winrate_black', 0.5))
-                wr_after = curr.get('winrate', curr.get('winrate_black', 0.5))
-                sc_before = prev.get('score', prev.get('score_lead_black', 0.0))
-                sc_after = curr.get('score', curr.get('score_lead_black', 0.0))
+                if isinstance(prev, dict):
+                    wr_before = prev.get('winrate', prev.get('winrate_black', 0.5))
+                    sc_before = prev.get('score', prev.get('score_lead_black', 0.0))
+                else:
+                    wr_before = getattr(prev, 'winrate', getattr(prev, 'winrate_black', 0.5))
+                    sc_before = getattr(prev, 'score', getattr(prev, 'score_lead_black', 0.0))
+
+                if isinstance(curr, dict):
+                    wr_after = curr.get('winrate', curr.get('winrate_black', 0.5))
+                    sc_after = curr.get('score', curr.get('score_lead_black', 0.0))
+                else:
+                    wr_after = getattr(curr, 'winrate', getattr(curr, 'winrate_black', 0.5))
+                    sc_after = getattr(curr, 'score', getattr(curr, 'score_lead_black', 0.0))
                 
                 if (i % 2 != 0): # Black turn (1, 3, 5...)
                     # 黒が打った結果、黒の勝率がどれだけ下がったか

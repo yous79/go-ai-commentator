@@ -44,9 +44,10 @@ class PDFGenerator:
         self.pdf.ln(10)
 
         for item in items:
-            # Move Title
+            # Title
             self.pdf.set_font('unicode', '', 16)
-            self.pdf.cell(0, 10, f"第 {item['move']} 手の解説", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+            title = item.get('title', f"第 {item.get('move', '?')} 手の解説")
+            self.pdf.cell(0, 10, title, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
             self.pdf.ln(5)
             
             # Image

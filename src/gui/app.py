@@ -491,7 +491,8 @@ class GoReplayApp(GoAppBase):
         if not self.report_generator: return
 
         def _task():
-            return self.report_generator.generate(self.controller.current_sgf_name, self.controller.image_dir)
+            import asyncio
+            return asyncio.run(self.report_generator.generate(self.controller.current_sgf_name, self.controller.image_dir))
 
         def _on_success(res):
             path, err = res
