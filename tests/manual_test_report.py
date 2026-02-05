@@ -8,6 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "s
 
 from services.report_generator import ReportGenerator
 from services.api_client import api_client
+from core.inference_fact import TemporalScope
 
 async def test_report_generation():
     print("Setting up Mocks...")
@@ -23,7 +24,7 @@ async def test_report_generation():
                         # let's use 3.
         (1.0, 0.05, 3), # Rank 2
     ], [])
-    mock_game.get_history_up_to.return_value = [["B", "aa"]]
+    mock_game.get_history_up_to.return_value = [["B", "aa"], ["W", "bb"], ["B", "cc"]]
     mock_game.get_board_at.return_value = MagicMock()
     
     # Mock moves for Good Move Detection
@@ -48,11 +49,35 @@ async def test_report_generation():
     
     # Mock Orchestrator
     mock_collector = MagicMock()
-    mock_collector.get_prioritized_text.return_value = "Facts Summary"
-    # Create a fake fact with severity
-    mock_fact = MagicMock()
-    mock_fact.severity = 5
-    mock_collector.facts = [mock_fact]
+    mock_collector.get_prioritized_text.return_value = "Existing Facts: Aki-sankaku on board"
+    
+    # Create fake facts
+    # Fact 1: Immediate Warning (Aki-sankaku created by last move)
+    mock_fact_imm = MagicMock()
+    mock_fact_imm.severity = 5
+    mock_fact_imm.scope = TemporalScope.IMMEDIATE
+    mock_fact_imm.format_for_ai.return_value = "⚠️ Aki-sankaku (Empty Triangle) created at D4"
+    
+    # Fact 2: Existing fact
+    mock_fact_ex = MagicMock()
+    mock_fact_ex.severity = 3
+    mock_fact_ex.scope = TemporalScope.EXISTING
+    mock_fact_ex.format_for_ai.return_value = "• Reasonable efficiency elsewhere"
+    
+    # Fact 3: Predicted Warning (Aki-sankaku in PV)
+    mock_fact_pred = MagicMock()
+    mock_fact_pred.severity = 5
+    mock_fact_pred.scope = TemporalScope.PREDICTED
+    mock_fact_pred.format_for_ai.return_value = "⚠️ Predicted Aki-sankaku (Empty Triangle) if this sequence continues"
+    
+    mock_collector.facts = [mock_fact_imm, mock_fact_ex, mock_fact_pred]
+    
+    # Mocking helper methods
+    mock_collector.get_last_move_summary.return_value = "⚠️ Aki-sankaku (Empty Triangle) created at D4"
+    mock_collector.get_scope_summary.side_effect = lambda scope: {
+        TemporalScope.IMMEDIATE: "⚠️ Aki-sankaku (Empty Triangle) created at D4",
+        TemporalScope.PREDICTED: "⚠️ Predicted Aki-sankaku (Empty Triangle) if this sequence continues"
+    }.get(scope, "")
     
     # Use AsyncMock for analyze_full
     mock_commentator.orchestrator.analyze_full = AsyncMock(return_value=mock_collector)
@@ -66,7 +91,8 @@ async def test_report_generation():
     mock_renderer.render.return_value.save = MagicMock()
 
     # Mock API Client
-    api_client.analyze_move = MagicMock(return_value=MagicMock(candidates=[MagicMock(pv=["aa"], move="aa")]))
+    # Match Move 3 ('cc') to test Tier 1 logic
+    api_client.analyze_move = MagicMock(return_value=MagicMock(candidates=[MagicMock(pv=["cc"], move="cc")]))
 
     # Instantiate ReportGenerator
     generator = ReportGenerator(mock_game, mock_renderer, mock_commentator)

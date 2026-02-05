@@ -9,6 +9,7 @@ from utils.pdf_generator import PDFGenerator
 from services.api_client import api_client
 from services.persona import PersonaFactory
 from utils.logger import logger
+from core.inference_fact import TemporalScope
 
 class ReportGenerator:
     def __init__(self, game_state, renderer, commentator):
@@ -87,29 +88,49 @@ class ReportGenerator:
                 best = res_prev.candidates[0]
                 pv_list = best.pv
                 
-                # 画像生成 A: 実戦図 (Actual)
-                # 実戦手を取得してマーカーを表示
-                last_move_data = None
+                # 画像生成: 推奨図 (Suggestion / PV) + 実戦手のマーク (▲)
+                # 実戦手を取得して ▲ マーカーを表示
+                actual_marks = {"TR": []}
                 history_curr_chk = self.game.get_history_up_to(m_idx)
                 if history_curr_chk:
                     last_c, last_gtp = history_curr_chk[-1]
                     if last_gtp and last_gtp.lower() != "pass":
                         idx = self.renderer.transformer.gtp_to_indices(last_gtp)
                         if idx:
-                            last_move_data = (last_c, idx)
+                            actual_marks["TR"].append(idx)
 
-                img_actual = self.renderer.render(self.game.get_board_at(m_idx), last_move=last_move_data)
-                fname_actual = f"mistake_{m_idx:03d}_actual.png"
-                path_actual = os.path.join(r_dir, fname_actual)
-                img_actual.save(path_actual)
-
-                # 画像生成 B: 推奨図 (Suggestion / PV)
-                # board_prev は打つ前の盤面
+                # 推奨図の上に実戦手を重ねる
                 img_pv = self.renderer.render_pv(board_prev, pv_list, "B", 
-                                              title=f"M{m_idx} Suggestion")
-                fname_pv = f"mistake_{m_idx:03d}_pv.png"
+                                              title=f"M{m_idx} Suggestion (Actual: Triangle)")
+                
+                # MarkupLayerを直接使うか、render()を再度呼ぶ。render_pvは内部でrenderを呼んでいる。
+                # 最終的な上書きのために、RenderContextを意識して再度描画するか、
+                # render_pv 自体を拡張して marks を受け取れるようにするのが理想的。
+                # 現状は簡略化のため、render_pv の結果のイメージに後描画するか、
+                # render を直接使って PV を手動で渡す。
+                
+                # 最も確実な方法: render を使用し、candidates(PV) と marks(Actual) を同時に渡す
+                mock_candidates = []
+                curr_c = "B" # starting_color は暫定
+                for i, m_str in enumerate(pv_list[:10]):
+                    mock_candidates.append({
+                        "move": m_str,
+                        "color": curr_c,
+                        "winrate": 0.0
+                    })
+                    curr_c = "W" if curr_c == "B" else "B"
+
+                final_img = self.renderer.render(
+                    board_prev, 
+                    analysis_text=f"Move {m_idx} Improvement Plan",
+                    candidates=mock_candidates,
+                    show_numbers=True,
+                    marks=actual_marks
+                )
+
+                fname_pv = f"mistake_{m_idx:03d}_suggestion.png"
                 path_pv = os.path.join(r_dir, fname_pv)
-                img_pv.save(path_pv)
+                final_img.save(path_pv)
 
                 # テンプレート選択
                 tmpl_name = "report_mistake_detailed" if is_rank_1 else "report_mistake_brief"
@@ -117,17 +138,29 @@ class ReportGenerator:
                 # コンテキスト知識フィルタリング
                 custom_kn = f"{full_knowledge}\n\n【この局面で検出された事実】:\n{det_facts}"
                 
-                # Persona
-                persona = PersonaFactory.get_persona(TARGET_LEVEL)
-                
+                # 解説生成
+                data_curr = self.game.moves[m_idx-1]
+                if isinstance(data_curr, dict):
+                    wr_after = data_curr.get('winrate', data_curr.get('winrate_black', 0.5))
+                    sc_after = data_curr.get('score', data_curr.get('score_lead_black', 0.0))
+                else:
+                    wr_after = getattr(data_curr, 'winrate', getattr(data_curr, 'winrate_black', 0.5))
+                    sc_after = getattr(data_curr, 'score', getattr(data_curr, 'score_lead_black', 0.0))
+
+                move_warnings = collector_curr.get_last_move_summary()
+                pv_warnings = collector_curr.get_scope_summary(TemporalScope.PREDICTED)
+
                 prompt_args = {
                     "m_idx": m_idx,
                     "player_color": "黒",
-                    "wr_drop": f"-{wr_drop:.1%}",
-                    "sc_drop": f"-{sc_drop:.1f}目",
+                    "winrate_curr": f"{wr_after:.1%}",
+                    "score_curr": f"{sc_after:.1f}",
+                    "winrate_drop": f"{wr_drop:.1%}",
+                    "score_drop": f"{sc_drop:.1f}",
                     "ai_move": best.move,
                     "pv_str": " -> ".join(pv_list) if pv_list else "",
-                    "related_knowledge": det_facts,
+                    "move_warnings": move_warnings,
+                    "pv_warnings": pv_warnings,
                     "knowledge": custom_kn
                 }
                 
@@ -136,26 +169,18 @@ class ReportGenerator:
                 # Commentary Generation
                 commentary = await self._call_gemini(prompt)
 
-                # Markdown追加: 左右配置のテーブル
+                # Markdown追加: 単一画像配置
                 md_title = f"### 手数 {m_idx} (Rank {rank}: 決定機)" if is_rank_1 else f"### 手数 {m_idx} (Rank {rank})"
                 
                 r_md += f"{md_title}\n"
                 r_md += f"- **勝率下落**: -{wr_drop:.1%}\n- **目数下落**: -{sc_drop:.1f}目\n\n"
-                r_md += f"| 実戦 (Actual) | AI推奨 (Suggestion) |\n| :---: | :---: |\n"
-                r_md += f"| ![{m_idx}実戦]({fname_actual}) | ![{m_idx}推奨]({fname_pv}) |\n\n"
+                r_md += f"![{m_idx}解説図]({fname_pv})\n\n"
+                r_md += f"> ▲印：あなたの着手 / 数字：AIの推奨手順\n\n"
                 r_md += f"{commentary}\n\n---\n\n"
                 
                 # PDFアイテム
-                # PDFではサイドバイサイドが難しい場合があるので、順に並べるか、PDFGenerator側で工夫が必要
-                # ここでは順に追加する形をとる（タイトルで区別）
                 pdf_items.append({
-                    "title": f"第 {m_idx} 手: 実戦（あなたの手）",
-                    "move": m_idx,
-                    "image": path_actual,
-                    "text": "実戦の局面です。"
-                })
-                pdf_items.append({
-                    "title": f"第 {m_idx} 手: AI推奨の進行",
+                    "title": f"第 {m_idx} 手: 解析図（▲実戦 / 数字AI）",
                     "move": m_idx,
                     "image": path_pv,
                     "text": commentary
@@ -235,6 +260,7 @@ class ReportGenerator:
             
             if not indices: return False
 
+            # 通常のサイズに戻す
             plt.figure(figsize=(10, 4))
             plt.plot(indices, wrs, marker='o', markersize=2, linestyle='-', color='black', label='Black Winrate')
             plt.axhline(y=50, color='gray', linestyle='--', alpha=0.5)
@@ -253,18 +279,19 @@ class ReportGenerator:
             return False
 
     async def _find_best_move_candidate(self):
-        """黒番の好手候補（損失が少なく、かつ緊急度が高い可能性がある場面）を探す"""
-        candidates = []
+        """黒番の好手候補を探す (Tiered Approach)"""
+        # Tier 1: AI一致 AND 高緊急度 (Surprise/Urgency)
+        # Tier 2: AI一致 (Best Move)
+        # Tier 3: 最も損失が少ない手 (Fallback)
+
         moves = self.game.moves
         if not moves or len(moves) < 2: return None
 
-        # 黒番の手(奇数手目)をチェック
-        # game.moves[i] は (i+1) 手目の結果。
-        # 例: i=0 -> 1手目(黒)。 
+        # 1. 全黒番の着手についてデータを収集
+        candidates_data = []
         for i, data in enumerate(moves):
-            # Check only Black moves (0, 2, 4...) -> Moves 1, 3, 5...
             if i % 2 != 0: continue # Skip White
-            if i == 0: continue # Skip first move (joseki usually)
+            if i == 0: continue # Skip first move
             
             prev = moves[i-1]
             curr = data
@@ -280,37 +307,94 @@ class ReportGenerator:
             else:
                 wb_curr = getattr(curr, 'winrate', getattr(curr, 'winrate_black', 0.5))
             
-            # Loss = Prev - Curr. Good move means Loss near 0 or Gain (negative loss).
+            # Loss計算 (小さいほど良い)
             loss = wb_prev - wb_curr
             
-            # 条件: 損失が非常に小さい (1%未満) か 利得がある
-            # かつ、勝負が決まっていない (5% < WR < 95%)
-            if loss < 0.01 and 0.05 < wb_prev < 0.95:
-                # 候補として登録。優先度は「直前のWinrate変動が大きかった（激戦）」など簡易指標で
-                candidates.append(i + 1)
+            # 勝負が決している局面(5%以下/95%以上)は好手の価値が薄いが、Tier 3用には残す
+            candidates_data.append({
+                'm_idx': i + 1,
+                'loss': loss,
+                'wb_prev': wb_prev
+            })
+
+        if not candidates_data: return None
+
+        # 損失が小さい順にソート (Tier 3候補)
+        sorted_by_loss = sorted(candidates_data, key=lambda x: x['loss'])
         
-        if not candidates: return None
+        # 解析対象: 損失が特に小さい上位5手 (Tier 1/2 の有望候補)
+        # ※ 損失が大きい手はそもそも AI一致である可能性が低い
+        analysis_targets = sorted_by_loss[:5]
         
-        # 候補の中からランダムか、あるいは特定の条件で1つ選んでフル解析
-        # ここでは「候補のなかで最も評価値が高い（＝最善に近い）もの」から順に3つ調べ、Urgency高いものを採用
-        # 簡易的に、候補リストの後ろの方（中盤・終盤）を優先してみる
-        candidates.reverse()
-        
-        for m_idx in candidates[:3]: # 最大3候補だけチェック
+        tier1_candidates = []
+        tier2_candidates = []
+
+        best_loss_idx = sorted_by_loss[0]['m_idx'] # Tier 3 Fallback
+
+        for cand in analysis_targets:
+            m_idx = cand['m_idx']
+            loss = cand['loss']
+            
+            # あまりに損失が大きい場合は解析スキップ (例: 5%以上損している)
+            if loss > 0.05: continue
+
             history = self.game.get_history_up_to(m_idx)
-            # 緊急度チェックのためフル解析
-            collector = await self._get_cached_analysis(history)
-            
-            # Urgencyファクトがあるか、Severityが高いファクトがあるか
-            # UrgencyProvider creates facts with category STRATEGY or URGENCY?
-            # Usually Urgency is a metric. FactCollector doesn't expose raw metrics easily unless in text.
-            # But let's check facts severity.
-            high_urgency = any(f.severity >= 4 for f in collector.facts)
-            
-            if high_urgency:
-                return m_idx
+            try:
+                # 前局面解析 (推奨手取得)
+                history_prev = self.game.get_history_up_to(m_idx - 1)
                 
-        return None
+                # AI解析実行
+                res_prev = await asyncio.to_thread(api_client.analyze_move, history_prev, self.game.board_size)
+                
+                if res_prev and res_prev.candidates:
+                    best_move_gtp = res_prev.candidates[0].move
+                    
+                    # 実戦の手を取得
+                    actual_move_gtp = None
+                    if history:
+                        _, last_gtp = history[-1]
+                        actual_move_gtp = last_gtp
+                    
+                    # 一致判定 (座標文字列の比較)
+                    if best_move_gtp and actual_move_gtp and \
+                       best_move_gtp.lower() == actual_move_gtp.lower():
+                           
+                        # 局面の緊急度判定
+                        collector = await self._get_cached_analysis(history)
+                        max_urgency = 0
+                        for f in collector.facts:
+                             if f.severity > max_urgency:
+                                 max_urgency = f.severity
+                        
+                        cand_info = {'m_idx': m_idx, 'urgency': max_urgency}
+                        
+                        # Tier 判定 (Severity 4=CRITICAL is strict Urgent)
+                        if max_urgency >= 4:
+                             tier1_candidates.append(cand_info)
+                        else:
+                             tier2_candidates.append(cand_info)
+
+            except Exception as e:
+                logger.error(f"Good move analysis failed at {m_idx}: {e}", layer="REPORT")
+                continue
+
+        # Selection Logic
+        
+        # 1. Tier 1: Urgent & Match
+        if tier1_candidates:
+            tier1_candidates.sort(key=lambda x: (x['urgency'], x['m_idx']), reverse=True)
+            logger.info(f"Selected Tier 1 Good Move: {tier1_candidates[0]}", layer="REPORT")
+            return tier1_candidates[0]['m_idx']
+            
+        # 2. Tier 2: Match
+        if tier2_candidates:
+             tier2_candidates.sort(key=lambda x: x['m_idx'], reverse=True)
+             logger.info(f"Selected Tier 2 Good Move: {tier2_candidates[0]}", layer="REPORT")
+             return tier2_candidates[0]['m_idx']
+             
+        # 3. Tier 3: Lowest Loss (Fallback)
+        logger.info(f"Selected Tier 3 Good Move (Lowest Loss): {best_loss_idx}", layer="REPORT")
+        return best_loss_idx
 
     async def _process_good_move(self, m_idx, knowledge, r_dir, r_md, pdf_items):
         try:
@@ -320,7 +404,17 @@ class ReportGenerator:
             
             # 画像
             board = self.game.get_board_at(m_idx)
-            p_img = self.renderer.render(board, last_move=None, analysis_text=f"Move {m_idx} (Good Move!)")
+            
+            # 着手箇所を特定して▲マークを付ける
+            actual_marks = {"TR": []}
+            if history:
+                last_c, last_gtp = history[-1]
+                if last_gtp and last_gtp.lower() != "pass":
+                    idx = self.renderer.transformer.gtp_to_indices(last_gtp)
+                    if idx:
+                        actual_marks["TR"].append(idx)
+
+            p_img = self.renderer.render(board, last_move=None, marks=actual_marks, analysis_text=f"Move {m_idx} (Good Move!)")
             img_path = os.path.join(r_dir, f"good_move_{m_idx:03d}.png")
             p_img.save(img_path)
             

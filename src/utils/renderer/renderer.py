@@ -23,8 +23,8 @@ class LayeredBoardRenderer:
             HeatmapLayer(), # Gridの上にヒートマップを表示
             CoordinateLayer(),
             StoneLayer(),
-            MarkupLayer(),
             AnalysisLayer(),
+            MarkupLayer(), # PVの石の上にマークを出したいのでAnalysisLayerの後に配置
             InfoLayer()
         ]
         
